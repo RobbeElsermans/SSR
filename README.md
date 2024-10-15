@@ -44,5 +44,7 @@ Robbe
 
 
 ### Adam hejduk
-Sup' wazaaaa
-
+My Rosposeability is: 
+- Sensor of Temperature and 
+- Energy output management.
+15.10.2024 - "I'll research how it works and learn how to code with it." 
