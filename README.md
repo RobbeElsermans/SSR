@@ -35,4 +35,12 @@ Robbe
 - Energy measurement (power profile)
 - Energy management (optimizing power consumption)
 
+## Group division
+### Robbe Elsermans
+- BLE connection to surrounding rovers.
+- Energy measurement (power profiling)
 
+### Thomas Kramp
+
+
+### Adam hejduk
