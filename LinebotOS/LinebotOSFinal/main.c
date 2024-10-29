@@ -1,6 +1,6 @@
 #include "hwconfig.h"
 
-#include "FreeRTOS.h"
+#include "./FreeRTOS/FreeRTOS.h"
 #include "task.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
