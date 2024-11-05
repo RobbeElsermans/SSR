@@ -163,5 +163,71 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
 }
 
 /* USER CODE BEGIN 1 */
+/**
+  * @brief RTC MSP Initialization
+  *        This function configures the hardware resources used in this example:
+  *           - Peripheral's clock enable
+  * @param hrtc: RTC handle pointer
+  * @note  Care must be taken when HAL_RCCEx_PeriphCLKConfig() is used to select 
+  *        the RTC clock source; in this case the Backup domain will be reset in  
+  *        order to modify the RTC Clock source, as consequence RTC registers (including 
+  *        the backup registers) and RCC_CSR register are set to their reset values.  
+  * @retval None
+  */
+void HAL_RTC_MspInit(RTC_HandleTypeDef *hrtc)
+{
+  RCC_OscInitTypeDef RCC_OscInitStruct;
+  RCC_PeriphCLKInitTypeDef  PeriphClkInitStruct;
+  
+  /* Intermediate configuration in case of system resume from standby mode:   */
+  /* RTC clock source disable before modifying its configuration afterwards.  */
+  /* Note: In case of user application requires RTC clock to be uninterrupted,*/
+  /*       an additional mechanism must be implemented in function of wake-up */
+  /*       status from standby mode.                                          */
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
+  PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_NONE;
+  if(HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+  {
+    while(1);
+  }
+  
+  /*##-1- Configure the RTC clock source ######################################*/
+  /* -a- Enable LSE Oscillator */
+  RCC_OscInitStruct.OscillatorType =  RCC_OSCILLATORTYPE_LSE;  
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+  RCC_OscInitStruct.LSEState = RCC_LSE_ON_RTC_ONLY;
+  if(HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    while(1);
+  }
 
+  /* -b- Select LSE as RTC clock source */
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
+  PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
+  if(HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+  { 
+    while(1);
+  }
+
+  /*##-2- Enable the RTC peripheral Clock ####################################*/
+  /* Enable RTC Clock */
+  __HAL_RCC_RTC_ENABLE();
+  
+  /*##-3- Configure the NVIC for RTC Alarm ###################################*/
+  HAL_NVIC_SetPriority(RTC_WKUP_IRQn, 0x0, 0);
+  HAL_NVIC_EnableIRQ(RTC_WKUP_IRQn);
+}
+
+/**
+  * @brief RTC MSP De-Initialization 
+  *        This function freeze the hardware resources used in this example:
+  *          - Disable the Peripheral's clock
+  * @param hrtc: RTC handle pointer
+  * @retval None
+  */
+void HAL_RTC_MspDeInit(RTC_HandleTypeDef *hrtc)
+{
+  /*##-1- Reset peripherals ##################################################*/
+  __HAL_RCC_RTC_DISABLE();
+}
 /* USER CODE END 1 */
