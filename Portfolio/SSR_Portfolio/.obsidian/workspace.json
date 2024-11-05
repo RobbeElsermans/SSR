@@ -6,6 +6,7 @@
       {
         "id": "3c9edb14421cfbd3",
         "type": "tabs",
+        "dimension": 48.720682302771856,
         "children": [
           {
             "id": "20c838dd4497e3b6",
@@ -13,15 +14,62 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Portfolio.md",
+                "file": "Nice links.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Portfolio"
+              "title": "Nice links"
+            }
+          },
+          {
+            "id": "45d2985d4c3d0874",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Nice links.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Nice links"
             }
           }
-        ]
+        ],
+        "currentTab": 1
+      },
+      {
+        "id": "9921e12c2afd7870",
+        "type": "tabs",
+        "dimension": 51.279317697228144,
+        "children": [
+          {
+            "id": "f28320e788dcc759",
+            "type": "leaf",
+            "state": {
+              "type": "pdf",
+              "state": {
+                "file": "Datasheets/stm32l412c8-1.pdf"
+              },
+              "icon": "lucide-file-text",
+              "title": "stm32l412c8-1"
+            }
+          },
+          {
+            "id": "968af66f4af3431f",
+            "type": "leaf",
+            "state": {
+              "type": "pdf",
+              "state": {
+                "file": "Datasheets/Nano_BLE_MCU-nRF52840_PS_v1.1.pdf"
+              },
+              "icon": "lucide-file-text",
+              "title": "Nano_BLE_MCU-nRF52840_PS_v1.1"
+            }
+          }
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -162,15 +210,17 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "20c838dd4497e3b6",
+  "active": "45d2985d4c3d0874",
   "lastOpenFiles": [
-    "Datasheets/stm32l412c8-1.pdf",
+    "Portfolio.md",
     "Datasheets/Nano_BLE_MCU-nRF52840_PS_v1.1.pdf",
+    "Datasheets/stm32l412c8-1.pdf",
+    "Nice links.md",
+    "Datasheets/rm0394-stm32l41xxx42xxx43xxx44xxx45xxx46xxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf",
     "Datasheets",
     "Images/nrf52840_pinout.jpg",
     "Images/L412_pinout.png",
     "Images/block diagram.png",
-    "Portfolio.md",
     "Images",
     "create a link.md"
   ]
