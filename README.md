@@ -11,8 +11,8 @@ Lastly, energy awareness is an important key stone of our system as it relies on
 
 ## Made by
 Adam
-Thomas
 Robbe
+Thomas
 
 ## Projext requirements
 ### connectivity
@@ -41,7 +41,9 @@ Robbe
 - Energy measurement (power profiling)
 
 ### Thomas Kramp
-
+- LoRaWAN connectivity to send telemetry data to the servers.
+- NodeRed environment to graph all received data.
+- Gyroscope implementation.
 
 ### Adam hejduk
 My Rosposeability is: 
