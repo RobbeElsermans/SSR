@@ -1,5 +1,5 @@
 # SSR
-By Thomas Kramp, Robbe Elsermans, and Adam ...
+By Thomas Kramp, Robbe Elsermans, and Adam Hejduk
 
 ## Intro
 
