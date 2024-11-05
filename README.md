@@ -7,7 +7,7 @@ This in combination with low power communication where we use BLE for inter robo
 
 We use temperature sensor for the environment temperature as wel as an Gyroscope to detect any anomalies when standing still or driving the rover (e.g. bumps, pits).
 
-Lastly, energy awareness is an important key stone of our sistem as it relies on harvested energy.
+Lastly, energy awareness is an important key stone of our system as it relies on harvested energy.
 
 ## Made by
 Adam
@@ -45,6 +45,6 @@ Robbe
 
 ### Adam hejduk
 My Rosposeability is: 
-- Sensor of Temperature and 
+- Sensor of Temperature, Humidity and light
 - Energy output management.
 15.10.2024 - "I'll research how it works and learn how to code with it." 
