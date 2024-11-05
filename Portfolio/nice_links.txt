@@ -2,3 +2,5 @@ https://wiki.seeedstudio.com/xiao_nrf52840_with_platform_io/
 https://wiki.seeedstudio.com/XIAO_BLE/
 https://docs.platformio.org/en/stable/boards/ststm32/nucleo_l412kb.html#board-ststm32-nucleo-l412kb
 https://www.st.com/en/development-tools/stm32cubemx.html
+
+https://github.com/adafruit/Adafruit_nRF52_Arduino/blob/master/libraries/Bluefruit52Lib/src/bluefruit.h
