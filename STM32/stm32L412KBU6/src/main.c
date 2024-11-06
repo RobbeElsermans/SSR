@@ -19,6 +19,10 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "i2c.h"
+#include "usart.h"
+#include "gpio.h"
+#include "lp.h"
 
 /** @addtogroup STM32L4xx_HAL_Examples
   * @{
@@ -30,19 +34,12 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define LED_TOGGLE_DELAY         100
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-/* RTC handler declaration */
-RTC_HandleTypeDef RTCHandle;
-static __IO uint32_t TimingDelay;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-void SystemPower_Config(void);
-static void MX_GPIO_Init(void);
-void RTC_Config(void);
 void Error_Handler(void);
 
 /* Private functions ---------------------------------------------------------*/
@@ -54,8 +51,6 @@ void Error_Handler(void);
   */
 int main(void)
 {
-  uint32_t tickstart;
-
   /* STM32L4xx HAL library initialization:
        - Configure the Flash prefetch
        - Systick timer is configured by default as source of time base, but user
@@ -67,19 +62,20 @@ int main(void)
        - Low Level Initialization
      */
   HAL_Init();
-  MX_GPIO_Init();
 
   /* Configure the system clock to 80 MHz */
   SystemClock_Config();
 
-  /* Configure LED3 */
-  //BSP_LED_Init(LED3);
+  // init pheripherals
+  MX_GPIO_Init();
+  MX_I2C1_Init();
+  MX_UART2_UART_Init();
 
   /* Configure RTC */
-  RTC_Config();
-
-  /* Configure the system Power */
-  SystemPower_Config();
+  if (RTC_Config())
+  {
+    Error_Handler();
+  }
 
   HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
   HAL_Delay(1000);
@@ -95,55 +91,12 @@ int main(void)
   /* Insert 5 seconds delay */
   HAL_Delay(5000);
 
-  /* Enable ultra low power BOR and PVD supply monitoring */
-  HAL_PWREx_EnableBORPVD_ULP();
-
-  /* The Following Wakeup sequence is highly recommended prior to each Standby mode entry
-     mainly when using more than one wakeup source this is to not miss any wakeup event.
-     - Disable all used wakeup sources,
-     - Clear all related wakeup flags,
-     - Re-enable all used wakeup sources,
-     - Enter the Standby mode.
-  */
-  /* Disable all used wakeup sources */
-  HAL_RTCEx_DeactivateWakeUpTimer(&RTCHandle);
-
-  /* Clear all related wakeup flags */
-  __HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
-
-  /* Re-enable wakeup source */
-  /* ## Setting the Wake up time ############################################*/
-  /* RTC Wakeup Interrupt Generation:
-    the wake-up counter is set to its maximum value to yield the longest
-    stand-by time to let the current reach its lowest operating point.
-    The maximum value is 0xFFFF, corresponding to about 33 sec. when
-    RTC_WAKEUPCLOCK_RTCCLK_DIV = RTCCLK_Div16 = 16 */
-
-  /* Wakeup Time Base = (RTC_WAKEUPCLOCK_RTCCLK_DIV /(LSE))
-     Wakeup Time = Wakeup Time Base * WakeUpCounter
-       = (RTC_WAKEUPCLOCK_RTCCLK_DIV /(LSE)) * WakeUpCounter
-       ==> WakeUpCounter = Wakeup Time / Wakeup Time Base   */
-
-  /* To configure the wake up timer to 33s the WakeUpCounter is set to 0xFFFF:
-     Wakeup Time Base = 16 /(~32 kHz RC) = ~0.5 ms
-     Wakeup Time = 0.5 ms  * WakeUpCounter
-     Therefore, with wake-up counter =  0xFFFF  = 65,535
-       Wakeup Time =  0.5 ms *  65,535 = ~ 33 sec. */
-  HAL_RTCEx_SetWakeUpTimer_IT(&RTCHandle, 0x0FFF, RTC_WAKEUPCLOCK_RTCCLK_DIV16, 0);
-
-  /* Need to wait for 2 RTC clock cycles before entering Standby mode when RTC is clocked by LSE,
-     so wait for RSF flag to ensure the delay is satisfied */
-  tickstart = HAL_GetTick();
-  while((RTCHandle.Instance->ICSR & RTC_ICSR_RSF) == 0U)
+  /* Enter the Standby mode */
+  if (lowPower_init())
   {
-    if((HAL_GetTick() - tickstart ) > RTC_TIMEOUT_VALUE)
-    {
-      Error_Handler() ;
-    }
+    Error_Handler();
   }
 
-
-  /* Enter the Standby mode */
   HAL_PWR_EnterSTANDBYMode();
 
   /* Program should never reach this point (program restart when exiting from standby mode) */
@@ -152,31 +105,6 @@ int main(void)
   while (1)
   {
   }
-}
-
-static void MX_GPIO_Init(void)
-{
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
-/* USER CODE BEGIN MX_GPIO_Init_1 */
-/* USER CODE END MX_GPIO_Init_1 */
-
-  /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOC_CLK_ENABLE();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOB_CLK_ENABLE();
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin : LD3_Pin */
-  GPIO_InitStruct.Pin = LD3_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LD3_GPIO_Port, &GPIO_InitStruct);
-
-/* USER CODE BEGIN MX_GPIO_Init_2 */
-/* USER CODE END MX_GPIO_Init_2 */
 }
 
 /**
@@ -234,86 +162,6 @@ void SystemClock_Config(void)
 }
 
 /**
-  * @brief  System Power Configuration
-  *         The system Power is configured as follow:
-  *            + Automatic Wakeup using RTC clocked by LSI (after ~4s)
-  * @param  None
-  * @retval None
-  */
-void SystemPower_Config(void)
-{
-  /* Enable Power Clock */
-  __HAL_RCC_PWR_CLK_ENABLE();
-
-  //Set GPIO as analog read so floating.
-  GPIO_InitTypeDef GPIO_InitStructure;
-
-  /* Enable GPIOs clock */
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOB_CLK_ENABLE();
-  __HAL_RCC_GPIOC_CLK_ENABLE();
-  __HAL_RCC_GPIOD_CLK_ENABLE();
-  __HAL_RCC_GPIOH_CLK_ENABLE();
-
-  /* Configure all GPIO port pins in Analog Input mode (floating input trigger OFF) */
-  /* Note: Debug using ST-Link is not possible during the execution of this   */
-  /*       example because communication between ST-link and the device       */
-  /*       under test is done through UART. All GPIO pins are disabled (set   */
-  /*       to analog input mode) including  UART I/O pins.           */
-  GPIO_InitStructure.Pin = GPIO_PIN_All;
-  GPIO_InitStructure.Mode = GPIO_MODE_ANALOG;
-  GPIO_InitStructure.Pull = GPIO_NOPULL;
-
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStructure);
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStructure);
-  HAL_GPIO_Init(GPIOD, &GPIO_InitStructure);
-  HAL_GPIO_Init(GPIOH, &GPIO_InitStructure);
-
-  /* Disable GPIOs clock */
-  __HAL_RCC_GPIOA_CLK_DISABLE();
-  __HAL_RCC_GPIOB_CLK_DISABLE();
-  __HAL_RCC_GPIOC_CLK_DISABLE();
-  __HAL_RCC_GPIOD_CLK_DISABLE();
-  __HAL_RCC_GPIOH_CLK_DISABLE();
-
-}
-
-/**
-  * @brief  RTC Configuration
-  *         RTC Clocked by LSE (see HAL_RTC_MspInit)
-  * @param  None
-  * @retval None
-  */
-void RTC_Config(void)
-{
-  /* Configure RTC */
-  RTCHandle.Instance = RTC;
-  /* Set the RTC time base to 1s */
-  /* Configure RTC prescaler and RTC data registers as follow:
-    - Hour Format = Format 24
-    - Asynch Prediv = Value according to source clock
-    - Synch Prediv = Value according to source clock
-    - OutPut = Output Disable
-    - OutPutPolarity = High Polarity
-    - OutPutType = Open Drain */
-  RTCHandle.Init.HourFormat = RTC_HOURFORMAT_24;
-  RTCHandle.Init.AsynchPrediv = RTC_ASYNCH_PREDIV;
-  RTCHandle.Init.SynchPrediv = RTC_SYNCH_PREDIV;
-  RTCHandle.Init.OutPut = RTC_OUTPUT_DISABLE;
-  RTCHandle.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
-  RTCHandle.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
-  if(HAL_RTC_Init(&RTCHandle) != HAL_OK)
-  {
-    /* Initialization Error */
-    Error_Handler();
-  }
-
-  /* Set RTC calibration low power mode */
-  HAL_RTCEx_SetLowPowerCalib(&RTCHandle, RTC_LPCAL_SET);
-}
-
-/**
   * @brief SYSTICK callback
   * @param None
   * @retval None
@@ -321,17 +169,6 @@ void RTC_Config(void)
 void HAL_SYSTICK_Callback(void)
 {
   HAL_IncTick();
-
-  if (TimingDelay != 0)
-  {
-    TimingDelay--;
-  }
-  else
-  {
-    /* Toggle LED3 */
-    //BSP_LED_Toggle(LED3);
-    TimingDelay = LED_TOGGLE_DELAY;
-  }
 }
 
 /**
