@@ -42,12 +42,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Fixes Software installations.md",
+                "file": "Nice links.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Fixes Software installations"
+              "title": "Nice links"
             }
           }
         ],
@@ -238,20 +238,20 @@
   },
   "active": "2c2190603f6c5d94",
   "lastOpenFiles": [
+    "Images/I2C/I2C_FirstBit_SHT40.png",
+    "Images/I2C",
+    "Fixes Software installations.md",
     "Datasheets/an4894-eeprom-emulation-techniques-and-software-for-stm32-microcontrollers-stmicroelectronics.pdf",
     "Nice links.md",
     "Portfolio.md",
     "Datasheets/an4894-how-to-use-eeprom-emulation-on-stm32-mcus-stmicroelectronics.pdf",
     "Datasheets/HT_DS_Datasheet_SHT4x.pdf",
-    "Fixes Software installations.md",
     "Datasheets/Nano_BLE_MCU-nRF52840_PS_v1.1.pdf",
     "Images/brain_flow_diagram.pdf",
     "Images/Leeg diagram(4).pdf",
     "Images/Leeg diagram(3).pdf",
     "Images/block diagram.pdf",
     "Images/Leeg diagram(2).pdf",
-    "Images/Leeg diagram(1).pdf",
-    "Datasheets/stm32l412c8-1.pdf",
     "Images/nrf52840_pinout.jpg",
     "Images/L412_pinout.png",
     "Images/block diagram.png",

@@ -30,3 +30,5 @@ be set only when less than 32s calibration window is required.
 1: Calibration window is 220 ck_apre, which is the required configuration for ultra-low
 consumption mode.
 
+A I2C scanner in STM32
+https://deepbluembedded.com/stm32-i2c-scanner-hal-code-example/
