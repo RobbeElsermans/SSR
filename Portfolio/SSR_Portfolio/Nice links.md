@@ -32,3 +32,6 @@ consumption mode.
 
 A I2C scanner in STM32
 https://deepbluembedded.com/stm32-i2c-scanner-hal-code-example/
+
+Writing a value through BLE with a phone
+https://how2electronics.com/send-receive-data-to-mobile-app-with-xiao-ble-nrf52840-sense/

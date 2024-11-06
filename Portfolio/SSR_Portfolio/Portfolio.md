@@ -1,6 +1,15 @@
+# Table of contents
+- [[#Intro|Intro]]
+- [[#Board selection|Board selection]]
+	- [[#Board selection#STM32L4 VS nRF52840|STM32L4 VS nRF52840]]
+- [[#MVP|MVP]]
+- [[#Brain code|Brain code]]
+- [[#Joule Scope Measurements|Joule Scope Measurements]]
+	- [[#Joule Scope Measurements#STM32L4 standby|STM32L4 standby]]
+- [[#I2C communication sensor SHT40|I2C communication sensor SHT40]]
+
 # SSR
 By Adam Hejduk, Robbe Elsermans, and Thomas Kramp
-
 ## Intro
 As humanities interest in Mars grows, an understanding of its weather is needed. One of the greatest challenges that the planet provides are the frequent dust storms.
 This project will try to monitor the weather phenomenon (such as temperature, humidity, light, ...) to predict such storms.
