@@ -245,6 +245,38 @@ void SystemPower_Config(void)
   /* Enable Power Clock */
   __HAL_RCC_PWR_CLK_ENABLE();
 
+  //Set GPIO as analog read so floating.
+  GPIO_InitTypeDef GPIO_InitStructure;
+
+  /* Enable GPIOs clock */
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
+  __HAL_RCC_GPIOH_CLK_ENABLE();
+
+  /* Configure all GPIO port pins in Analog Input mode (floating input trigger OFF) */
+  /* Note: Debug using ST-Link is not possible during the execution of this   */
+  /*       example because communication between ST-link and the device       */
+  /*       under test is done through UART. All GPIO pins are disabled (set   */
+  /*       to analog input mode) including  UART I/O pins.           */
+  GPIO_InitStructure.Pin = GPIO_PIN_All;
+  GPIO_InitStructure.Mode = GPIO_MODE_ANALOG;
+  GPIO_InitStructure.Pull = GPIO_NOPULL;
+
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStructure);
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStructure);
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStructure);
+  HAL_GPIO_Init(GPIOH, &GPIO_InitStructure);
+
+  /* Disable GPIOs clock */
+  __HAL_RCC_GPIOA_CLK_DISABLE();
+  __HAL_RCC_GPIOB_CLK_DISABLE();
+  __HAL_RCC_GPIOC_CLK_DISABLE();
+  __HAL_RCC_GPIOD_CLK_DISABLE();
+  __HAL_RCC_GPIOH_CLK_DISABLE();
+
 }
 
 /**
@@ -301,7 +333,6 @@ void HAL_SYSTICK_Callback(void)
     TimingDelay = LED_TOGGLE_DELAY;
   }
 }
-
 
 /**
   * @brief  This function is executed in case of error occurrence.

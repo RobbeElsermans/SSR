@@ -13,3 +13,8 @@ curl -fsSL https://raw.githubusercontent.com/platformio/platformio-core/develop/
 ```bash
 sudo systemctl restart udev
 ```
+
+MX-Cube-EEPROM failed to load
+https://community.st.com/t5/stm32cubemx-mcus/how-to-install-x-cube-eeprom-on-stm32cube/td-p/78773
+https://community.st.com/t5/stm32cubemx-mcus/how-can-i-install-and-use-x-cube-eeprom-middleware-in/m-p/122931
+https://community.st.com/t5/stm32-mcus/porting-and-using-x-cube-eeprom-with-any-stm32/ta-p/570539
