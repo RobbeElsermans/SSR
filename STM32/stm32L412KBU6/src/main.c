@@ -37,6 +37,10 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+//Seeed slave address
+const uint8_t BLE_Address = 0x10 << 1;
+uint8_t BLE_Counter = 0;
+uint8_t buf[12]; //I2C buffer
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -110,7 +114,7 @@ int main(void)
 
   uint8_t i = 0, ret;
   HAL_UART_Transmit(&huart2, StartMSG, sizeof(StartMSG), 10000);
-  for (i = 68; i < 69; i++)
+  for (i = 0; i < 128; i++)
   {
     ret = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i << 1), 3, 5);
     if (ret != HAL_OK) /* No ACK Received At That Address */
@@ -129,11 +133,6 @@ int main(void)
 
   HAL_StatusTypeDef retu ;
 
-  uint8_t buf[12];
-  uint8_t data[6];
-  uint8_t slave_id_reg = 0x89;
-  uint8_t device_address = 0x44; //Keep 1 bit open for read and write
-
   while (1)
   {
     HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
@@ -142,37 +141,18 @@ int main(void)
 
     //Select the propper reg
     //buf[0] = 0x01;
-    buf[0] = slave_id_reg;
-    retu = HAL_I2C_Master_Transmit(&hi2c1, device_address << 1, buf, 1, HAL_MAX_DELAY);
+    buf[0] = BLE_Counter++;
+    retu = HAL_I2C_Master_Transmit(&hi2c1, BLE_Address, buf, 1, HAL_MAX_DELAY);
     if(retu != HAL_OK)
     {
       sprintf(Buffer, "Failed");
-      HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 10000);
+      HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
     }
     else
     {
-      HAL_Delay(20);
-      retu = HAL_I2C_Master_Receive(&hi2c1, device_address << 1, data, 6, HAL_MAX_DELAY);
-      if(retu != HAL_OK)
-      {
-        sprintf(Buffer, "Failed - RX");
-        HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 10000);
-      }
-      else
-      {
-        sprintf(Buffer, "0x%02x", (data[0]));
-        HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 10000);
-      }
+
     }
   }
-
-
-  // HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
-  // HAL_Delay(1000);
-  // HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
-  // volatile HAL_StatusTypeDef status = HAL_I2C_Master_Receive(&hi2c1, 0x44, 0x89, sizeof(data), 10000);
-  // HAL_Delay(1000);
-  // HAL_UART_Transmit(&huart2, data, sizeof(data), 100);
 }
 
 /**
