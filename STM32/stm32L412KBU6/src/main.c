@@ -34,19 +34,80 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+#define LTR329_I2C_ADDR (0x29 << 1) // I2C address shifted for HAL
+
+#define LTR329_ALS_CONTR 0x80      // ALS control register
+#define LTR329_ALS_MEAS_RATE 0x85  // ALS measurement rate register
+#define LTR329_ALS_DATA_CH1_0 0x88 // ALS Channel 1 low byte
+#define LTR329_ALS_DATA_CH1_1 0x89 // ALS Channel 1 high byte
+#define LTR329_ALS_DATA_CH0_0 0x8A // ALS Channel 0 low byte
+#define LTR329_ALS_DATA_CH0_1 0x8B // ALS Channel 0 high byte
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-//Seeed slave address
-const uint8_t BLE_Address = 0x10 << 1;
+
 uint8_t BLE_Counter = 0;
-uint8_t buf[12]; //I2C buffer
+uint8_t buf[10]; // I2C recieve buffer
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 void Error_Handler(void);
 
 /* Private functions ---------------------------------------------------------*/
+
+// Function to initialize the LTR-329 sensor
+void LTR329_Init(void)
+{
+  uint8_t data[2];
+
+  // Enable ALS sensor, set to active mode
+  data[0] = LTR329_ALS_CONTR;
+  data[1] = 0x01; // Set to active mode with default gain
+  HAL_I2C_Master_Transmit(&hi2c1, LTR329_I2C_ADDR, data, 2, HAL_MAX_DELAY);
+  HAL_Delay(10); // Wait for wakeup
+
+  // Set ALS measurement rate and integration time
+  data[0] = LTR329_ALS_MEAS_RATE;
+  data[1] = 0x13; // 200ms integration, 500ms measurement rate
+  HAL_I2C_Master_Transmit(&hi2c1, LTR329_I2C_ADDR, data, 2, HAL_MAX_DELAY);
+  HAL_Delay(100); // Initial startup time
+}
+
+// Function to read ALS data from LTR-329
+uint16_t LTR329_ReadALS(uint8_t channel)
+{
+  uint8_t regAddr;
+  uint8_t rawData[2];
+  uint16_t data;
+
+  // Select register address based on the channel
+  if (channel == 0)
+  {
+    regAddr = LTR329_ALS_DATA_CH0_0;
+  }
+  else if (channel == 1)
+  {
+    regAddr = LTR329_ALS_DATA_CH1_0;
+  }
+  else
+  {
+    return 0; // Invalid channel
+  }
+
+  // Read 2 bytes (low and high) from the sensor
+
+  HAL_I2C_Master_Transmit(&hi2c1, LTR329_I2C_ADDR, &regAddr, 1, HAL_MAX_DELAY);
+  HAL_Delay(10);
+  HAL_I2C_Master_Receive(&hi2c1, LTR329_I2C_ADDR, &rawData[0], 1, HAL_MAX_DELAY);
+  HAL_Delay(10);
+  regAddr++;
+  HAL_I2C_Master_Transmit(&hi2c1, LTR329_I2C_ADDR, &regAddr, 1, HAL_MAX_DELAY);
+  HAL_Delay(10);
+  HAL_I2C_Master_Receive(&hi2c1, LTR329_I2C_ADDR, &rawData[1], 1, HAL_MAX_DELAY);
+
+  data = (rawData[1] << 8) | rawData[0]; // Combine low and high bytes
+  return data;
+}
 
 /**
  * @brief  Main program
@@ -74,6 +135,7 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_UART2_UART_Init();
+  LTR329_Init(); // Initialize LTR-329 sensor
 
   /* Configure RTC */
   if (RTC_Config())
@@ -107,52 +169,51 @@ int main(void)
 
   /* Program should never reach this point (program restart when exiting from standby mode) */
   // Error_Handler();
-  uint8_t Buffer[25] = {0};
-  uint8_t Space[] = " - ";
-  uint8_t StartMSG[] = "Starting I2C Scanning: \r\n";
-  uint8_t EndMSG[] = "Done! \r\n\r\n";
 
-  uint8_t i = 0, ret;
-  HAL_UART_Transmit(&huart2, StartMSG, sizeof(StartMSG), 10000);
-  for (i = 0; i < 128; i++)
-  {
-    ret = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i << 1), 3, 5);
-    if (ret != HAL_OK) /* No ACK Received At That Address */
-    {
-      HAL_UART_Transmit(&huart2, Space, sizeof(Space), 10000);
-    }
-    else if (ret == HAL_OK)
-    {
-      sprintf(Buffer, "0x%X", i);
-      HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 10000);
-    }
-  }
-  HAL_UART_Transmit(&huart2, EndMSG, sizeof(EndMSG), 10000);
+  /* Use to find I2C addresses on the bus */
+  // uint8_t Buffer[25] = {0};
+  // uint8_t Space[] = " - ";
+  // uint8_t StartMSG[] = "Starting I2C Scanning: \r\n";
+  // uint8_t EndMSG[] = "Done! \r\n\r\n";
 
-//  while(1);
+  // uint8_t i = 0, ret;
+  // HAL_UART_Transmit(&huart2, StartMSG, sizeof(StartMSG), 10000);
+  // for (i = 0; i < 128; i++)
+  // {
+  //   ret = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i << 1), 3, 5);
+  //   if (ret != HAL_OK) /* No ACK Received At That Address */
+  //   {
+  //     HAL_UART_Transmit(&huart2, Space, sizeof(Space), 10000);
+  //   }
+  //   else if (ret == HAL_OK)
+  //   {
+  //     sprintf(Buffer, "0x%X", i);
+  //     HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 10000);
+  //   }
+  // }
+  // HAL_UART_Transmit(&huart2, EndMSG, sizeof(EndMSG), 10000);
 
-  HAL_StatusTypeDef retu ;
+  // while(1);
+  /* Use to find I2C addresses on the bus */
 
+  HAL_StatusTypeDef retu;
+
+  // Communication example with LTR-329
+  // Datasheet https://www.mouser.com/ds/2/239/Lite-On_LTR-329ALS-01%20DS_ver1.1-348647.pdf?srsltid=AfmBOoobAK_ALvR5tFcoa4jTsWqJiDY3eis2wNgfagfst2LBPezI4wsr
   while (1)
   {
     HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
     HAL_Delay(1000);
     HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
 
-    //Select the propper reg
-    //buf[0] = 0x01;
-    buf[0] = BLE_Counter++;
-    retu = HAL_I2C_Master_Transmit(&hi2c1, BLE_Address, buf, 1, HAL_MAX_DELAY);
-    
-    if(retu != HAL_OK)
-    {
-      sprintf(Buffer, "Failed");
-      HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
-    }
-    else
-    {
+    uint16_t ch1 = LTR329_ReadALS(1); // Read channel 1 data
+    uint16_t ch0 = LTR329_ReadALS(0); // Read channel 0 data
 
-    }
+    char Buffer[25] = {0};
+    sprintf(Buffer, "Lux: ! %d\r\n", ch1);
+    HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
+
+    HAL_Delay(500); // Delay for the next measurement
   }
 }
 
