@@ -93,7 +93,7 @@ int main(void)
   }
 
   /* Insert 5 seconds delay */
-  HAL_Delay(2000);
+  HAL_Delay(5000);
 
   /* Enter the Standby mode */
   // if (lowPower_init())
@@ -143,6 +143,7 @@ int main(void)
     //buf[0] = 0x01;
     buf[0] = BLE_Counter++;
     retu = HAL_I2C_Master_Transmit(&hi2c1, BLE_Address, buf, 1, HAL_MAX_DELAY);
+    
     if(retu != HAL_OK)
     {
       sprintf(Buffer, "Failed");

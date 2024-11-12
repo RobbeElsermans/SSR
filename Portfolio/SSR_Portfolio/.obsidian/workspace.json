@@ -42,12 +42,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Nice links.md",
+                "file": "Portfolio.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Nice links"
+              "title": "Portfolio"
             }
           }
         ],
@@ -238,6 +238,7 @@
   },
   "active": "2c2190603f6c5d94",
   "lastOpenFiles": [
+    "Nice links.md",
     "Portfolio.md",
     "Images/nrf52840_pinout.jpg",
     "Images/L412_pinout.png",
@@ -246,7 +247,6 @@
     "Datasheets/HT_DS_Datasheet_SHT4x.pdf",
     "Datasheets/an4894-how-to-use-eeprom-emulation-on-stm32-mcus-stmicroelectronics.pdf",
     "Datasheets/an4894-eeprom-emulation-techniques-and-software-for-stm32-microcontrollers-stmicroelectronics.pdf",
-    "Nice links.md",
     "Images/I2C/I2C_FirstBit_SHT40.png",
     "Images/I2C",
     "Fixes Software installations.md",

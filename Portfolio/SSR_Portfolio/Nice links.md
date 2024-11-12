@@ -33,5 +33,8 @@ consumption mode.
 A I2C scanner in STM32
 https://deepbluembedded.com/stm32-i2c-scanner-hal-code-example/
 
-Writing a value through BLE with a phone
+Writing a value through BLE with a phone -> does not work. Need to install `Seeed nRF52 mbed-enabled Boards`.
 https://how2electronics.com/send-receive-data-to-mobile-app-with-xiao-ble-nrf52840-sense/
+
+Tutorial of using the SDK from nordic
+https://mynerdyprojects.com/2021/01/03/nrf52840-examples-part-2-software-and-setup/

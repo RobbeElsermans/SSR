@@ -72,7 +72,7 @@ uint8_t lowPower_init(void)
        Wakeup Time = 0.5 ms  * WakeUpCounter
        Therefore, with wake-up counter =  0xFFFF  = 65,535
          Wakeup Time =  0.5 ms *  65,535 = ~ 33 sec. */
-    HAL_RTCEx_SetWakeUpTimer_IT(&RTCHandle, 0x0FFF, RTC_WAKEUPCLOCK_RTCCLK_DIV16, 0);
+    HAL_RTCEx_SetWakeUpTimer_IT(&RTCHandle, 0x8FFF, RTC_WAKEUPCLOCK_RTCCLK_DIV16, 0);
 
     /* Need to wait for 2 RTC clock cycles before entering Standby mode when RTC is clocked by LSE,
        so wait for RSF flag to ensure the delay is satisfied */
