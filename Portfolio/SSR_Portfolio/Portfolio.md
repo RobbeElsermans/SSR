@@ -1,12 +1,5 @@
 # Table of contents
-- [[#Intro|Intro]]
-- [[#Board selection|Board selection]]
-	- [[#Board selection#STM32L4 VS nRF52840|STM32L4 VS nRF52840]]
-- [[#MVP|MVP]]
-- [[#Brain code|Brain code]]
-- [[#Joule Scope Measurements|Joule Scope Measurements]]
-	- [[#Joule Scope Measurements#STM32L4 standby|STM32L4 standby]]
-- [[#I2C communication sensor SHT40|I2C communication sensor SHT40]]
+==To Be Generated At the end==
 
 # SSR
 By Adam Hejduk, Robbe Elsermans, and Thomas Kramp
@@ -57,14 +50,68 @@ This is coded in a finite state machine which cycles through the different state
 
 ## Joule Scope Measurements
 ### STM32L4 standby
-This measurement is done to identify and verify that the datasheet is correct about the $0.775-0.565 µA$ in Deep Sleep. 
+This measurement is conducted by using JP0 
 
-The test code will have a counter that is increased every startup. This counter is saved in the virtual EEPROM. This counter states how many times a led must blink at startup,Thus, it is easly verified at which cycle the STM32L4 is in.
+The test code is the following pseudo code
+```
+while (1)
+	init_all
+	blink_led
+	wait 5 seconds
+	set pheripherals to go to sleep
+	enter standby sleep
+```
 
 The Standby code will last for $33$ seconds when we use a prescaler of $/16$ at the Low power Oscillator of $\pm 32kHz$ and a compare value of $0xFFFF$ which yields in $\frac{16}{\pm32kHz} = 0.5ms$ and
-$0.5ms \times 2^16 = 32.768 \Rightarrow \pm 33 seconds$.
+$0.5ms \times 2^{16} = 32.768 \Rightarrow \pm 33 seconds$.
 
-==ADD figure of JouleScope==
+For the measurements , we have taken a compare value of $0x8FFF$ which yield in $0.5ms \times 36863 = 32.768 \Rightarrow \pm 18.5 seconds$.
+![[stabdby_stm32_current_consumption.png]]
+We can deduct from this figure, the different steps
+1. The high peak is the led that blinks for 1 second $\pm 12.6mA$.
+2. Then, we wait for 5 seconds in running mode $\pm 10mA$
+3. Later, we initialize sleep and go to sleep which results in a significant reduce of current consumption to $\pm 7.75µA$
+
+The total cycle uses an average current of $\pm 2.7mA$.
+This can be reduced by using a compare value of $0xFFFF$.
+
+### XIAO nRF52840 peripheral mode
+A small pseudo-code on what the device does 
+```
+setup 
+	setup custom service
+	setup custom charactersitic
+	setup led
+	setup BLE and Serial
+	do Advertise
+loop
+	if connected to a central
+		check value changes on charactersitic
+		write led accordingly to value
+```
+
+The nRF52840 module will constantly be advertising on a rate of $100ms$ (this is default in ArduinoBLE see [ArduinoBLE-setAdvertisingInterval()](https://reference.arduino.cc/reference/en/libraries/arduinoble/ble.setadvertisinginterval/)).
+
+On central connect, it will check constantly if the value has changed or not. The central is a smartphone which has the app nRF Connect installed and acts as a central.
+
+![[BLE_pheri_led_1.png]]
+Here, we can see the periodic advertisements that periodically occurs every $100ms$. When the central connects to the peripheral, their is a heavily change of data present. Later, the central periodically checks the peripheral at a rate of $\pm 40ms$. This rate is defined by the smartphone. 
+
+![[BLE_pheri_led_2.png]]
+When connected, we can read and write the custom characteristic of the custom service. This characteristic's value is linked to an LED which is turned on and turned off as can be seen on the scope image above.
+
+![[BLE_pheri_led_anomalies.png]]
+The square wave like structure with again a square wave like structure is unknown why this is happening. Further investigation is needed in order to know what this $\pm 2mA$ deviation is.
+
+Average consumption of an advertisement on 100ms is $11.12mA$.
+Average consumption of connection intervals at 40ms is $11.01mA$.
+
+### LTR-329 Light Sensor
+
+
+### SHT40 Light Sensor
+
+
 
 ## I2C communication sensor SHT40
 ![[HT_DS_Datasheet_SHT4x.pdf]]
@@ -80,5 +127,13 @@ Some conclusions:
 $RH = ( -6 + 125 \cdot \frac{S_{RH}}{2^{16} -1}) (\%RH)$
 $T = ( -45 + 175 \cdot \frac{S_{T}}{2^{16} -1}) (^\circ C)$
 
+## I2C communication of LTR-329
+![[Lite-On_LTR-329ALS-01 DS_ver1.1-348647.pdf]]
+==For Adam==
 
 
+## UART Communication with LoRa-Module
+==Tom==
+
+## I2C Communication with Rover Bot
+==Tom==
