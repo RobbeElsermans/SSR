@@ -15,7 +15,6 @@ Robbe
 Thomas
 
 ## Projext requirements
-### connectivity
 - inter rover communication with BLE
 - LoRaWAN through a dashboard
 
