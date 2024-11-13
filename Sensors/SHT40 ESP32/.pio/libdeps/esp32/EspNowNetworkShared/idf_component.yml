@@ -1,0 +1,5 @@
+version: "1.0.0"
+description: Shared code for the EspNowNetwork, see https://github.com/Johboh/EspNowNetwork for more details.
+url: https://github.com/Johboh/EspNowNetworkShared
+dependencies:
+  idf: ">=4.4"
