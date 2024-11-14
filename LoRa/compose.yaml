@@ -4,7 +4,7 @@ services:
   node-red:
     image: nodered/node-red				# Node-RED Docker image
     container_name: SSR-server				# Set the container name
-    # restart: always
+    restart: always
     ports:
       - "1880:1880"					# Expose port 1880 for Node-RED
     volumes:
@@ -26,7 +26,7 @@ services:
   mongodb:
     image: mongodb/mongodb-community-server:latest	# MongoDB Docker image
     container_name: SSR-DB				# Set container name for MongoDB
-    # restart: always
+    restart: always
     ports:
       - "27017:27017"					# Expose MongoDB port
     volumes:
