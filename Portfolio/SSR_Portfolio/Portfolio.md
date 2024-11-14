@@ -133,6 +133,15 @@ $T = ( -45 + 175 \cdot \frac{S_{T}}{2^{16} -1}) (^\circ C)$
 
 
 ## UART Communication with LoRa-Module
+For the LoRa-Module, we utilize the Wio-e5 mini board.
+![[lora_e5_mini_pinout.jpg]]
+*[Wio-e5 mini pinout](https://wiki.seeedstudio.com/LoRa_E5_mini/)*
+
+For our communication to work we first need to perform three tasks:
+- Install a serial console for [UART communications](SSR_Portfolio/Pages/LoRa/UART%20Communications).
+- Create a [TheThingsNetwork account](SSR_Portfolio/Pages/LoRa/TheThingsNetwork).
+- Create a [back-end](SSR_Portfolio/Pages/LoRa/Back-End) that collects the data and visualizes it.
+
 ==Tom==
 
 ## I2C Communication with Rover Bot
