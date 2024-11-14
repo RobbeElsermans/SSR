@@ -6,7 +6,7 @@
       {
         "id": "3c9edb14421cfbd3",
         "type": "tabs",
-        "dimension": 58.48423876592891,
+        "dimension": 48.42387659289068,
         "children": [
           {
             "id": "20c838dd4497e3b6",
@@ -42,7 +42,7 @@
       {
         "id": "9921e12c2afd7870",
         "type": "tabs",
-        "dimension": 41.51576123407109,
+        "dimension": 51.57612340710932,
         "children": [
           {
             "id": "f28320e788dcc759",
@@ -66,18 +66,6 @@
               },
               "icon": "lucide-file-text",
               "title": "Nano_BLE_MCU-nRF52840_PS_v1.1"
-            }
-          },
-          {
-            "id": "f6fab2ac88eb7ba1",
-            "type": "leaf",
-            "state": {
-              "type": "pdf",
-              "state": {
-                "file": "Datasheets/HT_DS_Datasheet_SHT4x.pdf"
-              },
-              "icon": "lucide-file-text",
-              "title": "HT_DS_Datasheet_SHT4x"
             }
           }
         ]
@@ -221,19 +209,22 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "d5dfbafb5d671d57",
+  "active": "45d2985d4c3d0874",
   "lastOpenFiles": [
+    "Images/Power_Profiling/standby_stm32_current_consumption_close_look.png",
+    "Images/Power_Profiling/standby_stm32_current_consumption.png",
+    "Portfolio.md",
+    "Images/Power_Profiling/ltr_329_consumption.png",
+    "Images/Power_Profiling/sht40_consumption.png",
+    "Nice links.md",
     "Images/Power_Profiling/BLE_pheri_led_anomalies.png",
     "Images/Power_Profiling/BLE_pheri_led_2.png",
     "Images/Power_Profiling/BLE_pheri_led_1.png",
-    "Fixes Software installations.md",
-    "Nice links.md",
-    "Untitled.canvas",
-    "Portfolio.md",
     "Images/Power_Profiling",
-    "Images/Power_Profiling/stabdby_stm32_current_consumption.png",
-    "Datasheets/stm32l412c8-1.pdf",
     "Datasheets/Lite-On_LTR-329ALS-01 DS_ver1.1-348647.pdf",
+    "Fixes Software installations.md",
+    "Untitled.canvas",
+    "Datasheets/stm32l412c8-1.pdf",
     "Images/nrf52840_pinout.jpg",
     "Images/L412_pinout.png",
     "Datasheets/rm0394-stm32l41xxx42xxx43xxx44xxx45xxx46xxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf",
@@ -244,7 +235,6 @@
     "Images/I2C/I2C_FirstBit_SHT40.png",
     "Images/I2C",
     "Images/brain_flow_diagram.pdf",
-    "Images/block diagram.png",
     "create a link.md"
   ]
 }

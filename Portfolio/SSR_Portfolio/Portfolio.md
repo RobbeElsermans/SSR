@@ -50,7 +50,7 @@ This is coded in a finite state machine which cycles through the different state
 
 ## Joule Scope Measurements
 ### STM32L4 standby
-This measurement is conducted by using JP0 
+This measurement is conducted by using JP1 with the Joule scope as amp meter.
 
 The test code is the following pseudo code
 ```
@@ -66,15 +66,17 @@ The Standby code will last for $33$ seconds when we use a prescaler of $/16$ at 
 $0.5ms \times 2^{16} = 32.768 \Rightarrow \pm 33 seconds$.
 
 For the measurements , we have taken a compare value of $0x8FFF$ which yield in $0.5ms \times 36863 = 32.768 \Rightarrow \pm 18.5 seconds$.
-![[stabdby_stm32_current_consumption.png]]
+![[standby_stm32_current_consumption.png]]
 We can deduct from this figure, the different steps
 1. The high peak is the led that blinks for 1 second $\pm 12.6mA$.
 2. Then, we wait for 5 seconds in running mode $\pm 10mA$
 3. Later, we initialize sleep and go to sleep which results in a significant reduce of current consumption to $\pm 7.75µA$
 
+![[standby_stm32_current_consumption_close_look.png]]
+A closer look at the standby mode current consumption.
+
 The total cycle uses an average current of $\pm 2.7mA$.
 This can be reduced by using a compare value of $0xFFFF$.
-
 ### XIAO nRF52840 peripheral mode
 A small pseudo-code on what the device does 
 ```
@@ -101,17 +103,22 @@ Here, we can see the periodic advertisements that periodically occurs every $100
 When connected, we can read and write the custom characteristic of the custom service. This characteristic's value is linked to an LED which is turned on and turned off as can be seen on the scope image above.
 
 ![[BLE_pheri_led_anomalies.png]]
-The square wave like structure with again a square wave like structure is unknown why this is happening. Further investigation is needed in order to know what this $\pm 2mA$ deviation is.
+The square wave like structure with again a square wave like structure on top of it is unknown why this is happening. Further investigation is needed in order to know what this $\pm 2mA$ deviation is in current consumption.
 
-Average consumption of an advertisement on 100ms is $11.12mA$.
-Average consumption of connection intervals at 40ms is $11.01mA$.
+Average consumption of an advertisement on $100ms$ is $11.12mA$.
+Average consumption of connection intervals at $40ms$ is $11.01mA$.
 
 ### LTR-329 Light Sensor
+Joule scope is used as amp meter (by using only the red wires).
 
-
+![[ltr_329_consumption.png]]
+==Adam==
 ### SHT40 Light Sensor
-
-
+Joule scope is used as amp meter (by using only the red wires).
+![[sht40_consumption.png]]
+==Adam==
+### LoRa Module
+==Tom==
 
 ## I2C communication sensor SHT40
 ![[HT_DS_Datasheet_SHT4x.pdf]]
