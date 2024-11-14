@@ -23,7 +23,7 @@ Open the serial monitor application and use the following settings:
 - Stop Bit:          1
 - Parity:             None
 - Flow Control: None
-![UART Settings](/SSR_Portfolio/Images/LoRa/putty_uart_settings.png)
+![UART Settings](putty_uart_settings.png)
 # Test connection
 To test the connection, we just need to use the base AT command.
 ``` Serial

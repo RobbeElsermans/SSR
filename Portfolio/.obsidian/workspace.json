@@ -27,15 +27,16 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "SSR_Portfolio/Portfolio.md",
+                "file": "SSR_Portfolio/Pages/LoRa/Back-End.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Portfolio"
+              "title": "Back-End"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -176,23 +177,23 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "d249b953286655b4",
+  "active": "86e55289727d839f",
   "lastOpenFiles": [
-    "SSR_Portfolio/Pages/LoRa/TheThingsNetwork.md",
+    "SSR_Portfolio/Images/LoRa/mongodb_connection_creation.png",
+    "SSR_Portfolio/Images/LoRa/mongodb_settings.png",
+    "SSR_Portfolio/Images/LoRa/mongodb_simple_uri_settings.png",
+    "SSR_Portfolio/Images/LoRa/mqtt_server_connection_settings.png",
+    "SSR_Portfolio/Pages/LoRa/UART communications.md",
     "SSR_Portfolio/Pages/LoRa/Back-End.md",
+    "SSR_Portfolio/Pages/LoRa/TheThingsNetwork.md",
     "SSR_Portfolio/Portfolio.md",
     "SSR_Portfolio/Images/LoRa/ttn_mqtt_network_settings.png",
     "SSR_Portfolio/Images/LoRa/Screenshot from 2024-11-14 14-08-24.png",
-    "SSR_Portfolio/Pages/LoRa/UART communications.md",
     "SSR_Portfolio/Images/LoRa/ttn_device_formatter.png",
     "SSR_Portfolio/Images/LoRa/Screenshot from 2024-11-14 14-05-56.png",
     "SSR_Portfolio/Images/LoRa/ttn_create_application.png",
     "SSR_Portfolio/Images/LoRa/ttn_device_settings.png",
-    "SSR_Portfolio/Images/LoRa/ttn_register_device.png",
-    "SSR_Portfolio/Images/LoRa/ttn_application_settings.png",
     "ttn_create_application.md",
-    "SSR_Portfolio/Images/LoRa/Screenshot from 2024-11-14 13-43-58.png",
-    "SSR_Portfolio/Images/LoRa/Screenshot from 2024-11-14 13-44-46.png",
     "SSR_Portfolio/Fixes Software installations.md",
     "SSR_Portfolio/Images/LoRa/putty_uart_settings.md",
     "SSR_Portfolio/Pages/LoRa/UART.md",

@@ -110,13 +110,13 @@ networks:
 ## LoRa connectivity
 ### MQTT node
 Get a "mqtt in" node and put it in the flow, then click on it. A window should slide open. Click on the plus button next to the "server" to setup a connection to TheThingsNetwork.
-![MQTT server creation](/SSR_Portfolio/Images/LoRa/mqtt_server_creation.png)
+![MQTT server creation](mqtt_server_creation.png)
 Setup server connection.
-![MQTT server connetion settings](/SSR_Portfolio/Images/LoRa/mqtt_server_connection_settings.png)
+![MQTT server connetion settings](mqtt_server_connection_settings.png)
 Setup server connection security.
 ![MQTT server security settings](/SSR_Portfolio/Images/LoRa/mqtt_.png)
 Subscribe to a certain topic. *For testing porpusus we can use '#' as a any-topic*
-![MQTT settings](/SSR_Portfolio/Images/LoRa/mqtt_settings.png)
+![MQTT settings](mqtt_settings.png)
 ### Function node
 Get a "function" node and put it in the flow, then click on it. A window should slide open.
 In the "OnMessage" tab drop the following code:
@@ -129,7 +129,7 @@ return msg;
 Add last drop a "debug" node and put it in the flow, and connect:
 1) The MQTT output to the function input.
 2) The function output to the debug intput.
-![MQTT debug flow](/SSR_Portfolio/Images/LoRa/mqtt_debug_flow.png)
+![MQTT debug flow](mqtt_debug_flow.png)
 ## Container connectivity
 Add the following nodes to the flow:
 - An **inject** node
@@ -137,7 +137,7 @@ Add the following nodes to the flow:
 - A **[mongodb4](https://flows.nodered.org/node/node-red-contrib-mongodb4)**  node
 - A **debug** node
 Then connect them as follows:
-![MongoDB flow](/SSR_Portfolio/Images/LoRa/mongodb_flow.png)
+![MongoDB flow](mongodb_flow.png)
 ### Function nodes
 Click on the "function" node. A window should slide open.
 First let's make a find all function using the following code:
@@ -154,12 +154,12 @@ return msg;
 ### MongoDB node
 Click on the "mongodb4" node. A window should slide open.
 Create a new connection:
-![MongoDB create connection](/SSR_Portfolio/Images/LoRa/mongodb_connection_creation.png)
+![MongoDB create connection](mongodb_connection_creation.png)
 Set the simple URI settings:
-![MongoDB simple URI settings](/SSR_Portfolio/Images/LoRa/mongodb_simple_uri_settings.png)
+![MongoDB simple URI settings](mongodb_simple_uri_settings.png)
 Set the advanced URI settings:
-![MongoDB advanced URI settings](/SSR_Portfolio/Images/LoRa/mongodb_advanced_uri_settings.png)
+![MongoDB advanced URI settings](mongodb_advanced_uri_settings.png)
 Set the global settings:
-![MongoDB global settings](/SSR_Portfolio/Images/LoRa/mongodb_settings.png)
+![MongoDB global settings](mongodb_settings.png)
 ## Dashboard
 [dashboard nodes](https://flows.nodered.org/node/node-red-dashboard)
