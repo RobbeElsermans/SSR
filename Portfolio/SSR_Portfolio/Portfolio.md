@@ -97,7 +97,7 @@ The nRF52840 module will constantly be advertising on a rate of $100ms$ (this is
 On central connect, it will check constantly if the value has changed or not. The central is a smartphone which has the app nRF Connect installed and acts as a central.
 
 ![[BLE_pheri_led_1.png]]
-Here, we can see the periodic advertisements that periodically occurs every $100ms$. When the central connects to the peripheral, their is a heavily change of data present. Later, the central periodically checks the peripheral at a rate of $\pm 40ms$. This rate is defined by the smartphone. 
+Here, we can see the periodic advertisements that periodically occurs not every $100ms$, but around $40ms$. When the central connects to the peripheral, their is a heavily change of data present. Later, the central periodically checks the peripheral at a rate of $\pm 40ms$. This rate is defined by the smartphone. Weird. Further investigation is needed by manually setting the interval ranges and see if anything changes or not.
 
 ![[BLE_pheri_led_2.png]]
 When connected, we can read and write the custom characteristic of the custom service. This characteristic's value is linked to an LED which is turned on and turned off as can be seen on the scope image above.
@@ -105,8 +105,8 @@ When connected, we can read and write the custom characteristic of the custom se
 ![[BLE_pheri_led_anomalies.png]]
 The square wave like structure with again a square wave like structure on top of it is unknown why this is happening. Further investigation is needed in order to know what this $\pm 2mA$ deviation is in current consumption.
 
-Average consumption of an advertisement on $100ms$ is $11.12mA$.
-Average consumption of connection intervals at $40ms$ is $11.01mA$.
+Average consumption in advertising state is $11.12mA$.
+Average consumption in connection state is $11.01mA$.
 
 ### LTR-329 Light Sensor
 Joule scope is used as amp meter (by using only the red wires).
