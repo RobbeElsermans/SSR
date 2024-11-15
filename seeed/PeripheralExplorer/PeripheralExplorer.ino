@@ -41,9 +41,15 @@ void loop() {
     Serial.print(peripheral.localName());
     Serial.print("' ");
     Serial.print(peripheral.advertisedServiceUuid());
-    Serial.println();
+    Serial.print("' ");
 
-    // see if peripheral is a LED
+    //Do this in order to use the advertisement packet as data packet.
+    //https://forum.arduino.cc/t/solved-reading-advertising-data-via-arduinoble-hack-for-atc_mithermometer/677540/3
+    //Serial.print(peripheral.getRawAdvertisement());
+    //Serial.println();
+   
+
+    // search for a specific pheriperal
     if (peripheral.localName() == "Jesus") {
     //if (peripheral.advertisedServiceUuid())
       // stop scanning

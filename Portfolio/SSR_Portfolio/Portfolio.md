@@ -47,7 +47,6 @@ The MVP (Minimal Vital Product) contains the following items:
 Our brain, STM32L412KB, will have a certain flow as depicted in the block schematic below.
 ![[brain_flow_diagram.pdf]]
 This is coded in a finite state machine which cycles through the different states. This to provide a minimal code footprint onto the MCU.
-
 ## Joule Scope Measurements
 ### STM32L4 standby
 This measurement is conducted by using JP1 with the Joule scope as amp meter.
@@ -120,6 +119,11 @@ Joule scope is used as amp meter (by using only the red wires).
 ### LoRa Module
 ==Tom==
 
+## BLE Communication
+![[BLE-program_flow.pdf]]
+A starting point for the BLE flow
+I will describe here what I'll be using as raw advertisement or which services and characteristics I present with their UUID etc.
+
 ## I2C communication sensor SHT40
 ![[HT_DS_Datasheet_SHT4x.pdf]]
 Some conclusions: 
@@ -144,3 +148,4 @@ $T = ( -45 + 175 \cdot \frac{S_{T}}{2^{16} -1}) (^\circ C)$
 
 ## I2C Communication with Rover Bot
 ==Tom==
+
