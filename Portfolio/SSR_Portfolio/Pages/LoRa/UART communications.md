@@ -23,13 +23,13 @@ Open the serial monitor application and use the following settings:
 - Stop Bit:          1
 - Parity:             None
 - Flow Control: None
-![UART Settings](putty_uart_settings.png)
+![UART Settings](uart_settings.png)
 # Test connection
 To test the connection, we just need to use the base AT command.
 ``` Serial
 AT
 ```
-![connection_test_output]()
+![connection_test_output](uart_test_output.png)
 # Helpful commands
 Enter the test mode
 ``` Serial
@@ -48,24 +48,38 @@ AT+id
 
 Set device address
 ``` Serial
-AT+id=devaddres,"*address*"
+// With 260BC2D8 the address
+AT+id=devaddr,"260BC2D8"
 ```
 
 Set device secret keys
 ``` Serial
-AT+id=appskey,"*AppSKey*"
-AT+id=nwkskey,"*NwkSKey*"
+// With E91661F4C1D5172FE116CCDB137A3FDE the AppSKey
+// With 06E55AEC9813D87693F0A42EAF441E93 the NwkSKey
+AT+key=appskey,"E91661F4C1D5172FE116CCDB137A3FDE"
+AT+key=nwkskey,"06E55AEC9813D87693F0A42EAF441E93"
 ```
 
 Set device identifier
 ``` Serial
-AT+id=deveui,"*DevEUI*"
-AT+id=appeui,"*DevEUI*"
+// With 2CF7F12052608782 as the DevEUI
+AT+id=deveui,"2CF7F12052608782"
+AT+id=appeui,"2CF7F12052608782"
+```
+
+Enter the test mode
+``` Serial
+AT+mode="LWABP"
 ```
 
 Set device data rate
 ``` Serial
-AT+ch=dr,7
+AT+dr=7
+```
+
+Set channel
+``` Serial
+AT+ch=0
 ```
 
 Sent a message
