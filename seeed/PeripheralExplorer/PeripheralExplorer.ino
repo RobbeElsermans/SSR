@@ -1,10 +1,8 @@
 /*
-  Peripheral Explorer
-
-  This example scans for Bluetooth® Low Energy peripherals until one with a particular name ("LED")
-  is found. Then connects, and discovers + prints all the peripheral's attributes.
-  
-*/
+ * Use this when board selected
+ * 'Seeed nRF52 Boards'
+ * this is the easy approach and not well writte for power optimizations
+ */
 
 #include <ArduinoBLE.h>
 

@@ -1,5 +1,10 @@
-#include <ArduinoBLE.h>
+/*
+ * Use this when board selected
+ * 'Seeed nRF52 Boards'
+ * this is the easy approach and not well writte for power optimizations
+ */
 
+#include <ArduinoBLE.h>
 
 void blePeripheralConnectHandler(BLEDevice central);
 void myCharacteristicRead(BLEDevice central, BLECharacteristic characteristic);
@@ -11,6 +16,7 @@ BLEService myService("fff0");
 BLEIntCharacteristic myCharacteristic("fff1", BLERead | BLEBroadcast); 
 BLECharacteristic myCounterChar("fff2", BLERead | BLEBroadcast, 4);
 
+void interrupt();
 
 // Advertising parameters should have a global scope. Do NOT define them in 'setup' or in 'loop'
 //Data from 7-12 is visible in advertisement
@@ -19,13 +25,12 @@ uint8_t completeRawAdvertisingData[] = {0x02,0x01,0x06,0x09,0xff,0x01,0x01,0x00,
 uint8_t buf = 0;
 void setup() {
   Serial.begin(9600);
-  //while (!Serial);
+  while (!Serial);
 
   if (!BLE.begin()) {
     Serial.println("failed to initialize BLE!");
     while (1);
   }
-
 
   //Define the name of this device
   BLE.setDeviceName("The son");
@@ -53,9 +58,7 @@ void setup() {
 
   BLE.setEventHandler(BLEConnected, blePeripheralConnectHandler);
   myCharacteristic.setEventHandler(BLERead, myCharacteristicRead);
-
   
-
   //completeRawAdvertisingData[7] = 0x89;
   
   // Build advertising data packet
@@ -69,7 +72,6 @@ void setup() {
 
   BLE.setAdvertisedServiceUuid("19B10000-E8F2-537E-4F6C-D104768A1214");
 
-
   // Build scan response data packet
   BLEAdvertisingData scanData;
   scanData.setLocalName("Jesus");
@@ -79,9 +81,22 @@ void setup() {
   BLE.advertise();
 
   Serial.println("advertising ...");
+
+  pinMode(2, INPUT_PULLUP);
+  attachInterrupt(2,interrupt,FALLING);
+}
+
+void interrupt(){
+ pinMode(LEDG, OUTPUT);
+ delay(10);
+ digitalWrite(LEDG, HIGH);
+ delay(1000);
+ digitalWrite(LEDG, LOW);
 }
 
 void loop() {
+  //NRF_POWER->SYSTEMOFF = 1; 
+  
   BLE.poll(); //Poll for Bluetooth® Low Energy radio events and handle them.### Syntax
   
   //Serial.println("Polled!");

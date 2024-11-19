@@ -95,6 +95,9 @@ The nRF52840 module will constantly be advertising on a rate of $100ms$ (this is
 
 On central connect, it will check constantly if the value has changed or not. The central is a smartphone which has the app nRF Connect installed and acts as a central.
 
+
+[[Nice links]]
+
 ![[BLE_pheri_led_1.png]]
 Here, we can see the periodic advertisements that periodically occurs not every $100ms$, but around $40ms$. When the central connects to the peripheral, their is a heavily change of data present. Later, the central periodically checks the peripheral at a rate of $\pm 40ms$. This rate is defined by the smartphone. Weird. Further investigation is needed by manually setting the interval ranges and see if anything changes or not.
 
@@ -119,10 +122,35 @@ Joule scope is used as amp meter (by using only the red wires).
 ### LoRa Module
 ==Tom==
 
-## BLE Communication
+## BLE inter-communication
 ![[BLE-program_flow.pdf]]
 A starting point for the BLE flow
 I will describe here what I'll be using as raw advertisement or which services and characteristics I present with their UUID etc.
+
+## BLE I2C communication
+To enable the BLE inter-communication, we use I2C as device connection to the STM32L4. 
+Here, the BLE module shall have the address 0x10 and the following struct will be send over.
+```
+struct struct_BLE_object{
+	uint8_t readvertisements;
+	int16_t env_temperature; //Range from -327.68 to 327.67 °C
+	uint8_t env_humidity; //Range from -0-100%
+	uint16_t env_lux; //Range from 0 to 
+	uint16_t dev_voltage: //Range from 0-6.5535V 
+	//x gyro 8bit?
+	//y gyro 8bit?
+	//z gyro 8bit?
+};
+typedef structBLE_object BLE_object;
+```
+A total of 11 bytes.
+
+The BLE-advertisement can hold 7-bytes where we select the *dev_voltage* (2-bytes), *env_temperature* (2-bytes), and *env_humidity* (1-byte) in the respectively order for now.
+
+The BEL-object will be send over to the BLE module directly after. So we send a packet with 0x10 with the write bit enabled, and after that, we send 11 bytes.
+
+When the BLE-module has finished its flow, it goes to deep sleep.
+The SM32L4 needs to waken up the device by setting a specific GPIO HIGH.
 
 ## I2C communication sensor SHT40
 ![[HT_DS_Datasheet_SHT4x.pdf]]
