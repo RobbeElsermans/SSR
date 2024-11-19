@@ -2,7 +2,6 @@
 
 void LTR329_Init(I2C_HandleTypeDef* hi2c1) 
 {
-
   uint8_t data[2];
 
   // Enable ALS sensor, set to active mode

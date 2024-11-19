@@ -132,11 +132,13 @@ To enable the BLE inter-communication, we use I2C as device connection to the ST
 Here, the BLE module shall have the address 0x10 and the following struct will be send over.
 ```
 struct struct_BLE_object{
-	uint8_t readvertisements;
-	int16_t env_temperature; //Range from -327.68 to 327.67 °C
+	uint8_t ssr_id; //The ID of the rover itself
+	uint8_t beacon_time; //How long the beacon may last (val*100=ms)
+	uint8_t scan_time; //How long the scan may last (val*100=ms)
+	int16_t env_temperature; //Range from -327.68 to 327.67 °C (val/100=°C)
 	uint8_t env_humidity; //Range from -0-100%
-	uint16_t env_lux; //Range from 0 to 
-	uint16_t dev_voltage: //Range from 0-6.5535V 
+	uint16_t env_lux; //Range from 0 to 1000 
+	uint16_t dev_voltage; //Range from 0-6.5535V (val/10000=V) (val/10=mV)
 	//x gyro 8bit?
 	//y gyro 8bit?
 	//z gyro 8bit?

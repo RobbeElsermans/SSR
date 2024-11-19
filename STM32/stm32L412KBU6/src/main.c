@@ -23,14 +23,8 @@
 #include "usart.h"
 #include "gpio.h"
 #include "lp.h"
+#include "ble.h"
 
-/** @addtogroup STM32L4xx_HAL_Examples
- * @{
- */
-
-/** @addtogroup PWR_STANDBY_RTC
- * @{
- */
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -38,6 +32,7 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+struct ble_module_data_t ble_data;
 
 uint8_t BLE_Counter = 0;
 uint8_t buf[10]; // I2C recieve buffer
@@ -55,6 +50,10 @@ void Error_Handler(void);
  */
 int main(void)
 {
+  //Set ID of the SSR
+  ble_data.ssr_id = 0x10;
+  ble_data.env_temperature = -200;
+
   /* STM32L4xx HAL library initialization:
        - Configure the Flash prefetch
        - Systick timer is configured by default as source of time base, but user
@@ -74,7 +73,7 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_UART2_UART_Init();
-  LTR329_Init(&hi2c1); // Initialize LTR-329 sensor
+  //LTR329_Init(&hi2c1); // Initialize LTR-329 sensor
 
   /* Configure RTC */
   if (RTC_Config())
@@ -144,12 +143,16 @@ int main(void)
     HAL_Delay(1000);
     HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
 
+    //char Buffer[25] = {0};
+    //sprintf(Buffer, "Lux: ! %d\r\n", GetLuxAll(&hi2c1));
+    //HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
+    ble_data.env_temperature++;
+    ble_data.env_humidity++;
+    ble_data.dev_voltage++;
 
-    char Buffer[25] = {0};
-    sprintf(Buffer, "Lux: ! %d\r\n", GetLuxAll(&hi2c1));
-    HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
-
-    HAL_Delay(500); // Delay for the next measurement
+    //Send out a value
+    send_ble_data(&hi2c1, &ble_data);
+    HAL_Delay(500); // Delay
   }
 }
 
