@@ -61,13 +61,13 @@ void scan_callback(ble_gap_evt_adv_report_t* report)
                 report->data.p_data[report->data.len - 4] << 8*2 |
                 report->data.p_data[report->data.len - 3] << 8*1 | 
                 report->data.p_data[report->data.len - 2] << 8*0;
-
+Serial.printf("id: %02X", id);
     // Check if beacon has a certain address. Not good to use in global environment
   if ( *report->peer_addr.addr == 242 )//Bluefruit.Scanner.checkReportForUuid(report, BLEUART_UUID_SERVICE) )
   {
     Serial.println("                       BLE UART service detected");
     Serial.println(report->data.len);
-    Serial.printf("id: %02X", id);
+    //Serial.printf("id: %02X", id);
     uint8_t* pointer_to_data = report->data.p_data;
     uint16_t data_length = report->data.len;
     

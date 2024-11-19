@@ -125,19 +125,19 @@ void receiveEvent(int howMany)
     // Serial.println(x);   // print the integer
 
     //Print the whole struct
-    Serial.print("id:%02X ");
+    Serial.print("id: ");
     Serial.print(data.ssr_id);
-    Serial.print(" bt:%d ");
+    Serial.print(" bt: ");
     Serial.print(data.beacon_time);
-    Serial.print(" st:%d");
+    Serial.print(" st: ");
     Serial.print(data.scan_time);
-    Serial.print(" et:%d");
+    Serial.print(" et: ");
     Serial.print(data.env_temperature);
-    Serial.print(" eh:%d");
+    Serial.print(" eh: ");
     Serial.print(data.env_humidity);
-    Serial.print(" el:%d");
+    Serial.print(" el: ");
     Serial.print(data.env_lux);
-    Serial.print(" dv:%d");
+    Serial.print(" dv: ");
     Serial.println(data.dev_voltage);
 
 }
