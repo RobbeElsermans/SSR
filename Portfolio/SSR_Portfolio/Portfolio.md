@@ -47,10 +47,9 @@ The MVP (Minimal Vital Product) contains the following items:
 Our brain, STM32L412KB, will have a certain flow as depicted in the block schematic below.
 ![[brain_flow_diagram.pdf]]
 This is coded in a finite state machine which cycles through the different states. This to provide a minimal code footprint onto the MCU.
-
 ## Joule Scope Measurements
 ### STM32L4 standby
-This measurement is conducted by using JP0 
+This measurement is conducted by using JP1 with the Joule scope as amp meter.
 
 The test code is the following pseudo code
 ```
@@ -66,15 +65,17 @@ The Standby code will last for $33$ seconds when we use a prescaler of $/16$ at 
 $0.5ms \times 2^{16} = 32.768 \Rightarrow \pm 33 seconds$.
 
 For the measurements , we have taken a compare value of $0x8FFF$ which yield in $0.5ms \times 36863 = 32.768 \Rightarrow \pm 18.5 seconds$.
-![[stabdby_stm32_current_consumption.png]]
+![[standby_stm32_current_consumption.png]]
 We can deduct from this figure, the different steps
 1. The high peak is the led that blinks for 1 second $\pm 12.6mA$.
 2. Then, we wait for 5 seconds in running mode $\pm 10mA$
 3. Later, we initialize sleep and go to sleep which results in a significant reduce of current consumption to $\pm 7.75µA$
 
+![[standby_stm32_current_consumption_close_look.png]]
+A closer look at the standby mode current consumption.
+
 The total cycle uses an average current of $\pm 2.7mA$.
 This can be reduced by using a compare value of $0xFFFF$.
-
 ### XIAO nRF52840 peripheral mode
 A small pseudo-code on what the device does 
 ```
@@ -94,24 +95,64 @@ The nRF52840 module will constantly be advertising on a rate of $100ms$ (this is
 
 On central connect, it will check constantly if the value has changed or not. The central is a smartphone which has the app nRF Connect installed and acts as a central.
 
+
+[[Nice links]]
+
 ![[BLE_pheri_led_1.png]]
-Here, we can see the periodic advertisements that periodically occurs every $100ms$. When the central connects to the peripheral, their is a heavily change of data present. Later, the central periodically checks the peripheral at a rate of $\pm 40ms$. This rate is defined by the smartphone. 
+Here, we can see the periodic advertisements that periodically occurs not every $100ms$, but around $40ms$. When the central connects to the peripheral, their is a heavily change of data present. Later, the central periodically checks the peripheral at a rate of $\pm 40ms$. This rate is defined by the smartphone. Weird. Further investigation is needed by manually setting the interval ranges and see if anything changes or not.
 
 ![[BLE_pheri_led_2.png]]
 When connected, we can read and write the custom characteristic of the custom service. This characteristic's value is linked to an LED which is turned on and turned off as can be seen on the scope image above.
 
 ![[BLE_pheri_led_anomalies.png]]
-The square wave like structure with again a square wave like structure is unknown why this is happening. Further investigation is needed in order to know what this $\pm 2mA$ deviation is.
+The square wave like structure with again a square wave like structure on top of it is unknown why this is happening. Further investigation is needed in order to know what this $\pm 2mA$ deviation is in current consumption.
 
-Average consumption of an advertisement on 100ms is $11.12mA$.
-Average consumption of connection intervals at 40ms is $11.01mA$.
+Average consumption in advertising state is $11.12mA$.
+Average consumption in connection state is $11.01mA$.
 
 ### LTR-329 Light Sensor
+Joule scope is used as amp meter (by using only the red wires).
 
-
+![[ltr_329_consumption.png]]
+==Adam==
 ### SHT40 Light Sensor
+Joule scope is used as amp meter (by using only the red wires).
+![[sht40_consumption.png]]
+==Adam==
+### LoRa Module
+==Tom==
 
+## BLE inter-communication
+![[BLE-program_flow.pdf]]
+A starting point for the BLE flow
+I will describe here what I'll be using as raw advertisement or which services and characteristics I present with their UUID etc.
 
+## BLE I2C communication
+To enable the BLE inter-communication, we use I2C as device connection to the STM32L4. 
+Here, the BLE module shall have the address 0x10 and the following struct will be send over.
+```
+struct struct_BLE_object{
+	uint8_t ssr_id; //The ID of the rover itself
+	uint8_t beacon_time; //How long the beacon may last (val*100=ms)
+	uint8_t scan_time; //How long the scan may last (val*100=ms)
+	int16_t env_temperature; //Range from -327.68 to 327.67 °C (val/100=°C)
+	uint8_t env_humidity; //Range from -0-100%
+	uint16_t env_lux; //Range from 0 to 1000 
+	uint16_t dev_voltage; //Range from 0-6.5535V (val/10000=V) (val/10=mV)
+	//x gyro 8bit?
+	//y gyro 8bit?
+	//z gyro 8bit?
+};
+typedef structBLE_object BLE_object;
+```
+A total of 11 bytes.
+
+The BLE-advertisement can hold 7-bytes where we select the *dev_voltage* (2-bytes), *env_temperature* (2-bytes), and *env_humidity* (1-byte) in the respectively order for now.
+
+The BEL-object will be send over to the BLE module directly after. So we send a packet with 0x10 with the write bit enabled, and after that, we send 11 bytes.
+
+When the BLE-module has finished its flow, it goes to deep sleep.
+The SM32L4 needs to waken up the device by setting a specific GPIO HIGH.
 
 ## I2C communication sensor SHT40
 ![[HT_DS_Datasheet_SHT4x.pdf]]
@@ -153,3 +194,4 @@ If we follow these pages we should get a connection as follows:
 
 ## I2C Communication with Rover Bot
 ==Tom==
+
