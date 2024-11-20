@@ -1,0 +1,46 @@
+version: '1.0'
+
+services:
+  node-red:
+    image: nodered/node-red				# Node-RED Docker image
+    container_name: SSR-server				# Set the container name
+    restart: always
+    ports:
+      - "1880:1880"					# Expose port 1880 for Node-RED
+    volumes:
+      - node_red_data:/data				# Persist data in a Docker volume
+    networks:
+      - app-network					# Attach to custom network
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017		# MongoDB connection URL (use service name as host)
+    entrypoint:
+      - /bin/sh						# Use shell to execute commands
+      - -c
+      - |
+        npm stop;					# Stop Node-RED
+        npm install node-red-dashboard;			# Install dashboard nodes
+        npm install node-red-contrib-mongodb4;		# Install MongoDB nodes
+        npm start;                             		# Retart Node-RED
+    # Enter the container with the following command:	sudo docker exec -it <container_id> bash
+
+  mongodb:
+    image: mongodb/mongodb-community-server:latest	# MongoDB Docker image
+    container_name: SSR-DB				# Set container name for MongoDB
+    restart: always
+    ports:
+      - "27017:27017"					# Expose MongoDB port
+    volumes:
+      - mongo_data:/data/db				# Persist MongoDB data in a Docker volume
+    networks:
+      - app-network					# Attach to custom network
+    # environment:
+      # MONGO_INITDB_ROOT_USERNAME: root
+      # MONGO_INITDB_ROOT_PASSWORD: root
+
+volumes:
+  node_red_data:					# Volume for Node-RED data
+  mongo_data:						# Volume for MongoDB data
+
+networks:
+  app-network:						# Define network for communication between containers
+
