@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2024-11-14" view-index="0" gantt-divider-location="517" resource-divider-location="300" version="3.3.3312" locale="en_US">
+    <description/>
+    <view zooming-state="default:2" id="gantt-chart">
+        <field id="tpd3" name="Name" width="294" order="0"/>
+        <field id="tpd4" name="Begin date" width="111" order="1"/>
+        <field id="tpd5" name="End date" width="111" order="2"/>
+        <field id="tpd15" name="Notes" width="20" order="3"/>
+        <option id="filter.completedTasks" value="false"/>
+        <option id="filter.dueTodayTasks" value="false"/>
+        <option id="filter.overdueTasks" value="false"/>
+        <option id="filter.inProgressTodayTasks" value="false"/>
+        <option id="color.recent"><![CDATA[#000000 #ff6666 #33ff33 #006699 #009933 #3399ff]]></option>
+    </view>
+    <view id="resource-table">
+        <field id="0" name="Name" width="210" order="0"/>
+        <field id="1" name="Default role" width="86" order="1"/>
+    </view>
+    <!-- -->
+    <calendars>
+        <day-types>
+            <day-type id="0"/>
+            <day-type id="1"/>
+            <default-week id="1" name="default" sun="1" mon="0" tue="0" wed="0" thu="0" fri="0" sat="1"/>
+            <only-show-weekends value="false"/>
+            <overriden-day-types/>
+            <days/>
+        </day-types>
+    </calendars>
+    <tasks empty-milestones="true">
+        <taskproperties>
+            <taskproperty id="tpd0" name="type" type="default" valuetype="icon"/>
+            <taskproperty id="tpd1" name="priority" type="default" valuetype="icon"/>
+            <taskproperty id="tpd2" name="info" type="default" valuetype="icon"/>
+            <taskproperty id="tpd3" name="name" type="default" valuetype="text"/>
+            <taskproperty id="tpd4" name="begindate" type="default" valuetype="date"/>
+            <taskproperty id="tpd5" name="enddate" type="default" valuetype="date"/>
+            <taskproperty id="tpd6" name="duration" type="default" valuetype="int"/>
+            <taskproperty id="tpd7" name="completion" type="default" valuetype="int"/>
+            <taskproperty id="tpd8" name="coordinator" type="default" valuetype="text"/>
+            <taskproperty id="tpd9" name="predecessorsr" type="default" valuetype="text"/>
+        </taskproperties>
+        <task id="0" uid="1a1e051d9e5840bc8d85e3ba6a2a168b" name="Researching modules" meeting="false" start="2024-10-15" duration="10" complete="0" expand="false">
+            <task id="8" uid="4de612e3336c4da08862b2bb2a65edc8" name="Research HDC2080" color="#ff6666" meeting="false" start="2024-10-15" duration="10" complete="0" expand="true"/>
+            <task id="7" uid="d1cd4dd339134f9eb8d6c322b37428e7" name="Researching photoresistor" color="#ff6666" meeting="false" start="2024-10-15" duration="5" complete="0" expand="true"/>
+            <task id="17" uid="add14171b46d449c963f2bd699a6e514" name="Research MPU-6050" color="#8cb6ce" meeting="false" start="2024-10-15" duration="10" complete="0" expand="true"/>
+            <task id="6" uid="de68734440f941fbb8c0a24d33f825f7" name="Research CC2541" color="#33ff33" meeting="false" start="2024-10-15" duration="10" complete="0" expand="true"/>
+            <task id="5" uid="f5ab1a87c527416280af31dde429cf06" name="Researching SX1276" color="#8cb6ce" meeting="false" start="2024-10-15" duration="10" complete="0" expand="true"/>
+        </task>
+        <task id="1" uid="0b925d7949c246bb8a655c5228ca7fa8" name="Experiment with modules on STM32" meeting="false" start="2024-10-22" duration="30" complete="0" expand="false">
+            <task id="24" uid="2b1fab686bed4a49bb82429adbc1dbba" name="Temperature sensor" color="#ff6666" meeting="false" start="2024-10-22" duration="15" complete="0" expand="false">
+                <task id="15" uid="fb685a0bbd824426b95de36109d0b5e1" name="HDC2080 via STM32" color="#ff6666" meeting="false" start="2024-10-22" duration="10" complete="0" expand="true"/>
+                <task id="19" uid="852012eacc6d4dc1a63f3947ab912ed1" name="Intigrate HDC2080" color="#ff6666" meeting="false" start="2024-10-29" duration="10" complete="0" expand="true"/>
+            </task>
+            <task id="25" uid="0064388d51bb40f9b5f19bfd03df45ad" name="Light sensor" color="#ff6666" meeting="false" start="2024-11-05" duration="10" complete="0" expand="false">
+                <task id="14" uid="327a60c361814c9597c2de1a10cb43cb" name="Photoresistor via STM32" color="#ff6666" meeting="false" start="2024-11-05" duration="5" complete="0" expand="true"/>
+                <task id="23" uid="5dc983f6322547db86886f3d0169cfe0" name="Intigrate photoresistor" color="#ff6666" meeting="false" start="2024-11-12" duration="5" complete="0" expand="true"/>
+            </task>
+            <task id="26" uid="5ff517f94f5447cdbcdd2d24dc6bdecb" name="Gyroscope" color="#8cb6ce" meeting="false" start="2024-10-22" duration="15" complete="0" expand="false">
+                <task id="18" uid="eacb6d7aa671401d93777011e0ad6ae3" name="MPU-6050 via STM32" color="#8cb6ce" meeting="false" start="2024-10-22" duration="10" complete="0" expand="true"/>
+                <task id="22" uid="5d3582567ae946879805be502d3d8846" name="Intigrate MPU-6050" color="#8cb6ce" meeting="false" start="2024-11-05" duration="5" complete="0" expand="true"/>
+            </task>
+            <task id="16" uid="dfe616e8742a4d738bf1d8b70170df88" name="Bluetooth communications" color="#33ff33" meeting="false" start="2024-10-22" duration="20" complete="0" expand="false">
+                <task id="13" uid="aab5cbc4fba64679bc229f310d28d98d" name="CC2541 via STM32" color="#33ff33" meeting="false" start="2024-10-22" duration="10" complete="0" expand="true"/>
+                <task id="20" uid="2ce08c83c89d4ba28c83a4baa883b7c5" name="Intigrate CC2541" color="#33ff33" meeting="false" start="2024-11-05" duration="5" complete="0" expand="true"/>
+                <task id="12" uid="e1f8248ad66a411992f97f430646b436" name="BLE between STM32" color="#33ff33" meeting="false" start="2024-11-05" duration="10" complete="0" expand="true"/>
+            </task>
+            <task id="11" uid="0884185280f747a7a682dfd0eece162a" name="LoRa communications" color="#8cb6ce" meeting="false" start="2024-11-05" duration="20" complete="0" expand="false">
+                <task id="9" uid="85aacb495b2a4acca8385b736446cacc" name="Setup LoRa back-end" color="#8cb6ce" meeting="false" start="2024-11-05" duration="5" complete="0" expand="true"/>
+                <task id="21" uid="c54b76ec0ca0467faaa1f8c6c0d31e20" name="Intigrate SX1276" color="#8cb6ce" meeting="false" start="2024-11-12" duration="10" complete="0" expand="true"/>
+                <task id="10" uid="7a10638e87b54d3f8f61391295493feb" name="SX1276 via STM32" color="#8cb6ce" meeting="false" start="2024-11-19" duration="10" complete="0" expand="true"/>
+            </task>
+        </task>
+        <task id="4" uid="2caa719cba1647788fd759bee7540a07" name="Power measurement" color="#33ff33" meeting="false" start="2024-11-12" duration="15" complete="0" expand="false">
+            <task id="27" uid="b87a7e8333d446ce9c54561369c616f5" name="Measure modules active usage" color="#33ff33" meeting="false" start="2024-11-12" duration="10" complete="0" expand="true"/>
+            <task id="29" uid="654ac6c18cde483791a12522016a08e7" name="Measure solar gain" color="#33ff33" meeting="false" start="2024-11-12" duration="5" complete="0" expand="true"/>
+            <task id="28" uid="c495949497184eaeaef30bed4c5cafb5" name="Measure modules inactive usage" color="#33ff33" meeting="false" start="2024-11-19" duration="10" complete="0" expand="true"/>
+        </task>
+        <task id="3" uid="eac2d82209cc435cac0f1b43a8cf9372" name="Power management" color="#000000" meeting="false" start="2024-11-19" duration="20" complete="0" expand="true">
+            <task id="30" uid="7702dfabe387448a865e05401c0dbc50" name="Calculate power usage" color="#ff6666" meeting="false" start="2024-11-19" duration="5" complete="0" expand="true"/>
+            <task id="31" uid="372031c1534a403fbeda0717ab3f4da6" name="Implement optimized power consumption" color="#ff6666" meeting="false" start="2024-11-26" duration="5" complete="0" expand="true"/>
+            <task id="32" uid="5d1ba64daea5455da8b625be175ec0fd" name="Test the system" color="#000000" meeting="false" start="2024-12-03" duration="5" complete="0" expand="true"/>
+            <task id="34" uid="a47f5a7cf1024abab7546456c3845666" name="Recalculate power usage" color="#ff6666" meeting="false" start="2024-12-03" duration="5" complete="0" expand="true"/>
+            <task id="33" uid="1b801ce8e5d1474e8e15c17399a16872" name="Reimplement optimized power consumption" color="#ff6666" meeting="false" start="2024-12-10" duration="5" complete="0" expand="true"/>
+        </task>
+    </tasks>
+    <resources/>
+    <allocations/>
+    <vacations/>
+    <previous/>
+    <roles roleset-name="Default"/>
+</project>

@@ -1,0 +1,229 @@
+[
+    {
+        "id": "aacbeea8c606ee88",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "b498d90c154f0728",
+        "type": "mqtt in",
+        "z": "aacbeea8c606ee88",
+        "name": "",
+        "topic": "#",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "fa6f71847e26f6f8",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 510,
+        "y": 220,
+        "wires": [
+            [
+                "f6a4577301d6300e"
+            ]
+        ]
+    },
+    {
+        "id": "23ddc74378638a07",
+        "type": "debug",
+        "z": "aacbeea8c606ee88",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 900,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "f6a4577301d6300e",
+        "type": "function",
+        "z": "aacbeea8c606ee88",
+        "name": "function 1",
+        "func": "msg.payload = msg.payload.uplink_message.decoded_payload.bytes\n//at+msg=\"hello world\"\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 220,
+        "wires": [
+            [
+                "23ddc74378638a07"
+            ]
+        ]
+    },
+    {
+        "id": "59b5d7ed305a8304",
+        "type": "debug",
+        "z": "aacbeea8c606ee88",
+        "name": "Show data",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 910,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "b009738308969363",
+        "type": "inject",
+        "z": "aacbeea8c606ee88",
+        "name": "Click",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 430,
+        "y": 340,
+        "wires": [
+            [
+                "f8f75fe7bd026e58",
+                "01eecc93e02d29ac"
+            ]
+        ]
+    },
+    {
+        "id": "f8f75fe7bd026e58",
+        "type": "function",
+        "z": "aacbeea8c606ee88",
+        "name": "Find 1",
+        "func": "msg.payload = {hostname: \"73e5846ccdd6\"};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 380,
+        "wires": [
+            [
+                "84968576d3479ea3"
+            ]
+        ]
+    },
+    {
+        "id": "84968576d3479ea3",
+        "type": "mongodb4",
+        "z": "aacbeea8c606ee88",
+        "clientNode": "a89a0131439f438c",
+        "mode": "collection",
+        "collection": "startup_log",
+        "operation": "find",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": true,
+        "name": "",
+        "x": 750,
+        "y": 340,
+        "wires": [
+            [
+                "59b5d7ed305a8304"
+            ]
+        ]
+    },
+    {
+        "id": "01eecc93e02d29ac",
+        "type": "function",
+        "z": "aacbeea8c606ee88",
+        "name": "Find all",
+        "func": "msg = {};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 300,
+        "wires": [
+            [
+                "84968576d3479ea3"
+            ]
+        ]
+    },
+    {
+        "id": "fa6f71847e26f6f8",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "eu1.cloud.thethings.network",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "a89a0131439f438c",
+        "type": "mongodb4-client",
+        "name": "",
+        "protocol": "mongodb",
+        "hostname": "mongodb",
+        "port": "27017",
+        "dbName": "local",
+        "appName": "",
+        "authSource": "",
+        "authMechanism": "DEFAULT",
+        "tls": false,
+        "tlsCAFile": "",
+        "tlsCertificateKeyFile": "",
+        "tlsInsecure": false,
+        "connectTimeoutMS": "30000",
+        "socketTimeoutMS": "0",
+        "minPoolSize": "0",
+        "maxPoolSize": "100",
+        "maxIdleTimeMS": "0",
+        "uri": "",
+        "advanced": "{}",
+        "uriTabActive": "tab-uri-simple"
+    }
+]
