@@ -144,6 +144,9 @@ For our communication to work we need to perform three tasks:
 
 *Some handy videos include: [setup device](https://www.youtube.com/watch?v=L_acKpwNvnc&list=WL&index=11&t=600s) & [setup MQTT](https://www.youtube.com/watch?v=9H6GFXatOCY&list=WL&index=12&t=128s)*
 
+https://wiki.seeedstudio.com/LoRa_E5_mini/
+https://download.mikroe.com/documents/datasheets/Wio-E5%20Datasheet.pdf
+
 ==Tom==
 
 ## I2C Communication with Rover Bot

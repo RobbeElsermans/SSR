@@ -63,8 +63,7 @@
               "title": "Back-End"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -205,10 +204,10 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "dd41f3292dd183a4",
+  "active": "171b5569dd9fdadf",
   "lastOpenFiles": [
-    "SSR_Portfolio/Pages/LoRa/TheThingsNetwork.md",
     "SSR_Portfolio/Pages/LoRa/UART communications.md",
+    "SSR_Portfolio/Pages/LoRa/TheThingsNetwork.md",
     "SSR_Portfolio/Portfolio.md",
     "SSR_Portfolio/Pages/LoRa/Back-End.md",
     "SSR_Portfolio/Images/LoRa/uart_settings.png",
