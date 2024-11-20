@@ -23,14 +23,14 @@ Open the serial monitor application and use the following settings:
 - Stop Bit:          1
 - Parity:             None
 - Flow Control: None
-![UART Settings](uart_settings.png)
+![[uart_settings.png]]
 # Test connection
 To test the connection, we just need to use the base AT command.
 ``` Serial
 AT
 ```
-![connection_test_output](uart_test_output.png)
-# Helpful commands
+![[uart_test_output.png]]
+# Setup connection to TheThingsNetwork
 Enter the test mode
 ``` Serial
 AT+mode="LWABP"
@@ -81,6 +81,8 @@ Set channel
 ``` Serial
 AT+ch=0
 ```
+
+![[uart_settings_check.png]]
 
 Sent a message
 ``` Serial

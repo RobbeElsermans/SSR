@@ -4,63 +4,19 @@
     "type": "split",
     "children": [
       {
-        "id": "ee6084fbc462ef98",
+        "id": "5cb0da239aaacc5b",
         "type": "tabs",
         "children": [
           {
-            "id": "171b5569dd9fdadf",
+            "id": "611c4abc599a9599",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "image",
               "state": {
-                "file": "SSR_Portfolio/Portfolio.md",
-                "mode": "source",
-                "source": false
+                "file": "SSR_Portfolio/Images/I2C/mpu6050_i2c_message.png"
               },
-              "icon": "lucide-file",
-              "title": "Portfolio"
-            }
-          },
-          {
-            "id": "dd41f3292dd183a4",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "SSR_Portfolio/Pages/LoRa/UART communications.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "UART communications"
-            }
-          },
-          {
-            "id": "a1997cbd635acebe",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "SSR_Portfolio/Pages/LoRa/TheThingsNetwork.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "TheThingsNetwork"
-            }
-          },
-          {
-            "id": "6700c1aa35fd9025",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "SSR_Portfolio/Pages/LoRa/Back-End.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Back-End"
+              "icon": "lucide-image",
+              "title": "mpu6050_i2c_message"
             }
           }
         ]
@@ -204,39 +160,39 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "171b5569dd9fdadf",
+  "active": "611c4abc599a9599",
   "lastOpenFiles": [
-    "SSR_Portfolio/Pages/LoRa/UART communications.md",
     "SSR_Portfolio/Pages/LoRa/TheThingsNetwork.md",
-    "SSR_Portfolio/Portfolio.md",
     "SSR_Portfolio/Pages/LoRa/Back-End.md",
-    "SSR_Portfolio/Images/LoRa/uart_settings.png",
-    "SSR_Portfolio/Images/LoRa/uart_test_output.png",
-    "SSR_Portfolio/Images/LoRa/Screenshot from 2024-11-19 14-22-56.png",
-    "SSR_Portfolio/Images/LoRa/mongodb_connection_creation.png",
-    "SSR_Portfolio/Images/LoRa/mongodb_settings.png",
-    "SSR_Portfolio/Images/LoRa/mongodb_simple_uri_settings.png",
-    "SSR_Portfolio/Images/LoRa/mqtt_server_connection_settings.png",
-    "SSR_Portfolio/Images/LoRa/ttn_mqtt_network_settings.png",
-    "SSR_Portfolio/Images/LoRa/Screenshot from 2024-11-14 14-08-24.png",
+    "SSR_Portfolio/Images/LoRa/mqtt_server_security_settings.png",
+    "SSR_Portfolio/Pages/LoRa/UART communications.md",
+    "SSR_Portfolio/Images/LoRa/ttn_end_device_type.png",
+    "SSR_Portfolio/Images/LoRa/ttn_advanced_activation_settings.png",
+    "SSR_Portfolio/Images/LoRa/ttn_application_settings.png",
+    "SSR_Portfolio/Images/LoRa/ttn_cluster.png",
+    "SSR_Portfolio/Images/LoRa/ttn_console.png",
+    "SSR_Portfolio/Images/LoRa/ttn_console_interface.png",
+    "SSR_Portfolio/Images/LoRa/ttn_create_account.png",
+    "SSR_Portfolio/Images/LoRa/ttn_create_application.png",
     "SSR_Portfolio/Images/LoRa/ttn_device_formatter.png",
+    "SSR_Portfolio/Portfolio.md",
+    "SSR_Portfolio/Datasheets/Wio-E5 Datasheet.pdf",
+    "SSR_Portfolio/Pages/LoRa",
+    "SSR_Portfolio/Pages",
+    "SSR_Portfolio/Images/LoRa",
+    "PPT/SSR_Mid_PPT.pptx",
+    "PPT/Simple.pptx",
+    "SSR_Portfolio/Images/BLE-program_flow.pdf",
+    "SSR_Portfolio/Datasheets/bluefruit-nrf52-feather-learning-guide.pdf",
+    "PPT",
     "ttn_create_application.md",
     "SSR_Portfolio/Fixes Software installations.md",
     "SSR_Portfolio/Images/LoRa/putty_uart_settings.md",
     "SSR_Portfolio/Pages/LoRa/UART.md",
     "Pages/LoRa/UART.md",
     "Pages/LoRa",
-    "Pages",
-    "SSR_Portfolio/Pages/LoRa/Untitled",
-    "SSR_Portfolio/Pages/LoRa",
     "UART.md",
     "SSR_Portfolio/Nice links.md",
-    "SSR_Portfolio/Images/LoRa",
-    "SSR_Portfolio/Images/brain_flow_diagram.pdf",
-    "SSR_Portfolio/Images/block diagram.pdf",
-    "SSR_Portfolio/Images/Power_Profiling",
-    "SSR_Portfolio/Images/I2C",
-    "SSR_Portfolio/Datasheets/stm32l412c8-1.pdf",
     "install docker on linux.md",
     "portfolio.md"
   ]
