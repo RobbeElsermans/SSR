@@ -1,16 +1,7 @@
-/*********************************************************************
- This is an example for our nRF52 based Bluefruit LE modules
 
- Pick one up today in the adafruit shop!
-
- Adafruit invests time and resources providing this open source code,
- please support Adafruit and open-source hardware by purchasing
- products from Adafruit!
-
- MIT license, check LICENSE for more information
- All text above, and the splash screen below must be included in
- any redistribution
-*********************************************************************/
+// Use function references:
+// https://docs.nordicsemi.com/bundle/s130_v1.0.0_api/page/structble_gap_evt_adv_report_t_3.html#a389279e4505e5f438e39b64cac8ab4c0
+// https://learn.adafruit.com/bluefruit-nrf52-feather-learning-guide/blebeacon
 #include <bluefruit.h>
 #include <Wire.h>
 
@@ -59,14 +50,16 @@ volatile bool received_data = false;
 void setup() 
 {
   Serial.begin(115200);
+
+  
   Wire.begin(0x12);             // join i2c bus with address 0x10
   Wire.onReceive(receiveEvent); // register event
 
   // Uncomment to blocking wait for Serial connection
   while ( !Serial ) delay(10);
 
-  Serial.println("Bluefruit52 Beacon Example");
-  Serial.println("--------------------------\n");
+  //Serial.println("Bluefruit52 Beacon Example");
+  //Serial.println("--------------------------\n");
 
   Bluefruit.begin();
 
@@ -74,14 +67,13 @@ void setup()
   Bluefruit.autoConnLed(false);
   Bluefruit.setTxPower(0);    // Check bluefruit.h for supported values
   
-  beaconUuid[15] = random(255);
-  
   // Manufacturer ID is required for Manufacturer Specific Data
   beacon.setManufacturer(MANUFACTURER_ID);
 
-  Serial.println("Wait for data");
+  //Serial.println("Wait for data");
+  //DEBUG RESET AFTER
   while(!received_data); //Wait for I2C transfer
-  Serial.println("data received!");
+  //Serial.println("data received!");
   received_data = false;
 
   //Print the whole struct
@@ -112,15 +104,14 @@ void setup()
   beaconUuid[6] = (data.dev_voltage & 0xFF);
   
   // Setup the advertising packet
+  
   startAdv();
 
   Serial.println("Broadcasting beacon, open your beacon app to test");
+  while(Bluefruit.Advertising.isRunning()){
+    delay(1000);
+  }
 
-  //beaconUuid[15] = 0xFF;
-
-  while(Bluefruit.Advertising.isRunning());
-
-  //delay(10000);
   Serial.println("Done Advertising");
 
   Serial.println("Go to deep sleep");
@@ -129,18 +120,18 @@ void setup()
   //https://forum.seeedstudio.com/t/sleep-current-of-xiao-nrf52840-deep-sleep-vs-light-sleep/271841
   //https://devzone.nordicsemi.com/f/nordic-q-a/100602/seeed-xiao-nrf82840-wakeup-after-nrf_power-systemoff
 
-  nrf_gpio_cfg_sense_input(digitalPinToInterrupt(2), NRF_GPIO_PIN_PULLDOWN, NRF_GPIO_PIN_SENSE_HIGH);
-  delay(2000);
+  //nrf_gpio_cfg_sense_input(digitalPinToInterrupt(2), NRF_GPIO_PIN_PULLDOWN, NRF_GPIO_PIN_SENSE_HIGH);
+
+  //Works
+  //Found it on https://forum.seeedstudio.com/t/xiao-ble-sense-in-deep-sleep-mode/263477/129?page=7
+  //nrf_gpio_cfg_sense_input(g_ADigitalPinMap[2], NRF_GPIO_PIN_PULLUP, NRF_GPIO_PIN_SENSE_LOW); //wake from deep sleep
+  nrf_gpio_cfg_sense_input(g_ADigitalPinMap[2], NRF_GPIO_PIN_PULLDOWN, NRF_GPIO_PIN_SENSE_HIGH); //wake from deep sleep
 
   NRF_POWER->SYSTEMOFF = 1;
-  //Not working
-  //Continue here -> https://devzone.nordicsemi.com/f/nordic-q-a/58631/waking-the-nrf52840-from-systemoff---arduino-nano-33-board
 
+  //Code will not reache this.
   // Suspend Loop() to save power, since we didn't have any code there
   //suspendLoop();
-  Serial.println("OK");
-  pinMode(11, OUTPUT);
-  digitalWrite(11, HIGH);
 }
 
 void startAdv(void)
@@ -163,11 +154,15 @@ void startAdv(void)
    * - Type: Non connectable, undirected
    * - Fixed interval: 100 ms -> fast = slow = 100 ms
    */
-  //Bluefruit.Advertising.setType(BLE_GAP_ADV_TYPE_ADV_NONCONN_IND);
+//  Bluefruit.Advertising.setType(BLE_GAP_ADV_TYPE_ADV_NONCONN_IND);
   //Bluefruit.Advertising.restartOnDisconnect(true);
-  Bluefruit.Advertising.setInterval(160, 160);    // in unit of 0.625 ms
-  Bluefruit.Advertising.setFastTimeout(30);      // number of seconds in fast mode
-  Bluefruit.Advertising.start(5);                // 0 = Don't stop advertising after n seconds  
+  Bluefruit.Advertising.setInterval(160,160);    // in unit of 0.625 ms
+
+  uint8_t time_active = data.beacon_time / 10;
+  Serial.println(time_active);
+  
+  Bluefruit.Advertising.setFastTimeout(time_active);      // number of seconds in fast mode
+  Bluefruit.Advertising.start(1);                // 0 = Don't stop advertising after n seconds  
 }
 
 void loop() 
@@ -216,5 +211,8 @@ void receiveEvent(int howMany)
 
         i++;
     }
-    received_data = true;
+
+    //If ID has a good value
+    if (data.ssr_id != 0x00)
+      received_data = true;
 }

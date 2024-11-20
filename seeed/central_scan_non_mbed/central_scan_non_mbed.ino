@@ -1,17 +1,3 @@
-/*********************************************************************
- This is an example for our nRF52 based Bluefruit LE modules
-
- Pick one up today in the adafruit shop!
-
- Adafruit invests time and resources providing this open source code,
- please support Adafruit and open-source hardware by purchasing
- products from Adafruit!
-
- MIT license, check LICENSE for more information
- All text above, and the splash screen below must be included in
- any redistribution
-*********************************************************************/
-
 #include <bluefruit.h>
 
 void setup() 
@@ -38,6 +24,14 @@ void setup()
 
 void scan_callback(ble_gap_evt_adv_report_t* report)
 {
+  //The ID to identify 
+  uint32_t id = report->data.p_data[report->data.len - 5] << 8*3 | 
+                report->data.p_data[report->data.len - 4] << 8*2 |
+                report->data.p_data[report->data.len - 3] << 8*1 | 
+                report->data.p_data[report->data.len - 2] << 8*0;
+
+  if (id == 1058013184)
+  {
   Serial.println("Timestamp Addr              Rssi Data");
 
   Serial.printf("%09d ", millis());
@@ -55,13 +49,13 @@ void scan_callback(ble_gap_evt_adv_report_t* report)
   Serial.printBuffer(report->data.p_data, report->data.len, '-');
   Serial.println();
 
-
 //Compose 2 bytes of the 4 last bytes minus 1 byte
   uint32_t id = report->data.p_data[report->data.len - 5] << 8*3 | 
                 report->data.p_data[report->data.len - 4] << 8*2 |
                 report->data.p_data[report->data.len - 3] << 8*1 | 
                 report->data.p_data[report->data.len - 2] << 8*0;
-Serial.printf("id: %02X", id);
+                
+Serial.printf("id: %02X  real val: %d", id, id);
     // Check if beacon has a certain address. Not good to use in global environment
   if ( *report->peer_addr.addr == 242 )//Bluefruit.Scanner.checkReportForUuid(report, BLEUART_UUID_SERVICE) )
   {
@@ -87,6 +81,7 @@ Serial.printf("id: %02X", id);
   }
 
   Serial.println();
+  }
 
   // For Softdevice v6: after received a report, scanner will be paused
   // We need to call Scanner resume() to continue scanning

@@ -20,5 +20,6 @@ struct ble_module_data_t
 };
 
 uint8_t send_ble_data(I2C_HandleTypeDef *hi2c1, struct ble_module_data_t *data);
+uint8_t ble_device_ready(I2C_HandleTypeDef *hi2c1);
 
 #endif

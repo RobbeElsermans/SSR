@@ -28,3 +28,8 @@ uint8_t send_ble_data(I2C_HandleTypeDef *hi2c1, struct ble_module_data_t *data)
 
     return 0; // Bad
 }
+
+
+uint8_t ble_device_ready(I2C_HandleTypeDef *hi2c1){
+    uint8_t ret = HAL_I2C_IsDeviceReady(hi2c1, BLE_ADDRESS, 1, 1);
+}
