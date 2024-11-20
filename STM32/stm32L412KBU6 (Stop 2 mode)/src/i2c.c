@@ -1,3 +1,4 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    i2c.c
@@ -15,15 +16,27 @@
   *
   ******************************************************************************
   */
-
+/* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "i2c.h"
+
+/* USER CODE BEGIN 0 */
+
+/* USER CODE END 0 */
 
 I2C_HandleTypeDef hi2c1;
 
 /* I2C1 init function */
 void MX_I2C1_Init(void)
 {
+
+  /* USER CODE BEGIN I2C1_Init 0 */
+
+  /* USER CODE END I2C1_Init 0 */
+
+  /* USER CODE BEGIN I2C1_Init 1 */
+
+  /* USER CODE END I2C1_Init 1 */
   hi2c1.Instance = I2C1;
   hi2c1.Init.Timing = 0x00B07CB4;
   hi2c1.Init.OwnAddress1 = 0;
@@ -51,6 +64,10 @@ void MX_I2C1_Init(void)
   {
     Error_Handler();
   }
+  /* USER CODE BEGIN I2C1_Init 2 */
+
+  /* USER CODE END I2C1_Init 2 */
+
 }
 
 void HAL_I2C_MspInit(I2C_HandleTypeDef* i2cHandle)
@@ -60,6 +77,9 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* i2cHandle)
   RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
   if(i2cHandle->Instance==I2C1)
   {
+  /* USER CODE BEGIN I2C1_MspInit 0 */
+
+  /* USER CODE END I2C1_MspInit 0 */
 
   /** Initializes the peripherals clock
   */
@@ -84,6 +104,9 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* i2cHandle)
 
     /* I2C1 clock enable */
     __HAL_RCC_I2C1_CLK_ENABLE();
+  /* USER CODE BEGIN I2C1_MspInit 1 */
+
+  /* USER CODE END I2C1_MspInit 1 */
   }
 }
 
@@ -92,6 +115,9 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)
 
   if(i2cHandle->Instance==I2C1)
   {
+  /* USER CODE BEGIN I2C1_MspDeInit 0 */
+
+  /* USER CODE END I2C1_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_I2C1_CLK_DISABLE();
 
@@ -102,5 +128,13 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)
     HAL_GPIO_DeInit(GPIOA, GPIO_PIN_9);
 
     HAL_GPIO_DeInit(GPIOA, GPIO_PIN_10);
+
+  /* USER CODE BEGIN I2C1_MspDeInit 1 */
+
+  /* USER CODE END I2C1_MspDeInit 1 */
   }
 }
+
+/* USER CODE BEGIN 1 */
+
+/* USER CODE END 1 */

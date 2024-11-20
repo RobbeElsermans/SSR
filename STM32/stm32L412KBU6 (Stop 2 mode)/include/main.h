@@ -1,3 +1,4 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file           : main.h
@@ -15,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __MAIN_H
@@ -28,13 +30,24 @@ extern "C" {
 #include "stm32l4xx_hal.h"
 
 /* Private includes ----------------------------------------------------------*/
-/* Exported types ------------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
 
-extern struct ble_module_data_t ble_data;
+/* USER CODE END Includes */
+
+/* Exported types ------------------------------------------------------------*/
+/* USER CODE BEGIN ET */
+
+/* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
+/* USER CODE BEGIN EC */
+
+/* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
+/* USER CODE BEGIN EM */
+
+/* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
@@ -52,11 +65,14 @@ void Error_Handler(void);
 #define SWCLK_GPIO_Port GPIOA
 #define VCP_RX_Pin GPIO_PIN_15
 #define VCP_RX_GPIO_Port GPIOA
-
 #define USER_LED_Pin GPIO_PIN_3
 #define USER_LED_GPIO_Port GPIOB
 #define BLE_nSLEEP_Pin GPIO_PIN_6
 #define BLE_nSLEEP_GPIO_Port GPIOB
+
+/* USER CODE BEGIN Private defines */
+
+/* USER CODE END Private defines */
 
 #ifdef __cplusplus
 }
