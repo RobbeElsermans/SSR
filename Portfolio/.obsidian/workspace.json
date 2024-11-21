@@ -11,12 +11,14 @@
             "id": "171b5569dd9fdadf",
             "type": "leaf",
             "state": {
-              "type": "image",
+              "type": "markdown",
               "state": {
-                "file": "SSR_Portfolio/Images/I2C/mpu6050_i2c_message.png"
+                "file": "SSR_Portfolio/Portfolio.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-image",
-              "title": "mpu6050_i2c_message"
+              "icon": "lucide-file",
+              "title": "Portfolio"
             }
           },
           {
@@ -190,6 +192,9 @@
   },
   "active": "171b5569dd9fdadf",
   "lastOpenFiles": [
+    "SSR_Portfolio/Pages/LoRa/UART communications.md",
+    "SSR_Portfolio/Images/I2C/mpu6050_i2c_message.png",
+    "SSR_Portfolio/Pages/LoRa/TheThingsNetwork.md",
     "PPT/SSR_Mid_PPT.pptx",
     "PPT/Simple.pptx",
     "SSR_Portfolio/Images/Power_Profiling/standby_stm32_current_consumption_close_look.png",
@@ -200,8 +205,6 @@
     "SSR_Portfolio/Datasheets/bluefruit-nrf52-feather-learning-guide.pdf",
     "PPT",
     "block diagram.png",
-    "SSR_Portfolio/Pages/LoRa/UART communications.md",
-    "SSR_Portfolio/Pages/LoRa/TheThingsNetwork.md",
     "SSR_Portfolio/Pages/LoRa/Back-End.md",
     "SSR_Portfolio/Portfolio.md",
     "SSR_Portfolio/Pages/LoRa/Back-End.md",
@@ -209,7 +212,6 @@
     "SSR_Portfolio/Images/LoRa/uart_test_output.png",
     "SSR_Portfolio/Images/LoRa/Screenshot from 2024-11-19 14-22-56.png",
     "SSR_Portfolio/Images/LoRa/mongodb_connection_creation.png",
-    "SSR_Portfolio/Images/LoRa/mongodb_settings.png",
     "ttn_create_application.md",
     "SSR_Portfolio/Fixes Software installations.md",
     "SSR_Portfolio/Images/LoRa/putty_uart_settings.md",
@@ -222,7 +224,6 @@
     "UART.md",
     "SSR_Portfolio/Nice links.md",
     "SSR_Portfolio/Images/LoRa",
-    "SSR_Portfolio/Images/brain_flow_diagram.pdf",
     "install docker on linux.md",
     "portfolio.md"
   ]
