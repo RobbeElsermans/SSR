@@ -1,5 +1,6 @@
 ## Joule Scope Measurements
-### STM32L4 standby
+### STM32L4 
+#### standby
 This measurement is conducted by using JP1 with the Joule scope as amp meter.
 
 The test code is the following pseudo code
@@ -27,7 +28,10 @@ A closer look at the standby mode current consumption.
 
 The total cycle uses an average current of $\pm 2.7mA$.
 This can be reduced by using a compare value of $0xFFFF$.
-### XIAO nRF52840 peripheral mode
+#### stop 2 mode
+
+### XIAO nRF52840 
+#### peripheral mode
 A small pseudo-code on what the device does 
 ```
 setup 
@@ -42,10 +46,10 @@ loop
 		write led accordingly to value
 ```
 
-The nRF52840 module will constantly be advertising on a rate of $100ms$ (this is default in ArduinoBLE see [ArduinoBLE-setAdvertisingInterval()](https://reference.arduino.cc/reference/en/libraries/arduinoble/ble.setadvertisinginterval/)).
+The nRF52840 module will constantly be advertising on a rate of $100ms$ 
+(this is default in ArduinoBLE see [ArduinoBLE-setAdvertisingInterval()](https://reference.arduino.cc/reference/en/libraries/arduinoble/ble.setadvertisinginterval/)).
 
 On central connect, it will check constantly if the value has changed or not. The central is a smartphone which has the app nRF Connect installed and acts as a central.
-
 
 [[Nice links]]
 
@@ -61,10 +65,10 @@ The square wave like structure with again a square wave like structure on top of
 Average consumption in advertising state is $11.12mA$.
 Average consumption in connection state is $11.01mA$.
 
-### Change of plans for nRF52 
+#### beacon mode
 In the previous use case, we need an interconnection between 2 devices. This will not be the case in the next example.
 
-Here, we use a beacon with a customised UUID (16-bytes). This UUID can be seen by anyone who is scanning. We use this UUID to transfer the data to remote nodes. The signal strength can be used to determine the distance between a beacon and a device.
+Here, we use a beacon with a customized UUID (16-bytes). This UUID can be seen by anyone who is scanning. We use this UUID to transfer the data to remote nodes. The signal strength can be used to determine the distance between a beacon and a device.
 
 pseudo-code of the program
 ```
@@ -85,13 +89,14 @@ Then, the beacon is transmitted for 5 seconds ($\pm0.46mA$) where after that, a 
 This yields a result of $0.3566mA$ average consumption.
 
 ### LTR-329 Light Sensor
+#### Default operation
 Joule scope is used as amp meter (by using only the red wires).
 
 ![[ltr_329_consumption.png]]
-==Adam==
+#todo
 ### SHT40 Light Sensor
 Joule scope is used as amp meter (by using only the red wires).
 ![[sht40_consumption.png]]
-==Adam==
+#todo 
 ### LoRa Module
-==Tom==
+#todo
