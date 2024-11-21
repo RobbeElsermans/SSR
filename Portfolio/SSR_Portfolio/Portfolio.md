@@ -126,6 +126,7 @@ If we follow these pages we should get a connection as follows:
 ![[Wio-E5 Datasheet.pdf]]
 
 ==Tom==
+put the at commands in arduino code
 
 ## I2C Communication with Rover Bot
 ==Tom==
