@@ -38,3 +38,9 @@ https://how2electronics.com/send-receive-data-to-mobile-app-with-xiao-ble-nrf528
 
 Tutorial of using the SDK from nordic -> not needed
 https://mynerdyprojects.com/2021/01/03/nrf52840-examples-part-2-software-and-setup/
+
+STM32 IOC to PIO porter
+https://github.com/ussserrr/stm32pio
+
+FREERTOS STM32 example
+https://github.com/maxgerhardt/pio-stm32h7-stm32cube-freertos
