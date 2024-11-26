@@ -6,32 +6,40 @@ By Adam Hejduk, Robbe Elsermans, and Thomas Kramp
 ## Intro
 As humanities interest in Mars grows, an understanding of its weather is needed. One of the greatest challenges that the planet provides are the frequent dust storms.
 This project will try to monitor the weather phenomenon (such as temperature, humidity, light, ...) to predict such storms.
+## Project division
+#### to divide
+- Energy awareness algorithm
+- 
+#### Adam
+- Environmental sensing
+- Energy output management
+#### Thomas
+- LoRa connectivity
+- Gyroscope
+- Rover actuation
+#### Robbe
+- Project management
+- BLE communication
+- Power Profiling
 ## Board selection
 [[Brain Board selection]]
 ## MVP
 The MVP (Minimal Vital Product) contains the following items:
-- LoRa module connection that transmits data.
-- Dashboard to review received data.
+- LoRa-module that transmits data to a gateway.
+- Dashboard to review received data from LoRa-module.
 - The ability to measure temperature and humidity.
-- Only measure when there is enough energy available.
-- ..?
-
+- Energy awareness
+- Use environmental source as energy source
 ## Power Profiling
 [[Power Profiling]]
-## Brain code
+## STM32 Module
 [[STM32L412KB]]
-## BLE Module
+## BLE Module code
 [[nRF52 SEEED XIAO]]
 ## I2C communication sensor SHT40
 [[SHT40]]
 ## I2C communication of LTR-329
-
-
-
-![[Lite-On_LTR-329ALS-01 DS_ver1.1-348647.pdf]]
-==For Adam==
-
-
+[[LTR-329]]
 ## UART Communication with LoRa-Module
 For the LoRa-Module, we utilize the Wio-e5 mini board.
 ![[lora_e5_mini_pinout.jpg]]
