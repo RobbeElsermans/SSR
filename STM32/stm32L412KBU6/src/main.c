@@ -65,11 +65,9 @@ int main(void)
        - Low Level Initialization
      */
   HAL_Init();
-
   /* Configure the system clock to 80 MHz */
   SystemClock_Config();
-
-  // init pheripherals
+  // init pheripheral
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_UART2_UART_Init();
