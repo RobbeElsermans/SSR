@@ -6,13 +6,15 @@ By Adam Hejduk, Robbe Elsermans, and Thomas Kramp
 ## Intro
 As humanities interest in Mars grows, an understanding of its weather is needed. One of the greatest challenges that the planet provides are the frequent dust storms.
 This project will try to monitor the weather phenomenon (such as temperature, humidity, light, ...) to predict such storms.
+## Project goal
+1 systems that is his own master. They wonder around on the surface of mars. When a node gets lost or anything else, and another node approaches, it can share valuable information. For the rest, they act on their own.
+BLE is used to check proximities of each other and share some valuable information that could have been lost during dust storms (due to no communication available). Also, if a device is unable to move due to a mechanical problem, it can still transmit its data to surrounding nodes.
 ## Project division
 #### to divide
-- Energy awareness algorithm
-- 
+
 #### Adam
 - Environmental sensing
-- Energy output management
+- Energy harvesting
 #### Thomas
 - LoRa connectivity
 - Gyroscope
@@ -21,6 +23,7 @@ This project will try to monitor the weather phenomenon (such as temperature, hu
 - Project management
 - BLE communication
 - Power Profiling
+- Energy awareness algorithm
 ## Board selection
 [[Brain Board selection]]
 ## MVP

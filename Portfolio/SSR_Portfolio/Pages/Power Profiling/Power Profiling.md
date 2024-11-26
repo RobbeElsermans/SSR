@@ -29,7 +29,21 @@ A closer look at the standby mode current consumption.
 The total cycle uses an average current of $\pm 2.7mA$.
 This can be reduced by using a compare value of $0xFFFF$.
 #### stop 2 mode
+This power measurement is conducted on JP1.
 
+The stop mode 2 is a low-power mode which let the STM32 to sleep and retain the RAM. This ensures us to continue where we left. Tis can be handy if we are waiting for measurements.
+The code that is used for this:
+```
+while (1)
+	blink 1 second
+	sleep for 5 seconds in stop 2 mode
+```
+
+![[STM_32_STOP_2.png]]
+A current of $709µA$ is used when in stop mode 2.
+To compare this while running, we have a consumption of $4.54mA$. This is a huge difference in consumption. Therefore, this stop mode 2 can surely be used.
+
+We can also see that the while loop keeps running in loops and the RAM is fully retained.
 ### XIAO nRF52840 
 #### peripheral mode
 A small pseudo-code on what the device does 
