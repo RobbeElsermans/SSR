@@ -25,17 +25,19 @@ uint8_t beaconUuid[16] =
 // A valid Beacon packet consists of the following information:
 // UUID, Major, Minor, RSSI @ 1M
 //https://learn.adafruit.com/bluefruit-nrf52-feather-learning-guide/blebeacon
+//We will set the major and minor further down in the code.
 BLEBeacon beacon(beaconUuid, 0x0000, 0x0000, -54);
 
 struct ble_module_data_t
 {
-    uint8_t ssr_id;          // The ID of the rover itself
-    uint8_t beacon_time;     // How long the beacon may last (val*100=ms)
-    uint8_t scan_time;       // How long the scan may last (val*100=ms)
-    int16_t env_temperature; // Range from -327.68 to 327.67 °C (val/100=°C)
-    uint8_t env_humidity;    // Range from -0-100%
-    uint16_t env_lux;        // Range from 0 to 1000
-    uint16_t dev_voltage;    // Range from 0-6.5535V (val/10000=V) (val/10=mV)
+    uint8_t mode;             // The mode of the BLE-module, 0 -> beacon, 1-> scan
+    uint8_t ssr_id;           // The ID of the rover itself
+    uint8_t beacon_time;      // How long the beacon may last (val*100=ms)
+    uint8_t scan_time;        // How long the scan may last (val*100=ms)
+    int16_t env_temperature;  // Range from -327.68 to 327.67 °C (val/100=°C)
+    uint8_t env_humidity;     // Range from -0-100%
+    uint16_t env_lux;         // Range from 0 to 1000
+    uint16_t dev_voltage;     // Range from 0-6.5535V (val/10000=V) (val/10=mV)
     // x gyro 8bit?
     // y gyro 8bit?
     // z gyro 8bit?
@@ -51,7 +53,6 @@ void setup()
 {
   Serial.begin(115200);
 
-  
   Wire.begin(0x12);             // join i2c bus with address 0x10
   Wire.onReceive(receiveEvent); // register event
 
@@ -77,6 +78,8 @@ void setup()
   received_data = false;
 
   //Print the whole struct
+  Serial.print("m: ");
+  Serial.print(data.mode);
   Serial.print("id: ");
   Serial.print(data.ssr_id);
   Serial.print(" bt: ");
@@ -178,23 +181,24 @@ void receiveEvent(int howMany)
     while (Wire.available()) // loop through all but the last
     {
         uint8_t c = Wire.read(); // receive byte as a character
-
-        if (i == 0) // ssr_id
+        if (i == 0)
+            data.mode = (uint8_t)c;
+        if (i == 1) // ssr_id
             data.ssr_id = (uint8_t)c;
-        if (i == 1) // beacon_time
+        if (i == 2) // beacon_time
             data.beacon_time = (uint8_t)c;
-        if (i == 2) // scan_time
+        if (i == 3) // scan_time
             data.scan_time = (uint8_t)c;
-        if (i == 3) // env_temperature HSB
+        if (i == 4) // env_temperature HSB
         {
             i++;
             uint8_t c1 = Wire.read();            
             data.env_temperature = (int16_t)(c << 8 | c1);
         }
 
-        if (i == 5) // env_humidity
+        if (i == 6) // env_humidity
             data.env_humidity = (uint8_t)c;
-        if (i == 6) // env_lux
+        if (i == 7) // env_lux
         {
             i++;
             
@@ -202,7 +206,7 @@ void receiveEvent(int howMany)
             data.env_lux = (int16_t)(c << 8 | c1);
         }
 
-        if (i == 8) // dev_voltage
+        if (i == 9) // dev_voltage
         {   
             i++;
             uint8_t c1 = Wire.read();
