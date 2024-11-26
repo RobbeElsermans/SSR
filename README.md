@@ -14,39 +14,5 @@ Adam
 Robbe
 Thomas
 
-## Projext requirements
-### connectivity
-- inter rover communication with BLE
-- LoRaWAN through a dashboard
-
-### energy
-- energy harvesting
-- energy awareness
-- embedded power optimization
-
-### Sensing
-- usefull and feasable
-
-## milestones
-- temperature measurement
-- gyroscope measurement
-- LoRaWAN connection with a NodeRed backend for providing the dashboard
-- BLE connection to surrounding SSR's
-- Energy measurement (power profile)
-- Energy management (optimizing power consumption)
-
-## Group division
-### Robbe Elsermans
-- BLE connection to surrounding rovers.
-- Energy measurement (power profiling)
-
-### Thomas Kramp
-- LoRaWAN connectivity to send telemetry data to the servers.
-- NodeRed environment to graph all received data.
-- Gyroscope implementation.
-
-### Adam hejduk
-My Rosposeability is: 
-- Sensor of Temperature, Humidity and light
-- Energy output management.
-15.10.2024 - "I'll research how it works and learn how to code with it." 
+## Portfolio
+[link to portfolio](Portfolio/SSR_Portfolio/Portfolio.md)
