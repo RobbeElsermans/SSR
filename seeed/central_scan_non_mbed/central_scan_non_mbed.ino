@@ -3,7 +3,7 @@
 void setup() 
 {
   Serial.begin(115200);
-  //while ( !Serial ) delay(10);   // for nrf52840 with native usb
+  while ( !Serial ) delay(10);   // for nrf52840 with native usb
 
   Serial.println("Bluefruit52 Central Scan Example");
   Serial.println("--------------------------------\n");
@@ -17,13 +17,16 @@ void setup()
   // Start Central Scan
   Bluefruit.setConnLedInterval(250);
   Bluefruit.Scanner.setRxCallback(scan_callback);
-  Bluefruit.Scanner.start(0);
+  //Bluefruit.Scanner.useActiveScan(true);        // Request scan response data
+  Bluefruit.Scanner.restartOnDisconnect(false);   //Stops when a beacon is found and an ACK is sended over
+  Bluefruit.Scanner.start(700); //500 is 5 seconds
 
   Serial.println("Scanning ...");
 }
 
 void scan_callback(ble_gap_evt_adv_report_t* report)
 {
+  Serial.println("Entered scan");
   //The ID to identify 
   uint32_t id = report->data.p_data[report->data.len - 5] << 8*3 | 
                 report->data.p_data[report->data.len - 4] << 8*2 |
@@ -60,8 +63,8 @@ Serial.printf("id: %02X  real val: %d", id, id);
   if ( *report->peer_addr.addr == 242 )//Bluefruit.Scanner.checkReportForUuid(report, BLEUART_UUID_SERVICE) )
   {
     Serial.println("                       BLE UART service detected");
-    Serial.println(report->data.len);
-    //Serial.printf("id: %02X", id);
+    Serial.printf("%d ",report->data.len);
+    Serial.printf(" id: %02X", id);
     uint8_t* pointer_to_data = report->data.p_data;
     uint16_t data_length = report->data.len;
     
@@ -78,14 +81,23 @@ Serial.printf("id: %02X  real val: %d", id, id);
       
     }
     Serial.println("All data reviewed.");
+
+    //Connect to the beacon
+    //Will fail but is to provide an ACK to the beacon
+    Bluefruit.Central.connect(report);
+
+    
   }
 
   Serial.println();
   }
+  else
+  {
+    Bluefruit.Scanner.resume();
+  }
 
   // For Softdevice v6: after received a report, scanner will be paused
   // We need to call Scanner resume() to continue scanning
-  Bluefruit.Scanner.resume();
 }
 
 void loop() 

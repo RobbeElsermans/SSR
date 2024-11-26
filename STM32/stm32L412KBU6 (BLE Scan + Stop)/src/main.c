@@ -78,35 +78,15 @@ int main(void)
     blink_led(100);
   }
 
-  half_sleep(5000);
-
-  blink_led_times(100, 8);
-
-  // beacon();
-
-  // Read out the energy available
-  // Set the state accordingly
-
-  if (!checkBool(&boolean_holder_1, BOOL_SENS))
-  {
-    setBool(&boolean_holder_1, BOOL_SENS);
-    // Do sensing
-  }
-
-  if (!checkBool(&boolean_holder_1, BOOL_BEACON))
-  {
-    setBool(&boolean_holder_1, BOOL_BEACON);
-    // Send out the beacon
+  while(1){
+    ble_data.env_temperature++;
+    ble_data.env_lux+=2;
+    half_sleep(5000);
     beacon();
+
   }
 
-  blink_led_times(1000,2);
-  deep_sleep(5000);
 
-  while(1)
-  {
-    blink_led(50);
-  }
 
   // case sens:
   //   // Read the sensors values
@@ -197,16 +177,53 @@ void beacon()
   // Add measurement to data struct
   ble_data.mode = 0;
   ble_data.air_time = 50; // 50*100 = 5000ms 5 second
-  ble_data.env_temperature++;
-  ble_data.env_humidity++;
-  ble_data.dev_voltage++;
+  // ble_data.env_temperature++;
+  // ble_data.env_humidity++;
+  // ble_data.dev_voltage++;
 
   // Send out a value
   send_ble_data(&hi2c1, &ble_data);
 }
 void scan()
 {
-  // TODO
+  BLE_Init();
+
+  HAL_GPIO_WritePin(BLE_nSLEEP_GPIO_Port, BLE_nSLEEP_Pin, GPIO_PIN_SET);
+  HAL_Delay(10);
+  HAL_GPIO_WritePin(BLE_nSLEEP_GPIO_Port, BLE_nSLEEP_Pin, GPIO_PIN_RESET);
+
+  // wait until device is available
+  while (ble_device_ready(&hi2c1))
+  {
+    // To test in power profiling
+    // half_sleep(100);
+  }
+
+  // Add measurement to data struct
+  ble_data.mode = 1;
+  ble_data.air_time = 80; // 50*100 = 5000ms 5 second
+  ble_data.env_temperature++;
+  ble_data.env_humidity++;
+  ble_data.dev_voltage++;
+
+  // Send out the BLE data value
+  send_ble_data(&hi2c1, &ble_data);
+
+  //Sleep for air_time
+  half_sleep(ble_data.air_time * 100);
+
+  //read scan data
+  uint8_t received_data = 0;
+  do
+  {
+     half_sleep(100);
+    received_data = receive_ble_data(&hi2c1);
+  }
+  while(received_data == 0);
+
+  uint8_t Buffer[10] = {0};
+  sprintf(Buffer, "%d\r\n", received_data);
+  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
 }
 void sens()
 {
