@@ -36,15 +36,15 @@ The MVP (Minimal Vital Product) contains the following items:
 - Energy awareness
 - Use environmental source as energy source
 ## Power Profiling
-[[Power Profiling]]
+[Power Profiling](Pages/Power_Profiling/Power_Profiling.md)
 ## STM32 Module
-[[STM32L412KB]]
+[STM32 module](Pages/Brain_module/STM32L412KB.md)
 ## BLE Module code
-[[nRF52 SEEED XIAO]]
+[BLE Module](Pages/BLE_Module/nRF52_SEEED_XIAO.md)
 ## I2C communication sensor SHT40
-[[SHT40]]
+[SHT40](Pages/Sensor/SHT40.md)
 ## I2C communication of LTR-329
-[[LTR-329]]
+[LTR-329](Pages/Sensor/LTR-329.md)
 ## UART Communication with LoRa-Module
 For the LoRa-Module, we utilize the Wio-e5 mini board.
 ![[lora_e5_mini_pinout.jpg]]

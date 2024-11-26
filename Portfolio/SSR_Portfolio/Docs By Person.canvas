@@ -6,12 +6,12 @@
 		{"id":"ab6d0dbcb79c67e4","type":"file","file":"Pages/LoRa/Back-End.md","x":1260,"y":-588,"width":400,"height":400},
 		{"id":"e169c120bd4b1f4c","type":"file","file":"Pages/LoRa/TheThingsNetwork.md","x":1680,"y":-588,"width":400,"height":400},
 		{"id":"0e2a23c9dcf406f0","type":"file","file":"Pages/LoRa/UART communications.md","x":2100,"y":-588,"width":400,"height":400},
-		{"id":"2bd2054ab5040017","type":"file","file":"Pages/Power Profiling/Power Profiling.md","x":-800,"y":-588,"width":400,"height":400},
+		{"id":"2bd2054ab5040017","type":"file","file":"Pages/Power_Profiling/Power_Profiling.md","x":-800,"y":-588,"width":400,"height":400},
 		{"id":"742acc4a336fccf9","type":"file","file":"Pages/Investigation/Brain_Board_Selection.md","x":-380,"y":-588,"width":400,"height":400},
 		{"id":"82c3ec3e1614599f","type":"file","file":"Pages/Sensor/LTR-329.md","x":785,"y":-588,"width":400,"height":400},
 		{"id":"a0e90217199016aa","type":"file","file":"Pages/Sensor/SHT40.md","x":360,"y":-588,"width":400,"height":400},
-		{"id":"053a4c348a94b7b7","x":-800,"y":-1120,"width":400,"height":400,"type":"file","file":"Pages/Brain Module/STM32L412KB.md"},
-		{"id":"febd4ece1782bb81","x":-800,"y":-1660,"width":400,"height":400,"type":"file","file":"Pages/BLE Module/nRF52 SEEED XIAO.md"}
+		{"id":"053a4c348a94b7b7","x":-800,"y":-1120,"width":400,"height":400,"type":"file","file":"Pages/Brain_Module/STM32L412KB.md"},
+		{"id":"febd4ece1782bb81","x":-800,"y":-1660,"width":400,"height":400,"type":"file","file":"Pages/BLE_Module/nRF52_SEEED_XIAO.md"}
 	],
 	"edges":[
 		{"id":"dedbc2247231f96d","fromNode":"4fc413f83a227403","fromSide":"bottom","toNode":"ab6d0dbcb79c67e4","toSide":"top"},
