@@ -13,7 +13,7 @@ extern "C" {
 #define RTC_SYNCH_PREDIV     0x00F9  /* 32 kHz RC/128 - 1 */
 #define LED_TOGGLE_DELAY         100
 
-void SystemPower_Config(void);
+void GPIO_Disable(void);
 uint8_t RTC_Config(void);
 uint8_t lowPower_init(void);
 

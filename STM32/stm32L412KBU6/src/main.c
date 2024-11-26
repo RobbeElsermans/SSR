@@ -24,18 +24,21 @@
 #include "gpio.h"
 #include "lp.h"
 #include "ble.h"
-
+#include "rtc.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 struct ble_module_data_t ble_data;
 
-uint8_t BLE_Counter = 0;
-uint8_t buf[10]; // I2C recieve buffer
+uint8_t boolean_holder_1;
+#define BOOL_SEND 0
+#define BOOL_BEACON 1
+#define BOOL_SCAN 2
+#define BOOL_TRANSMIT 3
+#define BOOL_SENS 4
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -50,66 +53,201 @@ void Error_Handler(void);
  */
 int main(void)
 {
-  //Set ID of the SSR
-  ble_data.ssr_id = 0x10;
-  ble_data.env_temperature = -200;
+  // Set ID of the SSR
+  ble_data.ssr_id = SSR_ID;
 
-  /* STM32L4xx HAL library initialization:
-       - Configure the Flash prefetch
-       - Systick timer is configured by default as source of time base, but user
-         can eventually implement his proper time base source (a general purpose
-         timer for example or other time source), keeping in mind that Time base
-         duration should be kept 1ms since PPP_TIMEOUT_VALUEs are defined and
-         handled in milliseconds basis.
-       - Set NVIC Group Priority to 4
-       - Low Level Initialization
-     */
-  HAL_Init();
-  /* Configure the system clock to 80 MHz */
-  SystemClock_Config();
-  // init pheripheral
-  MX_GPIO_Init();
-  MX_I2C1_Init();
+  MCU_Init();
+
+  // Debug UART
   MX_UART2_UART_Init();
-  //LTR329_Init(&hi2c1); // Initialize LTR-329 sensor
 
   /* Configure RTC */
   if (RTC_Config())
   {
     Error_Handler();
   }
-  //Blinky blinky
-  HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_SET);
-  HAL_Delay(250);
-  HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_RESET);
 
-
-  //Wakeup BLE
-  HAL_GPIO_WritePin(BLE_nSLEEP_GPIO_Port, BLE_nSLEEP_Pin, GPIO_PIN_SET);
-  HAL_Delay(10);
-  HAL_GPIO_WritePin(BLE_nSLEEP_GPIO_Port, BLE_nSLEEP_Pin, GPIO_PIN_RESET);
+  // Blinky blinky
+  blink_led(1000);
 
   /* Check if the system was resumed from StandBy mode */
   if (__HAL_PWR_GET_FLAG(PWR_FLAG_SB) != RESET)
   {
     /* Clear Standby flag */
     __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
+    blink_led(100);
   }
-  //Read the sensors values
 
-  //wait until device is available
-  while(ble_device_ready(&hi2c1));
+  half_sleep(5000);
 
-  ble_data.beacon_time = 50; //50*100 = 5000ms 5 second
+  blink_led_times(100, 8);
+
+  // beacon();
+
+  // Read out the energy available
+  // Set the state accordingly
+
+  if (!checkBool(&boolean_holder_1, BOOL_SENS))
+  {
+    setBool(&boolean_holder_1, BOOL_SENS);
+    // Do sensing
+  }
+
+  if (!checkBool(&boolean_holder_1, BOOL_BEACON))
+  {
+    setBool(&boolean_holder_1, BOOL_BEACON);
+    // Send out the beacon
+    beacon();
+  }
+
+
+  blink_led_times(1000,2);
+  deep_sleep(5000);
+
+  while(1)
+  {
+    blink_led(50);
+  }
+
+  // case sens:
+  //   // Read the sensors values
+
+  //   // Read out the energy available
+  //   // Determine what option to take hereafter
+  //   task_state = beacon;
+
+  //   setBool(&boolean_holder_1, BOOL_MEASUREMENT_TAKEN);
+  //   break;
+
+  // case beacon:
+  //   // initialize
+  //   BLE_Init();
+
+  //   // wait until device is available
+  //   while (ble_device_ready(&hi2c1))
+  //   {
+  //   }
+
+  //   // Add measurement to data struct
+  //   ble_data.beacon_time = 50; // 50*100 = 5000ms 5 second
+  //   ble_data.env_temperature++;
+  //   ble_data.env_humidity++;
+  //   ble_data.dev_voltage++;
+
+  //   // Send out a value
+  //   send_ble_data(&hi2c1, &ble_data);
+
+  //   // Go to deep sleep
+  //   task_state = deep_sleep;
+  //   break;
+
+  // case scan:
+  //   break;
+
+  // case transmit:
+  //   break;
+
+  // case sleep:
+  //   // The stop 2 mode
+  //   MX_RTC_Init();
+  //   HAL_SuspendTick();
+  //   HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0x2806, RTC_WAKEUPCLOCK_RTCCLK_DIV16, 0);
+  //   // check_reg = seconds / 0.000488;
+
+  //   /* Enter STOP 2 mode */
+  //   HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
+  //   HAL_RTCEx_DeactivateWakeUpTimer(&hrtc);
+  //   SystemClock_Config();
+  //   HAL_ResumeTick();
+
+  //   break;
+
+  // case deep_sleep:
+
+  //   /* Enter the Standby mode */
+  //   if (lowPower_init())
+  //   {
+  //     Error_Handler();
+  //   }
+  //   else
+  //   {
+  //     HAL_PWR_EnterSTANDBYMode();
+  //   }
+  //   // Will not reach this code
+  //   break;
+
+  // Code shouldn't reach this point after entering standby mode
+  Error_Handler();
+}
+
+void beacon()
+{
+  BLE_Init();
+
+  HAL_GPIO_WritePin(BLE_nSLEEP_GPIO_Port, BLE_nSLEEP_Pin, GPIO_PIN_SET);
+  HAL_Delay(10);
+  HAL_GPIO_WritePin(BLE_nSLEEP_GPIO_Port, BLE_nSLEEP_Pin, GPIO_PIN_RESET);
+
+  // wait until device is available
+  while (ble_device_ready(&hi2c1))
+  {
+    // To test in power profiling
+    // half_sleep(100);
+  }
+
+  // Add measurement to data struct
+  ble_data.mode = 0;
+  ble_data.air_time = 50; // 50*100 = 5000ms 5 second
   ble_data.env_temperature++;
   ble_data.env_humidity++;
   ble_data.dev_voltage++;
 
-  //Send out a value
+  // Send out a value
   send_ble_data(&hi2c1, &ble_data);
-  
+}
+void scan()
+{
+  // TODO
+}
+void sens()
+{
+  // TODO
+}
+void transmit()
+{
+  // TODO
+}
+
+void half_sleep(uint16_t time)
+{
+  uint16_t counter_value = 0x2806; // 5 seconds
+  // Calculate the time
+  if (time > 31981)
+    counter_value = 0xFFFF; // Set maximum available time
+  else
+    counter_value = (uint16_t)((time / 1000.0) / 0.000488);
+
+  // uint8_t Buffer[10] = {0};
+  // sprintf(Buffer, "%02X", counter_value);
+  // HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
+
+  // The stop 2 mode
+  MX_RTC_Init();
+  HAL_SuspendTick();
+  HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, counter_value, RTC_WAKEUPCLOCK_RTCCLK_DIV16, 0);
+  // check_reg = seconds / 0.000488;
+
+  /* Enter STOP 2 mode */
+  HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
+  HAL_RTCEx_DeactivateWakeUpTimer(&hrtc);
+  SystemClock_Config();
+  HAL_ResumeTick();
+}
+
+void deep_sleep(uint16_t time)
+{
   /* Enter the Standby mode */
-  if (lowPower_init())
+  if (lowPower_init(time))
   {
     Error_Handler();
   }
@@ -117,9 +255,60 @@ int main(void)
   {
     HAL_PWR_EnterSTANDBYMode();
   }
+  // Will not reach this code
+}
 
-  //Code shouldn't reach this point
-  Error_Handler();
+void blink_led(uint16_t time)
+{
+  blink_led_times(time, (uint8_t)1);
+}
+
+void blink_led_times(uint16_t time, uint8_t times)
+{
+  for (uint8_t i = 0; i < times; i++)
+  {
+    HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_SET);
+    HAL_Delay(time);
+    HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_RESET);
+    HAL_Delay(time);
+  }
+}
+
+// Mandatory to operate MCU in the first place
+void MCU_Init()
+{
+  HAL_Init();
+  SystemClock_Config();
+  MX_GPIO_Init();
+}
+
+void sensor_Init()
+{
+  LTR329_Init(&hi2c1);
+  // SHT40_Init(&hi2c1);
+}
+
+void BLE_Init()
+{
+  MX_I2C1_Init();
+}
+void LoRa_Init()
+{
+}
+
+void setBool(uint8_t *bool_carrier, uint8_t bool_place)
+{
+  *bool_carrier |= 0b1 << bool_place;
+}
+
+void clearBool(uint8_t *bool_carrier, uint8_t bool_place)
+{
+  *bool_carrier &= ~(0b1 << bool_place);
+}
+
+uint8_t checkBool(uint8_t *bool_carrier, uint8_t bool_place)
+{
+  return *bool_carrier & (0b1 << bool_place);
 }
 
 /**

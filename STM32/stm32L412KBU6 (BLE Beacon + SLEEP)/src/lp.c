@@ -37,7 +37,7 @@ uint8_t lowPower_init(void)
 {
     uint32_t tickstart;
     /* Configure the system Power */
-    SystemPower_Config();
+    GPIO_Disable();
     /* Enable ultra low power BOR and PVD supply monitoring */
     HAL_PWREx_EnableBORPVD_ULP();
 
@@ -95,7 +95,7 @@ uint8_t lowPower_init(void)
   * @param  None
   * @retval None
   */
-void SystemPower_Config(void)
+void GPIO_Disable(void)
 {
   /* Enable Power Clock */
   __HAL_RCC_PWR_CLK_ENABLE();

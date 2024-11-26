@@ -7,9 +7,9 @@ uint8_t send_ble_data(I2C_HandleTypeDef *hi2c1, struct ble_module_data_t *data)
     //Set correct translation
     uint8_t buf[13];
 
-    buf[0] = data->ssr_id;
-    buf[1] = data->beacon_time;
-    buf[2] = data->scan_time;
+    buf[0] = data->mode;
+    buf[1] = data->ssr_id;
+    buf[2] = data->air_time;
     buf[3] = (uint8_t) (data->env_temperature >> 8) & 0xFF; 
     buf[4] = (uint8_t) data->env_temperature & 0xFF; 
     buf[5] = data->env_humidity;
@@ -32,4 +32,5 @@ uint8_t send_ble_data(I2C_HandleTypeDef *hi2c1, struct ble_module_data_t *data)
 
 uint8_t ble_device_ready(I2C_HandleTypeDef *hi2c1){
     uint8_t ret = HAL_I2C_IsDeviceReady(hi2c1, BLE_ADDRESS, 1, 1);
+    return ret;
 }
