@@ -25,7 +25,9 @@ BLE is used to check proximities of each other and share some valuable informati
 - Power Profiling
 - Energy awareness algorithm
 ## Board selection
-[[Brain Board selection]]
+[Brain Board Selection](Pages/Investigation/Brain_Board_Selection.md)
+
+
 ## MVP
 The MVP (Minimal Vital Product) contains the following items:
 - LoRa-module that transmits data to a gateway.

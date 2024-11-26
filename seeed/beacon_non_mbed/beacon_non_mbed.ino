@@ -32,8 +32,7 @@ struct ble_module_data_t
 {
     uint8_t mode;             // The mode of the BLE-module, 0 -> beacon, 1-> scan
     uint8_t ssr_id;           // The ID of the rover itself
-    uint8_t beacon_time;      // How long the beacon may last (val*100=ms)
-    uint8_t scan_time;        // How long the scan may last (val*100=ms)
+    uint8_t air_time; // How long the beacon may last (val*100=ms)
     int16_t env_temperature;  // Range from -327.68 to 327.67 °C (val/100=°C)
     uint8_t env_humidity;     // Range from -0-100%
     uint16_t env_lux;         // Range from 0 to 1000
@@ -53,7 +52,7 @@ void setup()
 {
   Serial.begin(115200);
 
-  Wire.begin(0x12);             // join i2c bus with address 0x10
+  Wire.begin(0x12);             // join i2c bus with address 0x12
   Wire.onReceive(receiveEvent); // register event
 
   // Uncomment to blocking wait for Serial connection
@@ -82,10 +81,8 @@ void setup()
   Serial.print(data.mode);
   Serial.print("id: ");
   Serial.print(data.ssr_id);
-  Serial.print(" bt: ");
-  Serial.print(data.beacon_time);
-  Serial.print(" st: ");
-  Serial.print(data.scan_time);
+  Serial.print(" at: ");
+  Serial.print(data.air_time);
   Serial.print(" et: ");
   Serial.print(data.env_temperature);
   Serial.print(" eh: ");
@@ -161,7 +158,7 @@ void startAdv(void)
   //Bluefruit.Advertising.restartOnDisconnect(true);
   Bluefruit.Advertising.setInterval(160,160);    // in unit of 0.625 ms
 
-  uint8_t time_active = data.beacon_time / 10;
+  uint8_t time_active = data.air_time / 10;
   Serial.println(time_active);
   
   Bluefruit.Advertising.setFastTimeout(time_active);      // number of seconds in fast mode
@@ -186,19 +183,17 @@ void receiveEvent(int howMany)
         if (i == 1) // ssr_id
             data.ssr_id = (uint8_t)c;
         if (i == 2) // beacon_time
-            data.beacon_time = (uint8_t)c;
-        if (i == 3) // scan_time
-            data.scan_time = (uint8_t)c;
-        if (i == 4) // env_temperature HSB
+            data.air_time = (uint8_t)c;
+        if (i == 3) // env_temperature HSB
         {
             i++;
             uint8_t c1 = Wire.read();            
             data.env_temperature = (int16_t)(c << 8 | c1);
         }
 
-        if (i == 6) // env_humidity
+        if (i == 5) // env_humidity
             data.env_humidity = (uint8_t)c;
-        if (i == 7) // env_lux
+        if (i == 6) // env_lux
         {
             i++;
             
@@ -206,7 +201,7 @@ void receiveEvent(int howMany)
             data.env_lux = (int16_t)(c << 8 | c1);
         }
 
-        if (i == 9) // dev_voltage
+        if (i == 8) // dev_voltage
         {   
             i++;
             uint8_t c1 = Wire.read();

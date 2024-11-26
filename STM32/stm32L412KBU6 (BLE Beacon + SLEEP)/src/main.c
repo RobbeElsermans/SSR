@@ -101,7 +101,7 @@ int main(void)
   while(ble_device_ready(&hi2c1));
 
   ble_data.mode = 0;
-  ble_data.beacon_time = 50; //50*100 = 5000ms 5 second
+  ble_data.air_time = 50; //50*100 = 5000ms 5 second
   ble_data.env_temperature++;
   ble_data.env_humidity++;
   ble_data.dev_voltage++;

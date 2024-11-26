@@ -9,18 +9,17 @@ uint8_t send_ble_data(I2C_HandleTypeDef *hi2c1, struct ble_module_data_t *data)
 
     buf[0] = data->mode;
     buf[1] = data->ssr_id;
-    buf[2] = data->beacon_time;
-    buf[3] = data->scan_time;
-    buf[4] = (uint8_t) (data->env_temperature >> 8) & 0xFF; 
-    buf[5] = (uint8_t) data->env_temperature & 0xFF; 
-    buf[6] = data->env_humidity;
-    buf[7] = (uint8_t) (data->env_lux >> 8) & 0xFF; 
-    buf[8] = (uint8_t) data->env_lux & 0xFF; 
-    buf[9] = (uint8_t) (data->dev_voltage >> 8) & 0xFF; 
-    buf[10] = (uint8_t) data->dev_voltage & 0xFF; 
+    buf[2] = data->air_time;
+    buf[3] = (uint8_t) (data->env_temperature >> 8) & 0xFF; 
+    buf[4] = (uint8_t) data->env_temperature & 0xFF; 
+    buf[5] = data->env_humidity;
+    buf[6] = (uint8_t) (data->env_lux >> 8) & 0xFF; 
+    buf[7] = (uint8_t) data->env_lux & 0xFF; 
+    buf[8] = (uint8_t) (data->dev_voltage >> 8) & 0xFF; 
+    buf[9] = (uint8_t) data->dev_voltage & 0xFF; 
+    buf[10] = data->ssr_id;
     buf[11] = data->ssr_id;
     buf[12] = data->ssr_id;
-    buf[13] = data->ssr_id;
 
     ret = HAL_I2C_Master_Transmit(hi2c1, BLE_ADDRESS, buf, sizeof(buf), HAL_MAX_DELAY);
 
@@ -33,4 +32,5 @@ uint8_t send_ble_data(I2C_HandleTypeDef *hi2c1, struct ble_module_data_t *data)
 
 uint8_t ble_device_ready(I2C_HandleTypeDef *hi2c1){
     uint8_t ret = HAL_I2C_IsDeviceReady(hi2c1, BLE_ADDRESS, 1, 1);
+    return ret;
 }
