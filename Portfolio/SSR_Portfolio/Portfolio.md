@@ -155,7 +155,7 @@ When the BLE-module has finished its flow, it goes to deep sleep.
 The SM32L4 needs to waken up the device by setting a specific GPIO HIGH.
 
 ## I2C communication sensor SHT40
-![[HT_DS_Datasheet_SHT4x.pdf]]
+![[SHT4x Datasheet.pdf]]
 Some conclusions: 
 - address can range from 0x44 to 0x46.
 - Idle current = $0.08\mu A$
@@ -169,7 +169,7 @@ $RH = ( -6 + 125 \cdot \frac{S_{RH}}{2^{16} -1}) (\%RH)$
 $T = ( -45 + 175 \cdot \frac{S_{T}}{2^{16} -1}) (^\circ C)$
 
 ## I2C communication of LTR-329
-![[Lite-On_LTR-329ALS-01 DS_ver1.1-348647.pdf]]
+![[LTR-329ALS Datasheet.pdf]]
 ==For Adam==
 
 
@@ -194,5 +194,6 @@ If we follow these pages we should get a connection as follows:
 put the at commands in arduino code
 
 ## I2C Communication with Rover Bot
+![[MPU-6050 Datasheet.pdf]]
 ==Tom==
 
