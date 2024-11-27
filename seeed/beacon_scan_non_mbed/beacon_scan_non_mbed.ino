@@ -69,7 +69,7 @@ void setup()
   Wire.onReceive(receiveEvent); // register event
 
   // Uncomment to blocking wait for Serial connection
-  while ( !Serial ) delay(10);
+  //while ( !Serial ) delay(10);
 
   //Serial.println("Wait for data");
   //DEBUG RESET AFTER

@@ -1,5 +1,7 @@
 #include <bluefruit.h>
 
+uint32_t devId = 0;
+
 void setup() 
 {
   Serial.begin(115200);
@@ -31,9 +33,6 @@ void connect_callback(uint16_t conn_handle)
 {
   BLEConnection* conn = Bluefruit.Connection(conn_handle);
   Serial.println("connect_callback - A connection is made");
-
-  Serial.printf("connect_callback - RSSI: %d \r\n",conn->getRssi());
-  
   conn->disconnect(); //in order to drop the connection
   Serial.println("connect_callback - The connection is disconnected");
   delay(100);
@@ -49,65 +48,60 @@ void scan_callback(ble_gap_evt_adv_report_t* report)
                 report->data.p_data[report->data.len - 3] << 8*1 | 
                 report->data.p_data[report->data.len - 2] << 8*0;
 
-  if (id == 1058013184)
+  if (id == 1058013184 && id != devId)
   {
-  Serial.println("Timestamp Addr              Rssi Data");
+    devId = id;
+    Serial.println("Timestamp Addr              Rssi Data");
 
-  Serial.printf("%09d ", millis());
-  
-  // MAC is in little endian --> print reverse
-  Serial.printBufferReverse(report->peer_addr.addr, 6, ':');
-  Serial.print(" ");
-  Serial.print(*report->peer_addr.addr);
-  Serial.print(" ");
-  //Search for CE:A5:C5:43:A3:F2 242
-
-  Serial.print(report->rssi);
-  Serial.print("  ");
-
-  Serial.printBuffer(report->data.p_data, report->data.len, '-');
-  Serial.println();
-
-//Compose 2 bytes of the 4 last bytes minus 1 byte
-  uint32_t id = report->data.p_data[report->data.len - 5] << 8*3 | 
-                report->data.p_data[report->data.len - 4] << 8*2 |
-                report->data.p_data[report->data.len - 3] << 8*1 | 
-                report->data.p_data[report->data.len - 2] << 8*0;
-                
-Serial.printf("id: %02X  real val: %d", id, id);
-    // Check if beacon has a certain address. Not good to use in global environment
-  if ( *report->peer_addr.addr == 242 )//Bluefruit.Scanner.checkReportForUuid(report, BLEUART_UUID_SERVICE) )
-  {
-    Serial.println("                       BLE Beacon service detected");
-    Serial.printf("%d ",report->data.len);
-    Serial.printf(" id: %02X", id);
-    uint8_t* pointer_to_data = report->data.p_data;
-    uint16_t data_length = report->data.len;
+    Serial.printf("%09d ", millis());
     
-    for( uint16_t i = 0; i < report->data.len; i++){
+    // MAC is in little endian --> print reverse
+    Serial.printBufferReverse(report->peer_addr.addr, 6, ':');
+    Serial.print(" ");
+    Serial.print(*report->peer_addr.addr);
+    Serial.print(" ");
+    //Search for CE:A5:C5:43:A3:F2 242
+
+    Serial.print(report->rssi);
+    Serial.print("  ");
+
+    Serial.printBuffer(report->data.p_data, report->data.len, '-');
+    Serial.println();
+                  
+    Serial.printf("id: %02X  real val: %d", id, id);
+    // Check if beacon has a certain address. Not good to use in global environment
+    if ( *report->peer_addr.addr == 242 )//Bluefruit.Scanner.checkReportForUuid(report, BLEUART_UUID_SERVICE) )
+    {
+      Serial.println("                       BLE Beacon service detected");
+      Serial.printf("%d ",report->data.len);
+      Serial.printf(" id: %02X", id);
+      uint8_t* pointer_to_data = report->data.p_data;
+      uint16_t data_length = report->data.len;
       
-      Serial.print(i);
-      Serial.print(" ");
-      Serial.printf("%02X", pointer_to_data[0]);  
-      //Serial.printf("%02X", pointer_to_data[1]);  
-      //Serial.printf("%02X", pointer_to_data[2]);  
-      //Serial.printf("%02X", pointer_to_data[3]);  
-      Serial.print(" ; ");
-      pointer_to_data += 1;
-      
+      for( uint16_t i = 0; i < report->data.len; i++){
+        
+        Serial.print(i);
+        Serial.print(" ");
+        Serial.printf("%02X", pointer_to_data[0]);  
+        //Serial.printf("%02X", pointer_to_data[1]);  
+        //Serial.printf("%02X", pointer_to_data[2]);  
+        //Serial.printf("%02X", pointer_to_data[3]);  
+        Serial.print(" ; ");
+        pointer_to_data += 1;
+        
+      }
+      Serial.println("All data reviewed.");
+
+      //Connect to the beacon
+      //Will fail but is to provide an ACK to the beacon
+
+      Serial.println("Before connect");
+      Bluefruit.Central.connect(report);
+      Serial.println("After connect");
+      delay(500);
     }
-    Serial.println("All data reviewed.");
 
-    //Connect to the beacon
-    //Will fail but is to provide an ACK to the beacon
-
-    Serial.println("Before connect");
-    Bluefruit.Central.connect(report);
-    Serial.println("After connect");
-    delay(500);
-  }
-
-  Serial.println();
+    Serial.println();
   }
   else
   {
