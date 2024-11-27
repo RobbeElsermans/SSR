@@ -120,20 +120,21 @@ void setup()
   // Setup the advertising packet
   
   
-startAdv();
   Serial.println("Broadcasting beacon, open your beacon app to test");
   timer = millis();
   while(millis()-timer < data.air_time*100)
   {
+    startAdv();
     delay(10);
     while(Bluefruit.Advertising.isRunning()){
       delay(1000);
     }
     Serial.println("advertising done");
-    Bluefruit.Advertising.stop();
+    //Bluefruit.Advertising.stop();
     delay(10); 
-    Bluefruit.Advertising.start(1);
+    //Bluefruit.Advertising.start(1);
     delay(1000);  
+    Bluefruit.Periph.clearBonds();
   }
 
    deep_sleep();
@@ -200,8 +201,10 @@ void loop()
  */
 void connect_callback(uint16_t conn_handle)
 {
+  BLEConnection* conn = Bluefruit.Connection(conn_handle);
   Serial.println("Connected");
   //Bluefruit.Advertising.stop();
+  conn->disconnect();
 }
 
 /**

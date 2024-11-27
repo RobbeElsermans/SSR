@@ -29,8 +29,11 @@ void setup()
 
 void connect_callback(uint16_t conn_handle)
 {
+  BLEConnection* conn = Bluefruit.Connection(conn_handle);
   Serial.println("Connect callback");
-  Bluefruit.Scanner.start(0); //To reset the connection
+  conn->disconnect();
+  delay(100);
+  //Bluefruit.Scanner.start(0); //To reset the connection
 }
 
 void scan_callback(ble_gap_evt_adv_report_t* report)
