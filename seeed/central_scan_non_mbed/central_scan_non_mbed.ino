@@ -10,23 +10,32 @@ void setup()
 
   // Initialize Bluefruit with maximum connections as Peripheral = 0, Central = 1
   // SRAM usage required by SoftDevice will increase dramatically with number of connections
-  Bluefruit.begin(0, 1);
+  Bluefruit.begin(0, 2);
   Bluefruit.setTxPower(4);    // Check bluefruit.h for supported values
   Bluefruit.setName("Bluefruit52");
 
   // Start Central Scan
   Bluefruit.setConnLedInterval(250);
   Bluefruit.Scanner.setRxCallback(scan_callback);
+  Bluefruit.Central.setConnectCallback(connect_callback);
+  
   //Bluefruit.Scanner.useActiveScan(true);        // Request scan response data
-  Bluefruit.Scanner.restartOnDisconnect(false);   //Stops when a beacon is found and an ACK is sended over
-  Bluefruit.Scanner.start(700); //500 is 5 seconds
+  //Bluefruit.Scanner.restartOnDisconnect(false);   //Stops when a beacon is found and an ACK is sended over
+  Bluefruit.Scanner.restartOnDisconnect(true);
+  Bluefruit.Scanner.start(0); //500 is 5 seconds
 
   Serial.println("Scanning ...");
 }
 
+void connect_callback(uint16_t conn_handle)
+{
+  Serial.println("Connect callback");
+  Bluefruit.Scanner.start(0); //To reset the connection
+}
+
 void scan_callback(ble_gap_evt_adv_report_t* report)
 {
-  Serial.println("Entered scan");
+  //Serial.println("Entered scan");
   //The ID to identify 
   uint32_t id = report->data.p_data[report->data.len - 5] << 8*3 | 
                 report->data.p_data[report->data.len - 4] << 8*2 |
@@ -62,7 +71,7 @@ Serial.printf("id: %02X  real val: %d", id, id);
     // Check if beacon has a certain address. Not good to use in global environment
   if ( *report->peer_addr.addr == 242 )//Bluefruit.Scanner.checkReportForUuid(report, BLEUART_UUID_SERVICE) )
   {
-    Serial.println("                       BLE UART service detected");
+    Serial.println("                       BLE Beacon service detected");
     Serial.printf("%d ",report->data.len);
     Serial.printf(" id: %02X", id);
     uint8_t* pointer_to_data = report->data.p_data;
@@ -84,9 +93,11 @@ Serial.printf("id: %02X  real val: %d", id, id);
 
     //Connect to the beacon
     //Will fail but is to provide an ACK to the beacon
-    Bluefruit.Central.connect(report);
 
-    
+    Serial.println("Before connect");
+    Bluefruit.Central.connect(report);
+    Serial.println("After connect");
+    delay(500);
   }
 
   Serial.println();
@@ -98,6 +109,7 @@ Serial.printf("id: %02X  real val: %d", id, id);
 
   // For Softdevice v6: after received a report, scanner will be paused
   // We need to call Scanner resume() to continue scanning
+  Bluefruit.Scanner.resume();
 }
 
 void loop() 

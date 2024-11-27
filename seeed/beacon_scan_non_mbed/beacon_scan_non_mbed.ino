@@ -28,6 +28,9 @@ uint8_t beaconUuid[16] =
 //We will set the major and minor further down in the code.
 BLEBeacon beacon(beaconUuid, 0x0000, 0x0000, -54);
 
+void deep_sleep();
+
+
 struct ble_module_data_t
 {
     uint8_t mode;             // The mode of the BLE-module, 0 -> beacon, 1-> scan
@@ -42,6 +45,12 @@ struct ble_module_data_t
     // z gyro 8bit?
 };
 
+struct ble_beacon_result_t
+{
+  // How many devices have acked the Beacon. this determines the amount of nodes present
+  uint8_t amount_of_ack;
+};
+
 volatile struct ble_module_data_t data;
 
 void receiveEvent(int howMany);
@@ -49,6 +58,8 @@ void receiveEvent(int howMany);
 volatile bool received_data = false;
 
 volatile bool mode = 0; //Default in beacon mode
+
+long timer = 0;
 
 void setup() 
 {
@@ -84,12 +95,12 @@ void setup()
 
   if(data.mode == 0)
   {
-  Bluefruit.Periph.setConnectCallback(connect_callback);
-  
-  Bluefruit.begin();
+  //Bluefruit.Periph.setConnectCallback(connect_callback);
 
+  Bluefruit.begin();
+  
   // off Blue LED for lowest power consumption
-  Bluefruit.autoConnLed(false);
+  Bluefruit.autoConnLed(true);
   Bluefruit.setTxPower(0);    // Check bluefruit.h for supported values
   
   // Manufacturer ID is required for Manufacturer Specific Data
@@ -108,35 +119,38 @@ void setup()
   
   // Setup the advertising packet
   
-  startAdv();
-
+  
+startAdv();
   Serial.println("Broadcasting beacon, open your beacon app to test");
-  while(Bluefruit.Advertising.isRunning()){
-    delay(1000);
-  }
-
-  Serial.println("Done Advertising");
-  }
-  else
+  timer = millis();
+  while(millis()-timer < data.air_time*100)
   {
-    //beacon mode
-      
+    delay(10);
+    while(Bluefruit.Advertising.isRunning()){
+      delay(1000);
+    }
+    Serial.println("advertising done");
+    Bluefruit.Advertising.stop();
+    delay(10); 
+    Bluefruit.Advertising.start(1);
+    delay(1000);  
   }
 
-  Serial.println("Go to deep sleep");
+   deep_sleep();
+}
+
+  //Serial.println("Go to deep sleep");
+  //delay(1000);
   //https://pperego83.medium.com/how-to-sleep-arduino-nano-ble-33-c4fe4d38b357
   //https://forum.arduino.cc/t/put-nano-33-ble-into-power-on-sleep-mode/1169463
   //https://forum.seeedstudio.com/t/sleep-current-of-xiao-nrf52840-deep-sleep-vs-light-sleep/271841
   //https://devzone.nordicsemi.com/f/nordic-q-a/100602/seeed-xiao-nrf82840-wakeup-after-nrf_power-systemoff
 
-  //nrf_gpio_cfg_sense_input(digitalPinToInterrupt(2), NRF_GPIO_PIN_PULLDOWN, NRF_GPIO_PIN_SENSE_HIGH);
 
   //Works
   //Found it on https://forum.seeedstudio.com/t/xiao-ble-sense-in-deep-sleep-mode/263477/129?page=7
-  //nrf_gpio_cfg_sense_input(g_ADigitalPinMap[2], NRF_GPIO_PIN_PULLUP, NRF_GPIO_PIN_SENSE_LOW); //wake from deep sleep
-  nrf_gpio_cfg_sense_input(g_ADigitalPinMap[2], NRF_GPIO_PIN_PULLDOWN, NRF_GPIO_PIN_SENSE_HIGH); //wake from deep sleep
-
-  NRF_POWER->SYSTEMOFF = 1;
+  //nrf_gpio_cfg_sense_input(g_ADigitalPinMap[2], NRF_GPIO_PIN_PULLDOWN, NRF_GPIO_PIN_SENSE_HIGH); //wake from deep sleep
+  //NRF_POWER->SYSTEMOFF = 1;
 
   //Code will not reache this.
   // Suspend Loop() to save power, since we didn't have any code there
@@ -149,6 +163,8 @@ void startAdv(void)
   // Set the beacon payload using the BLEBeacon class populated
   // earlier in this example
   Bluefruit.Advertising.setBeacon(beacon);
+  Bluefruit.Periph.setConnectCallback(connect_callback);
+  Bluefruit.Advertising.setStopCallback(stop_callback);
 
   // Secondary Scan Response packet (optional)
   // Since there is no room for 'Name' in Advertising packet
@@ -164,17 +180,13 @@ void startAdv(void)
    * - Fixed interval: 100 ms -> fast = slow = 100 ms
    */
 //  Bluefruit.Advertising.setType(BLE_GAP_ADV_TYPE_ADV_NONCONN_IND);
-  
-  
-  
-  Bluefruit.Advertising.restartOnDisconnect(false); //in order so the beacon stops sending after ACK.
+    
+  //Bluefruit.Advertising.restartOnDisconnect(false); //in order so the beacon stops sending after ACK.
+  Bluefruit.Advertising.restartOnDisconnect(false);
   Bluefruit.Advertising.setInterval(160,160);    // in unit of 0.625 ms
-
-  uint8_t time_active = data.air_time / 10;
-  Serial.println(time_active);
   
-  Bluefruit.Advertising.setFastTimeout(time_active);      // number of seconds in fast mode
-  Bluefruit.Advertising.start(1);                // 0 = Don't stop advertising after n seconds  
+  Bluefruit.Advertising.setFastTimeout(1);      // number of seconds in fast mode
+  Bluefruit.Advertising.start(data.air_time/10);                // 0 = Don't stop advertising after n seconds  
 }
 
 void loop() 
@@ -182,7 +194,35 @@ void loop()
   // loop is already suspended, CPU will not run loop() at all
 }
 
+/**
+ * Callback invoked when an connection is established
+ * @param conn_handle
+ */
+void connect_callback(uint16_t conn_handle)
+{
+  Serial.println("Connected");
+  //Bluefruit.Advertising.stop();
+}
+
+/**
+ * Callback invoked when a connection is dropped
+ * @param conn_handle
+ * @param reason is a BLE_HCI_STATUS_CODE which can be found in ble_hci.h
+ */
+void disconnect_callback(uint16_t conn_handle, uint8_t reason)
+{
+  Serial.print("Disconnected, reason = 0x"); Serial.println(reason, HEX);
+}
+
+void stop_callback()
+{
+  Serial.println("Done Advertising");
+  Serial.println("stopped");
+  deep_sleep();
+}
+
 // callback invoked when central connects
+/*
 void connect_callback(uint16_t conn_handle)
 {
   // Get the reference to current connection
@@ -194,6 +234,7 @@ void connect_callback(uint16_t conn_handle)
   Serial.print("Connected to ");
   Serial.println(central_name);
 }
+*/
 
 // function that executes whenever data is received from master
 // this function is registered as an event, see setup()
@@ -215,7 +256,7 @@ void receiveEvent(int howMany)
             uint8_t c1 = Wire.read();            
             data.env_temperature = (int16_t)(c << 8 | c1);
         }
-
+        
         if (i == 5) // env_humidity
             data.env_humidity = (uint8_t)c;
         if (i == 6) // env_lux
@@ -239,4 +280,23 @@ void receiveEvent(int howMany)
     //If ID has a good value
     if (data.ssr_id != 0x00)
       received_data = true;
+}
+
+
+void deep_sleep(){
+  Serial.println("Go to deep sleep");
+  delay(1000);
+  //https://pperego83.medium.com/how-to-sleep-arduino-nano-ble-33-c4fe4d38b357
+  //https://forum.arduino.cc/t/put-nano-33-ble-into-power-on-sleep-mode/1169463
+  //https://forum.seeedstudio.com/t/sleep-current-of-xiao-nrf52840-deep-sleep-vs-light-sleep/271841
+  //https://devzone.nordicsemi.com/f/nordic-q-a/100602/seeed-xiao-nrf82840-wakeup-after-nrf_power-systemoff
+
+  //nrf_gpio_cfg_sense_input(digitalPinToInterrupt(2), NRF_GPIO_PIN_PULLDOWN, NRF_GPIO_PIN_SENSE_HIGH);
+
+  //Works
+  //Found it on https://forum.seeedstudio.com/t/xiao-ble-sense-in-deep-sleep-mode/263477/129?page=7
+  //nrf_gpio_cfg_sense_input(g_ADigitalPinMap[2], NRF_GPIO_PIN_PULLUP, NRF_GPIO_PIN_SENSE_LOW); //wake from deep sleep
+  nrf_gpio_cfg_sense_input(g_ADigitalPinMap[2], NRF_GPIO_PIN_PULLDOWN, NRF_GPIO_PIN_SENSE_HIGH); //wake from deep sleep
+
+  NRF_POWER->SYSTEMOFF = 1;
 }
