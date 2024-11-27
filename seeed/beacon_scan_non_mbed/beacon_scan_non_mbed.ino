@@ -117,27 +117,22 @@ void setup()
   beaconUuid[5] = (data.dev_voltage & 0xFF) >> 8;
   beaconUuid[6] = (data.dev_voltage & 0xFF);
   
-  // Setup the advertising packet
-  
-  
   Serial.println("Broadcasting beacon, open your beacon app to test");
   timer = millis();
   while(millis()-timer < data.air_time*100)
   {
-    startAdv();
-    delay(10);
-    while(Bluefruit.Advertising.isRunning()){
-      delay(1000);
-    }
+    uint16_t time_left = data.air_time*100 - (millis()-timer);
+    //Pass through the amount of seconds it has to wait.
+    Serial.printf("time left: %d", time_left);
+    startAdv(time_left);
+    //Wait until a connection is made again
+    while(Bluefruit.Advertising.isRunning());
     Serial.println("advertising done");
-    //Bluefruit.Advertising.stop();
-    delay(10); 
-    //Bluefruit.Advertising.start(1);
-    delay(1000);  
+    delay(1);
     Bluefruit.Periph.clearBonds();
   }
 
-   deep_sleep();
+  deep_sleep();
 }
 
   //Serial.println("Go to deep sleep");
@@ -158,8 +153,8 @@ void setup()
   //suspendLoop();
 }
 
-void startAdv(void)
-{  
+void startAdv(uint16_t timer)
+{
   // Advertising packet
   // Set the beacon payload using the BLEBeacon class populated
   // earlier in this example
@@ -187,7 +182,15 @@ void startAdv(void)
   Bluefruit.Advertising.setInterval(160,160);    // in unit of 0.625 ms
   
   Bluefruit.Advertising.setFastTimeout(1);      // number of seconds in fast mode
-  Bluefruit.Advertising.start(data.air_time/10);                // 0 = Don't stop advertising after n seconds  
+  //Bluefruit.Advertising.start(data.air_time/10);                // 0 = Don't stop advertising after n seconds  
+
+  Serial.println("Time in sec");
+  Serial.println(timer/1000);
+  
+  if (timer/1000 <= 0)
+    Bluefruit.Advertising.start(1);
+  else
+    Bluefruit.Advertising.start(timer/1000);
 }
 
 void loop() 
@@ -202,24 +205,14 @@ void loop()
 void connect_callback(uint16_t conn_handle)
 {
   BLEConnection* conn = Bluefruit.Connection(conn_handle);
-  Serial.println("Connected");
-  //Bluefruit.Advertising.stop();
+  Serial.println("connect_callback - Connected");
   conn->disconnect();
-}
-
-/**
- * Callback invoked when a connection is dropped
- * @param conn_handle
- * @param reason is a BLE_HCI_STATUS_CODE which can be found in ble_hci.h
- */
-void disconnect_callback(uint16_t conn_handle, uint8_t reason)
-{
-  Serial.print("Disconnected, reason = 0x"); Serial.println(reason, HEX);
+  Serial.println("connect_callback - The connection is disconnected");
 }
 
 void stop_callback()
 {
-  Serial.println("Done Advertising");
+  Serial.println("timer passed from .start() method Advertising");
   Serial.println("stopped");
   deep_sleep();
 }

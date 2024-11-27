@@ -24,14 +24,18 @@ void setup()
   Bluefruit.Scanner.restartOnDisconnect(true);
   Bluefruit.Scanner.start(0); //500 is 5 seconds
 
-  Serial.println("Scanning ...");
+  Serial.println("setup - Scanning ...");
 }
 
 void connect_callback(uint16_t conn_handle)
 {
   BLEConnection* conn = Bluefruit.Connection(conn_handle);
-  Serial.println("Connect callback");
-  conn->disconnect();
+  Serial.println("connect_callback - A connection is made");
+
+  Serial.printf("connect_callback - RSSI: %d \r\n",conn->getRssi());
+  
+  conn->disconnect(); //in order to drop the connection
+  Serial.println("connect_callback - The connection is disconnected");
   delay(100);
   //Bluefruit.Scanner.start(0); //To reset the connection
 }
