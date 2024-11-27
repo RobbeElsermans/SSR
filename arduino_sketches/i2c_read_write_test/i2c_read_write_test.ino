@@ -20,9 +20,10 @@ void setup(void) {
 
   // Request 1 byte from the device
   Wire.requestFrom(address, (uint8_t)1);
-  if (Wire.available()) {
+  while (Wire.available()) {
     read_buffer = Wire.read(); // Read the received byte
   }
+  
 
   Serial.print("WHO_AM_I register: 0x");
   Serial.println(read_buffer, HEX); // Print the value in hexadecimal
