@@ -43,8 +43,34 @@ The MVP (Minimal Vital Product) contains the following items:
 [BLE Module](Pages/BLE_Module/nRF52_SEEED_XIAO.md)
 ## I2C communication sensor SHT40
 [SHT40](Pages/Sensor/SHT40.md)
+- addressing an array x addressing a place in an array 
+- UART printing is not the same as printf sprintf...
+- HAL libary learining
+- working with datasheets of more complex nature for the first time 
+- programing in more dvanced C
+
+
 ## I2C communication of LTR-329
 [LTR-329](Pages/Sensor/LTR-329.md)
+
+## Energy Harvesting
+[Enegry Harvesting Module AEM1094](AEM10941.md)
+The goal is to pover as many peripherals as possible... SHT40, LTR-329, STM32, BLE ?
+We have:
+- Outside S.P.
+- Inside S.P.
+- 2x 2,7V1F Supercap
+- 2x AEM10941 Evaluation Kit 
+Note to self: Make sure to have SuperCap connected before connecting power source (S.P.)
+
+Tested Single Cell Configuration: It seems to be ok on 2,7V treshhold, the module gets slighty over 2,7 Volts and than regulates it down so that the Capacitor is okay. 
+HighOUT: 1,8V
+LowOUT? 1,2V
+according to datasheet
+It takes about 1h 35m to charge the Cap. to 2,3V WITH additional artiffical lights
+![[Pasted image 20241129210421.png]]
+
+
 ## UART Communication with LoRa-Module
 For the LoRa-Module, we utilize the Wio-e5 mini board.
 ![[lora_e5_mini_pinout.jpg]]

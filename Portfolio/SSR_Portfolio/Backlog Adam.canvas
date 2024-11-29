@@ -19,13 +19,14 @@
 		{"id":"23e065630663b641","type":"text","text":"Power Profile temperature and humidity sensor","x":-407,"y":-720,"width":250,"height":60,"color":"5"},
 		{"id":"447710117e5ee1e5","type":"text","text":"BLE wake-up STM32? Check if possible","x":-407,"y":-660,"width":250,"height":60,"color":"5"},
 		{"id":"b234e01e07f7591e","type":"text","text":"Adam","x":-440,"y":-1020,"width":250,"height":60,"color":"3"},
-		{"id":"11931e3e373e5d75","type":"text","text":"Sending sensors to sleep","x":-407,"y":-600,"width":250,"height":60,"color":"3"},
 		{"id":"417376788a349f71","type":"text","text":"Harvesting energy via Solar panel (AEM10941) ","x":193,"y":-780,"width":250,"height":60,"color":"3"},
 		{"id":"aad74e62b874fde8","type":"text","text":"I2C with Temp&Hum sensor","x":793,"y":-360,"width":250,"height":60,"color":"3"},
 		{"id":"c70e1036dfca425a","type":"text","text":"I2C with Light Sensor","x":793,"y":-300,"width":250,"height":60,"color":"3"},
-		{"id":"3a449c3e7e8b381e","type":"text","text":"Implement energy harvesting to power sensors","x":-407,"y":-540,"width":250,"height":120,"color":"3"},
 		{"id":"e270e680dfca4d5a","type":"text","text":"Meassuring cappacitor behaviour (AEM10941) ","x":792,"y":-240,"width":250,"height":60,"color":"3"},
-		{"id":"e3df5f3e3facaaea","x":-407,"y":-420,"width":250,"height":60,"color":"3","type":"text","text":"Power profiling of sensors"}
+		{"id":"11931e3e373e5d75","type":"text","text":"Sending sensors to sleep","x":193,"y":-720,"width":250,"height":60,"color":"3"},
+		{"id":"e0ced2667d369c40","type":"text","text":"SHT40 - sleeping","x":792,"y":-180,"width":250,"height":60,"color":"3"},
+		{"id":"3a449c3e7e8b381e","type":"text","text":"Implement energy harvesting to power sensors","x":-407,"y":-600,"width":250,"height":120,"color":"3"},
+		{"id":"ce307bc69aed504d","type":"text","text":"Power Profile of sleeping sensors / wake sensors","x":-407,"y":-480,"width":250,"height":60,"color":"3"}
 	],
 	"edges":[]
 }
