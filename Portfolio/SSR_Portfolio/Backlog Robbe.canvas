@@ -16,7 +16,6 @@
 		{"id":"7a3f36592ebf4e08","type":"text","text":"Power Profile light sensor in low power configuration","x":-407,"y":-780,"width":250,"height":90,"color":"1"},
 		{"id":"447710117e5ee1e5","type":"text","text":"BLE wake-up STM32? Check if possible","x":-407,"y":-600,"width":250,"height":60,"color":"5"},
 		{"id":"23e065630663b641","type":"text","text":"Power Profile temperature and humidity sensor in low-power configuration","x":-407,"y":-690,"width":250,"height":90,"color":"1"},
-		{"id":"76dfb6612756fbc6","type":"text","text":"BLE beacon and scan in 1 code","x":-407,"y":-540,"width":250,"height":60,"color":"5"},
 		{"id":"fa9d8263d5810e93","type":"text","text":"Add mode option in I2C packet","x":793,"y":-320,"width":250,"height":60,"color":"5"},
 		{"id":"35afaca645e93810","type":"text","text":"Power Profiling","x":-440,"y":-1120,"width":250,"height":60,"color":"1"},
 		{"id":"af0ec7befff365b7","type":"text","text":"BLE","x":-440,"y":-1060,"width":250,"height":60,"color":"5"},
@@ -26,11 +25,16 @@
 		{"id":"250c75c485d39bc3","type":"text","text":"STM32 standby mode code","x":793,"y":-200,"width":250,"height":60,"color":"4"},
 		{"id":"58302a6dc3e96b2a","type":"text","text":"Example I2C communication with light sensor","x":793,"y":-480,"width":250,"height":100,"color":"6"},
 		{"id":"f06a68729ffd23b5","type":"text","text":"nRF52 deep sleep with external wake-up","x":793,"y":-140,"width":250,"height":60,"color":"4"},
-		{"id":"b041949ad8da93ce","type":"text","text":"Implement brain code awareness reading available energy","x":-407,"y":-480,"width":250,"height":100,"color":"4"},
-		{"id":"85e88aa687efbdc9","type":"text","text":"Implement energy aware tasks selection","x":-407,"y":-380,"width":250,"height":60,"color":"4"},
 		{"id":"bfc476eaf6dae4d9","type":"text","text":"Create backlog pages","x":793,"y":-80,"width":250,"height":60,"color":"3"},
 		{"id":"45d08ed5f97391b7","type":"text","text":"Create portfolio layout","x":1043,"y":-840,"width":250,"height":60,"color":"3"},
-		{"id":"3404969d798b20af","type":"text","text":"Create BLE-scan&beacon flow-diagram","x":1043,"y":-780,"width":250,"height":60,"color":"3"}
+		{"id":"3404969d798b20af","type":"text","text":"Create BLE-scan&beacon flow-diagram","x":1043,"y":-780,"width":250,"height":60,"color":"3"},
+		{"id":"84f31d16f89ed403","type":"text","text":"BLE Scan decode UUID","x":1043,"y":-720,"width":250,"height":60,"color":"5"},
+		{"id":"28d055a39dfb14ac","type":"text","text":"BLE Scan max air-time","x":1043,"y":-660,"width":250,"height":60,"color":"5"},
+		{"id":"9bd1789da30f9254","type":"text","text":"BLE Beacon max air-time","x":1043,"y":-600,"width":250,"height":60,"color":"5"},
+		{"id":"76dfb6612756fbc6","type":"text","text":"BLE beacon and scan in 1 code","x":193,"y":-780,"width":250,"height":60,"color":"5"},
+		{"id":"ac2af3eeca999949","type":"text","text":"BLE Beacon code and send data back over I2C","x":193,"y":-720,"width":250,"height":60,"color":"5"},
+		{"id":"b041949ad8da93ce","type":"text","text":"Implement brain code awareness reading available energy","x":-407,"y":-540,"width":250,"height":100,"color":"4"},
+		{"id":"85e88aa687efbdc9","type":"text","text":"Implement energy aware tasks selection","x":-407,"y":-440,"width":250,"height":60,"color":"4"}
 	],
 	"edges":[]
 }

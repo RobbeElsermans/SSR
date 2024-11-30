@@ -19,6 +19,28 @@ struct ble_module_data_t
     // z gyro 8bit?
 };
 
+extern struct ble_module_data_t ble_data;
+
+struct ble_beacon_result_t
+{
+  // How many devices have acked the Beacon. this determines the amount of nodes present
+  uint8_t amount_of_ack;
+};
+
+extern struct ble_beacon_result_t ble_beacon_data;
+
+struct ble_scan_data_t
+{
+    uint8_t ssr_id;       // The ID of the source
+    uint16_t temperature; // temperature
+    uint8_t humidity;     // humidity
+    uint16_t lux;         // lux (light)
+    uint16_t voltage;     // voltage
+    int8_t rssi;           //rssi
+};
+
+extern struct ble_scan_data_t ble_scan_data;
+
 uint8_t send_ble_data(I2C_HandleTypeDef *hi2c1, struct ble_module_data_t *data);
 uint8_t receive_ble_data(I2C_HandleTypeDef *hi2c1);
 uint8_t ble_device_ready(I2C_HandleTypeDef *hi2c1);

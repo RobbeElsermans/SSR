@@ -31,7 +31,6 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-struct ble_module_data_t ble_data;
 
 uint8_t boolean_holder_1;
 #define BOOL_SEND 0
@@ -88,11 +87,9 @@ int main(void)
 
     //DEBUG
     ble_data.ssr_id++; 
-
+    beacon();
     //half_sleep(5000);
     HAL_Delay(5000);
-    beacon();
-
   }
 
   // case sens:
@@ -190,7 +187,26 @@ void beacon()
 
   // Send out a value
   send_ble_data(&hi2c1, &ble_data);
+
+  //Sleep for air_time
+  //half_sleep(ble_data.air_time * 100);
+  HAL_Delay(ble_data.air_time * 100);
+
+  //read scan data
+  uint8_t received_data = 0;
+  do
+  {
+    //half_sleep(100);
+    HAL_Delay(100);
+    received_data = receive_ble_data(&hi2c1);
+  }
+  while(received_data == 0);
+
+  uint8_t Buffer[10] = {0};
+  sprintf(Buffer, "%d\r\n", received_data);
+  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
 }
+
 void scan()
 {
   BLE_Init();

@@ -1,5 +1,9 @@
 #include "ble.h"
 
+struct ble_module_data_t ble_data;
+struct ble_beacon_result_t ble_beacon_data;
+struct ble_scan_data_t ble_scan_data;
+
 uint8_t send_ble_data(I2C_HandleTypeDef *hi2c1, struct ble_module_data_t *data)
 {
     HAL_StatusTypeDef ret;
@@ -32,8 +36,8 @@ uint8_t send_ble_data(I2C_HandleTypeDef *hi2c1, struct ble_module_data_t *data)
 uint8_t receive_ble_data(I2C_HandleTypeDef *hi2c1)
 {
     uint8_t buffer[1];
-    HAL_I2C_Master_Receive(hi2c1, BLE_ADDRESS, buffer, sizeof(buffer), 1);
-    if(buffer[0] == 0)
+    HAL_I2C_Master_Receive(hi2c1, BLE_ADDRESS, buffer, sizeof(buffer), 100);
+    if(buffer[0] == 255)
     {
         return 0;
     }

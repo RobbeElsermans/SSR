@@ -6,7 +6,33 @@
 #include <Wire.h>
 
 #define MANUFACTURER_ID   0x0059
-#define SSR_BEACON_ID     0x3F00 //Add ssr_id to it. Is a 8-bit value.
+
+#define BEACON_SSR_ID 0x3F  //Add ssr_id to it. Is a 8-bit value.
+
+// IBeacon format used
+// https://semiwiki.com/semiconductor-services/einfochips/302892-understanding-ble-beacons-and-their-applications/
+
+#define TEMP_MSB 9
+#define TEMP_LSB 10
+#define HUM 11
+#define LUX_MSB 12
+#define LUX_LSB 13
+#define VCC_MSB 14
+#define VCC_LSB 15
+//#define RESERVED_1 16
+//#define RESERVED_1 17
+//#define RESERVED_1 18
+//#define RESERVED_1 19
+//#define RESERVED_1 20
+//#define RESERVED_1 21
+//#define RESERVED_1 22
+//#define RESERVED_1 23
+//#define RESERVED_1 24
+#define MAJOR_MSB 25
+#define MAJOR_LSB 26
+#define MINOR_MSB 27
+#define MINOR_LSB 28
+#define RSSI 30
 
 // "nRF Connect" app can be used to detect beacon
 uint8_t beaconUuid[16] =
@@ -21,19 +47,30 @@ uint8_t beaconUuid[16] =
 BLEBeacon beacon(beaconUuid, 0x0000, 0x0000, -54);
 
 void deep_sleep();              //Deep sleep configuration with HIGH-flank wakeup on pin D2.
+
+//--------------beacon functions-------------//
 void init_beacon();             //Initialize the beacon BLE.
 void set_data_beacon();         //Set the data received by I2C in the UUID and major, minor.
 void start_beacon(uint16_t timer);  //Start the actual beacon and let it stop at a certain time defined in seconds.
 
+
+//--------------scanner functions-------------//
+uint8_t ssr_id_exists(uint8_t ssr_id_unknown);
+//void connect_callback(uint16_t conn_handle);
+void scan_callback(ble_gap_evt_adv_report_t *report);
+uint8_t fetch_id(ble_gap_evt_adv_report_t *report);
+uint8_t fetch_ssr_id(ble_gap_evt_adv_report_t *report);
+uint8_t ssr_id_exists(uint8_t ssr_id_unknown);
+void increase_beacon_data_index();
+void set_beacon_data(ble_gap_evt_adv_report_t *report);
 void init_scan();
 void start_scan(uint16_t timer);
-void scan_callback(ble_gap_evt_adv_report_t* report);
-uint32_t fetch_id(ble_gap_evt_adv_report_t* report);
-
+//void stop_callback();
 void stop_callback();
 void connect_callback(uint16_t conn_handle);
 
-void receiveEvent(int howMany); //I2C callback
+void receive_event(int howMany); //I2C callback
+void request_event();
 uint32_t devId = 0;
 
 struct ble_module_data_t
@@ -56,10 +93,24 @@ struct ble_beacon_result_t
   uint8_t amount_of_ack;
 };
 
+struct ble_scan_data_t
+{
+    uint8_t ssr_id;       // The ID of the source
+    uint16_t temperature; // temperature
+    uint8_t humidity;     // humidity
+    uint16_t lux;         // lux (light)
+    uint16_t voltage;     // voltage
+    int8_t rssi;           //rssi
+};
+
 volatile struct ble_module_data_t i2c_data;
 volatile struct ble_beacon_result_t beacon_data;
+volatile struct ble_scan_data_t received_beacon_data[256];
+volatile int16_t index_beacon_data = -1;
 
 volatile bool received_data = false;
+volatile bool device_is_done = false;
+volatile bool transmited_data = false;
 
 volatile bool mode = 0; //Default in beacon mode
 
@@ -70,31 +121,16 @@ void setup()
   Serial.begin(115200);
 
   Wire.begin(0x12);             // join i2c bus with address 0x12
-  Wire.onReceive(receiveEvent); // register event
+  Wire.onReceive(receive_event); // register event
+  Wire.onRequest(request_event);
 
   // Uncomment to blocking wait for Serial connection
   while ( !Serial ) delay(10);
 
   Serial.println("Wait for data");
   while(!received_data); //Wait for I2C transfer
-  Serial.println("data received!");
+  Serial.println("data received! ");
   received_data = false;
-
-  //Print the whole struct
-  Serial.print("m: ");
-  Serial.print(i2c_data.mode);
-  Serial.print("id: ");
-  Serial.print(i2c_data.ssr_id);
-  Serial.print(" at: ");
-  Serial.print(i2c_data.air_time);
-  Serial.print(" et: ");
-  Serial.print(i2c_data.env_temperature);
-  Serial.print(" eh: ");
-  Serial.print(i2c_data.env_humidity);
-  Serial.print(" el: ");
-  Serial.print(i2c_data.env_lux);
-  Serial.print(" dv: ");
-  Serial.println(i2c_data.dev_voltage);
 
   if(i2c_data.mode == 0)
   {
@@ -116,47 +152,42 @@ void setup()
     }
   
     //Transfer data of beacon to master
-    Serial.printf("Amount of ACK's: %d", beacon_data.amount_of_ack);
+    Serial.printf("Amount of ACK's: %d \r\n", beacon_data.amount_of_ack);
     delay(200);
-  
-    deep_sleep();
   }
   else
   {
-    //Mode 1
+    init_scan();
+
+    //check if scanning timer has finished
+    timer = millis();
+    while(millis()-timer < i2c_data.air_time*100)
+    {
+      uint16_t time_left = i2c_data.air_time*100 - (millis()-timer);
+      Serial.printf("time left: %d", time_left);
+      
+      start_scan(time_left);
+
+      //perform scanning
+      while(Bluefruit.Scanner.isRunning());
+      
+    }
 
   }
 
+  //Wait for I2C read from master
+  device_is_done = true;
+  while(!transmited_data)
+  {
+    delay(10);
+  }
+  
+  deep_sleep();
 }
 
 void loop() 
 {
   // loop is already suspended, CPU will not run loop() at all
-}
-
-void init_scan()
-{
-  Bluefruit.begin(0, 2);
-  Bluefruit.setTxPower(4);    // Check bluefruit.h for supported values
-  Bluefruit.setName((const char*)(SSR_BEACON_ID |i2c_data.ssr_id));
-}
-
-void start_scan(uint16_t timer)
-{
-  // Start Central Scan
-  Bluefruit.setConnLedInterval(250);
-  Bluefruit.Scanner.setRxCallback(scan_callback);
-  Bluefruit.Central.setConnectCallback(connect_callback);
-  Bluefruit.Scanner.restartOnDisconnect(true);
-
-  uint8_t timer_sec = timer/1000;
-
-  if (timer_sec <= 0)
-    Bluefruit.Scanner.start(1);
-  else
-    Bluefruit.Scanner.start(timer_sec);
-
-  Serial.println("setup - Scanning ...");
 }
 
 void init_beacon()
@@ -165,7 +196,7 @@ void init_beacon()
   Bluefruit.autoConnLed(true);
   Bluefruit.setTxPower(0);    // Check bluefruit.h for supported values
   beacon.setManufacturer(MANUFACTURER_ID);
-  beacon.setMajorMinor((SSR_BEACON_ID |i2c_data.ssr_id), 0x0000);
+  beacon.setMajorMinor((BEACON_SSR_ID << 8 |i2c_data.ssr_id), 0x0000);
 }
 
 void set_data_beacon()
@@ -228,103 +259,161 @@ void start_beacon(uint16_t timer)
  */
 void connect_callback(uint16_t conn_handle)
 {
+    BLEConnection* conn = Bluefruit.Connection(conn_handle);
+    conn->disconnect();
+  
   if(i2c_data.mode == 0){
     beacon_data.amount_of_ack++;
   }
   else{
-    //Do somthing with data
-    Serial.println("mode 1");
+    Bluefruit.Scanner.stop();
   }
-
-  BLEConnection* conn = Bluefruit.Connection(conn_handle);
-  Serial.println("connect_callback - Connected");
-  conn->disconnect();
-  Serial.println("connect_callback - The connection is disconnected");
 }
 
 void stop_callback()
 {
-  Serial.println("timer passed from .start() method Advertising");
-  Serial.println("stopped");
+  Serial.println("stop_callback - timer passed");
+  Serial.println("stop_callback - stopped");
   //deep_sleep();
 }
 
-void scan_callback(ble_gap_evt_adv_report_t* report)
-{
-  //Serial.println("Entered scan");
-  //The ID to identify 
-  uint32_t id = fetch_id(report);
-  
-  if (id == 1058013184 && id != devId)
-  {
-    devId = id; //To only loock it up once.    
-    // MAC is in little endian --> print reverse
-    Serial.printBufferReverse(report->peer_addr.addr, 6, ':');
-    Serial.printf(" address: %d ",*report->peer_addr.addr);
-    //Search for CE:A5:C5:43:A3:F2 or F2 = 242
-    //Better to search for major first byte.
 
-    Serial.printf(" Rssi: %d ",report->rssi);
+void init_scan(){
+    // Initialize Bluefruit with maximum connections as Peripheral = 0, Central = 1
+    // SRAM usage required by SoftDevice will increase dramatically with number of connections
+    Bluefruit.begin(0, 2);
+    Bluefruit.setTxPower(4); // Check bluefruit.h for supported values
+    Bluefruit.setName((const char*)("I2C SSR data"));
+    
+    // Start Central Scan
+    Bluefruit.setConnLedInterval(250);
+    Bluefruit.Scanner.setRxCallback(scan_callback);
+    Bluefruit.Central.setConnectCallback(connect_callback);
+    Bluefruit.Scanner.setStopCallback(stop_callback);
+    Bluefruit.Scanner.restartOnDisconnect(false);
 
-    Serial.printBuffer(report->data.p_data, report->data.len, '-');
-    Serial.println();
-
-    Serial.printf("id: %02X  real val: %d", id, id);
-    // Check if beacon has a certain address. Not good to use in global environment
-    if ( *report->peer_addr.addr == 242 )//Bluefruit.Scanner.checkReportForUuid(report, BLEUART_UUID_SERVICE) )
-    {
-      Serial.println("                       BLE SSR Beacon service detected");
-      Serial.printf("%d ",report->data.len);
-      Serial.printf(" id: %02X", id);
-      uint8_t* pointer_to_data = report->data.p_data;
-      uint16_t data_length = report->data.len;
-      
-      for( uint16_t i = 0; i < report->data.len; i++){
-        
-        Serial.print(i);
-        Serial.print(" ");
-        Serial.printf("%02X", pointer_to_data[0]);  
-        //Serial.printf("%02X", pointer_to_data[1]);  
-        //Serial.printf("%02X", pointer_to_data[2]);  
-        //Serial.printf("%02X", pointer_to_data[3]);  
-        Serial.print(" ; ");
-        pointer_to_data += 1;
-        
-      }
-      Serial.println("All data reviewed.");
-
-      //Connect to the beacon
-      //Will fail but is to provide an ACK to the beacon
-
-      Serial.println("Before connect");
-      Bluefruit.Central.connect(report);
-      Serial.println("After connect");
-      delay(500);
-    }
-
-    Serial.println();
-  }
-  else
-  {
-    Bluefruit.Scanner.resume();
-  }
-
-  // For Softdevice v6: after received a report, scanner will be paused
-  // We need to call Scanner resume() to continue scanning
-  Bluefruit.Scanner.resume();
 }
 
-uint32_t fetch_id(ble_gap_evt_adv_report_t* report)
+void start_scan(uint16_t timer){
+  uint8_t timer_sec = timer/1000;
+  Serial.printf("start_scan - timer_sec: %d\r\n", timer_sec);
+  if (timer_sec <= 0)
+    Bluefruit.Scanner.start(1*100);
+  else
+    Bluefruit.Scanner.start(timer_sec*100);
+
+    Serial.println("start_scan - start scan ...");
+}
+
+void scan_callback(ble_gap_evt_adv_report_t *report)
 {
-  return  report->data.p_data[report->data.len - 5] << 8*3 | 
-          report->data.p_data[report->data.len - 4] << 8*2 |
-          report->data.p_data[report->data.len - 3] << 8*1 | 
-          report->data.p_data[report->data.len - 2] << 8*0;
+    // The ID to identify
+    uint8_t beacon_id = fetch_id(report);
+    uint8_t ssr_id = fetch_ssr_id(report);
+
+    if (beacon_id == BEACON_SSR_ID && !ssr_id_exists(ssr_id))
+    {
+        Serial.println(" ----- BLE SSR Beacon service detected ----- ");
+        Serial.printf(" Rssi: %d ", report->rssi);
+        Serial.printf("bid: 0x%02X ssrid: 0x%02X", beacon_id, ssr_id);
+
+        set_beacon_data(report);
+
+        Serial.printBuffer(report->data.p_data, report->data.len, '-');
+        Serial.println();
+
+        Serial.printf("bid: 0x%02X ssrid: 0x%02X \r\n", beacon_id, ssr_id);
+        Serial.printf("temp: %d \r\n", received_beacon_data[index_beacon_data].temperature);
+        Serial.printf("hum: %d \r\n", received_beacon_data[index_beacon_data].humidity);
+        Serial.printf("lux: %d \r\n", received_beacon_data[index_beacon_data].lux);
+        Serial.printf("voltage: %d \r\n", received_beacon_data[index_beacon_data].voltage);
+        Serial.printf("rssi: %d \r\n", received_beacon_data[index_beacon_data].rssi);
+
+        Serial.println("All data reviewed.");
+
+        // Connect to the beacon
+        Bluefruit.Central.connect(report);
+        Serial.println();
+    }
+    else
+    {
+        Bluefruit.Scanner.resume();
+    }
+}
+
+uint8_t fetch_id(ble_gap_evt_adv_report_t *report)
+{
+    return report->data.p_data[MAJOR_MSB];
+}
+
+uint8_t fetch_ssr_id(ble_gap_evt_adv_report_t *report)
+{
+    return report->data.p_data[MAJOR_LSB];
+}
+
+uint8_t ssr_id_exists(uint8_t ssr_id_unknown)
+{
+    for (uint8_t i = 0; i < 256; i++)
+    {
+        if (received_beacon_data[i].ssr_id == ssr_id_unknown)
+        {
+            return 1;
+        }
+
+        if (received_beacon_data[i].ssr_id == 0)
+            return 0;
+    }
+    return 0;
+}
+
+void increase_beacon_data_index()
+{
+    
+    if (index_beacon_data == 255)
+    {
+        index_beacon_data = 255;
+    }
+    else
+    {
+        index_beacon_data++;
+    }
+
+    Serial.printf("\r\n increase_beacon_data_index to %d \r\n", index_beacon_data);
+}
+
+void set_beacon_data(ble_gap_evt_adv_report_t *report)
+{
+    increase_beacon_data_index();
+
+    received_beacon_data[index_beacon_data].ssr_id = fetch_ssr_id(report);
+    received_beacon_data[index_beacon_data].temperature = report->data.p_data[TEMP_MSB] << 8 | report->data.p_data[TEMP_LSB];
+    received_beacon_data[index_beacon_data].humidity = report->data.p_data[HUM];
+    received_beacon_data[index_beacon_data].lux = report->data.p_data[LUX_MSB] << 8 | report->data.p_data[LUX_LSB];
+    received_beacon_data[index_beacon_data].voltage = report->data.p_data[VCC_MSB] << 8 | report->data.p_data[VCC_LSB];
+    received_beacon_data[index_beacon_data].rssi = report->rssi;
+}
+
+void request_event()
+{
+  if(device_is_done)
+  {
+    transmited_data = true;
+
+    if(i2c_data.mode = 0){
+      Wire.write(10);
+    }
+    else{
+      Wire.write(beacon_data.amount_of_ack);
+    }
+    
+    Serial.printf("A request on I2C: %d\r\n", Wire.read());
+    //Wire.write(20); 
+  }
 }
 
 // function that executes whenever data is received from master
 // this function is registered as an event, see setup()
-void receiveEvent(int howMany)
+void receive_event(int howMany)
 {
     uint8_t i = 0;
     while (Wire.available()) // loop through all but the last
@@ -366,6 +455,25 @@ void receiveEvent(int howMany)
     //If ID has a good value
     if (i2c_data.ssr_id != 0x00)
       received_data = true;
+
+
+    if (received_data){
+        //Print the whole struct
+        Serial.print("m: ");
+        Serial.print(i2c_data.mode);
+        Serial.print(" id: ");
+        Serial.print(i2c_data.ssr_id);
+        Serial.print(" at: ");
+        Serial.print(i2c_data.air_time);
+        Serial.print(" et: ");
+        Serial.print(i2c_data.env_temperature);
+        Serial.print(" eh: ");
+        Serial.print(i2c_data.env_humidity);
+        Serial.print(" el: ");
+        Serial.print(i2c_data.env_lux);
+        Serial.print(" dv: ");
+        Serial.println(i2c_data.dev_voltage);
+    }
 }
 
 void deep_sleep(){

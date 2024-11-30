@@ -40,7 +40,7 @@ struct ble_beacon_receive_data_t
     uint8_t humidity;     // humidity
     uint16_t lux;         // lux (light)
     uint16_t voltage;     // voltage
-    int8_t rssi           //rssi
+    int8_t rssi;           //rssi
 };
 
 struct ble_beacon_receive_data_t received_beacon_data[256];
@@ -72,7 +72,7 @@ void setup()
 
     init_scan();
 
-    uint8_t air_time = 120;
+    uint8_t air_time = 200;
 
     //check if scanning timer has finished
     timer = millis();
@@ -84,10 +84,7 @@ void setup()
       start_scan(time_left);
 
       //perform scanning
-      while(Bluefruit.Scanner.isRunning())
-      {
-          
-      }
+      while(Bluefruit.Scanner.isRunning());
       
     }
     Serial.println("Finished air_time");
@@ -133,13 +130,10 @@ void connect_callback(uint16_t conn_handle)
     Serial.println("connect_callback - A connection is made");
     conn->disconnect(); // in order to drop the connection
     Serial.println("connect_callback - The connection is disconnected");
-    Bluefruit.Scanner.stop();
-    delay(100);
 }
 
 void scan_callback(ble_gap_evt_adv_report_t *report)
 {
-    // Serial.println("Entered scan");
     // The ID to identify
     uint8_t beacon_id = fetch_id(report);
     uint8_t ssr_id = fetch_ssr_id(report);
@@ -172,15 +166,11 @@ void scan_callback(ble_gap_evt_adv_report_t *report)
     {
         Bluefruit.Scanner.resume();
     }
-
-    // For Softdevice v6: after received a report, scanner will be paused
-    // We need to call Scanner resume() to continue scanning
-    //Bluefruit.Scanner.resume();
 }
 
 uint8_t fetch_id(ble_gap_evt_adv_report_t *report)
 {
-    return report->data.p_data[report->data.len - 5];
+    return report->data.p_data[MAJOR_MSB];
 }
 
 uint8_t fetch_ssr_id(ble_gap_evt_adv_report_t *report)
