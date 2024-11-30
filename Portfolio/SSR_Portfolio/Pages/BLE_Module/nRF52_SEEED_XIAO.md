@@ -58,5 +58,73 @@ When a scanner ACKs a beacon, the beacon gets halted for a moment. The beacon wi
 After the *air_time* has finished, the beacon will stop. The BLE module now waits for the STM32 to reached back. After the STM32 reached back, the BLE goes to sleep again.
 
 ### Mode 1
-Mode 1 is when we use the BLE module as scanner to search for BLE beacons in the proximity area. This allows for intercommunication between the SSRs. Same as Beacon, the scan will be in air for *air_time* and will have a named that represents the BLE-devide ID and the *ssr_id*
+Mode 1 is when we use the BLE module as scanner to search for BLE beacons in the proximity area. This allows for intercommunication between the SSRs. Same as Beacon, the scan will be in air for *air_time* and will have a named that represents the BLE-devide ID and the *ssr_id*.
 
+All this data is encapsulated in the advertisement data packet. This consists of the following:
+- Preamable (1-byte)
+- Access Address (4-bytes)
+- Protocol Data Unit (2-39-bytes)
+- CRC (3-bytes)
+
+![PDU Packet](BLE_LE_Packet.png)
+
+Our wanted data will be situated in the Protocol Data Unit or PDU packet. Here we have the following structure:
+- Header (2-bytes)
+- Payload (0-37-bytes)
+
+![PDU Packet](PDU_Packet.png)
+
+And the header can be subdivided into:
+- PDU types (4-bits)
+- RFU (1-bit)
+- ChSel (1-bit)
+- TxAdd (1-bit)
+- RxAdd (1-bit)
+- Length (8-bit)
+
+![Header Packet](../../Images/Header_Packet.png)
+
+[reference for images of packet structures](https://academy.nordicsemi.com/courses/bluetooth-low-energy-fundamentals/lessons/lesson-2-bluetooth-le-advertising/topic/advertisement-packet/)
+
+One note here, this is not a normal advertisement packet. This is an iBeacon packet which has a slightly different packet structure as described below.
+
+
+An example where we distinguish all elements in the full Bluetooth BLE packet
+```
+02-01-06-1A-FF-59-00-02-15-00-5C-00-00-5D-00-5E-FF-FF-FF-FF-FF-FF-FF-FF-FF-3F-6C-00-00-CA
+
+```
+
+**1. Flags Field** (`02-01-06`):
+
+- **Length (02)**: 2 bytes.
+- **Type (01)**: Flags.
+- **Value (06)**:
+    - **LE General Discoverable Mode** (bit 1 set).
+    - **BR/EDR Not Supported** (bit 2 set).
+
+**2. Manufacturer Specific Data** (`1A-FF-59-00-02-15-00-5C-00-00-5D-00-5E-FF-FF-FF-FF-FF-FF-FF-FF-FF-3F-6C-00-00-CA`):
+
+- **Length (1A)**: 26 bytes.
+- **Type (FF)**: Manufacturer Specific Data.
+- **Company Identifier (59-00)**:
+    - Assigned by Bluetooth SIG, corresponds to **Nordic Semiconductor ASA**.
+
+**iBeacon-Specific Fields:**
+
+- **Beacon Type (`02-15`)**:
+    - `02`: iBeacon Indicator.
+    - `15`: Indicates the iBeacon payload size (21 bytes).
+- **UUID (`00-5C-00-00-5D-00-5E-FF-FF-FF-FF-FF-FF-FF-FF-FF`)**:
+    - A unique identifier for this beacon.
+    - This UUID encodes environmental telemetry, replacing a static UUID typical in iBeacon usage.
+- **Major Value (`3F-6C`)**:
+    - `3F` the id of a SSR beacon.
+    - `6C` the SSR ID.
+- **Minor Value (`00-00`)**:
+    - not set in our project
+- **Measured Power (`CA`)**:
+    - The signal strength (RSSI) at 1 meter, used for distance estimation.
+    - Decoded as `-54 dBm` (signed integer).
+
+[Source](https://semiwiki.com/semiconductor-services/einfochips/302892-understanding-ble-beacons-and-their-applications/)

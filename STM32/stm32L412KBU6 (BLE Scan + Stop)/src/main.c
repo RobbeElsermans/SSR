@@ -77,16 +77,23 @@ int main(void)
     __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
     blink_led(100);
   }
+    ble_data.env_temperature = 0;
+    ble_data.env_lux = 1;
+    ble_data.dev_voltage = 2;
 
   while(1){
     ble_data.env_temperature++;
-    ble_data.env_lux+=2;
-    half_sleep(5000);
+    ble_data.env_lux++;
+    ble_data.dev_voltage++;
+
+    //DEBUG
+    ble_data.ssr_id++; 
+
+    //half_sleep(5000);
+    HAL_Delay(5000);
     beacon();
 
   }
-
-
 
   // case sens:
   //   // Read the sensors values

@@ -28,6 +28,7 @@ void start_beacon(uint16_t timer);  //Start the actual beacon and let it stop at
 void init_scan();
 void start_scan(uint16_t timer);
 void scan_callback(ble_gap_evt_adv_report_t* report);
+uint32_t fetch_id(ble_gap_evt_adv_report_t* report);
 
 void stop_callback();
 void connect_callback(uint16_t conn_handle);
@@ -252,36 +253,27 @@ void scan_callback(ble_gap_evt_adv_report_t* report)
 {
   //Serial.println("Entered scan");
   //The ID to identify 
-  uint32_t id = report->data.p_data[report->data.len - 5] << 8*3 | 
-                report->data.p_data[report->data.len - 4] << 8*2 |
-                report->data.p_data[report->data.len - 3] << 8*1 | 
-                report->data.p_data[report->data.len - 2] << 8*0;
-
+  uint32_t id = fetch_id(report);
+  
   if (id == 1058013184 && id != devId)
   {
-    devId = id;
-    Serial.println("Timestamp Addr              Rssi Data");
-
-    Serial.printf("%09d ", millis());
-    
+    devId = id; //To only loock it up once.    
     // MAC is in little endian --> print reverse
     Serial.printBufferReverse(report->peer_addr.addr, 6, ':');
-    Serial.print(" ");
-    Serial.print(*report->peer_addr.addr);
-    Serial.print(" ");
-    //Search for CE:A5:C5:43:A3:F2 242
+    Serial.printf(" address: %d ",*report->peer_addr.addr);
+    //Search for CE:A5:C5:43:A3:F2 or F2 = 242
+    //Better to search for major first byte.
 
-    Serial.print(report->rssi);
-    Serial.print("  ");
+    Serial.printf(" Rssi: %d ",report->rssi);
 
     Serial.printBuffer(report->data.p_data, report->data.len, '-');
     Serial.println();
-                  
+
     Serial.printf("id: %02X  real val: %d", id, id);
     // Check if beacon has a certain address. Not good to use in global environment
     if ( *report->peer_addr.addr == 242 )//Bluefruit.Scanner.checkReportForUuid(report, BLEUART_UUID_SERVICE) )
     {
-      Serial.println("                       BLE Beacon service detected");
+      Serial.println("                       BLE SSR Beacon service detected");
       Serial.printf("%d ",report->data.len);
       Serial.printf(" id: %02X", id);
       uint8_t* pointer_to_data = report->data.p_data;
@@ -320,6 +312,14 @@ void scan_callback(ble_gap_evt_adv_report_t* report)
   // For Softdevice v6: after received a report, scanner will be paused
   // We need to call Scanner resume() to continue scanning
   Bluefruit.Scanner.resume();
+}
+
+uint32_t fetch_id(ble_gap_evt_adv_report_t* report)
+{
+  return  report->data.p_data[report->data.len - 5] << 8*3 | 
+          report->data.p_data[report->data.len - 4] << 8*2 |
+          report->data.p_data[report->data.len - 3] << 8*1 | 
+          report->data.p_data[report->data.len - 2] << 8*0;
 }
 
 // function that executes whenever data is received from master
