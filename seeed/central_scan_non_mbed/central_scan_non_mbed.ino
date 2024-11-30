@@ -27,6 +27,9 @@
 #define MINOR_LSB 28
 #define RSSI 30
 
+
+long timer = 0;
+
 // uint8_t devId[256] = {0};
 // uint8_t* dev_id_pointer = devId;
 
@@ -37,6 +40,7 @@ struct ble_beacon_receive_data_t
     uint8_t humidity;     // humidity
     uint16_t lux;         // lux (light)
     uint16_t voltage;     // voltage
+    int8_t rssi           //rssi
 };
 
 struct ble_beacon_receive_data_t received_beacon_data[256];
@@ -51,6 +55,9 @@ uint8_t fetch_ssr_id(ble_gap_evt_adv_report_t *report);
 uint8_t ssr_id_exists(uint8_t ssr_id_unknown);
 void increase_beacon_data_index();
 void set_beacon_data(ble_gap_evt_adv_report_t *report);
+void init_scan();
+void start_scan(uint16_t timer);
+void stop_callback();
 
 //--------------functions-------------//
 
@@ -63,27 +70,61 @@ void setup()
     Serial.println("Bluefruit52 Central Scan Example");
     Serial.println("--------------------------------\n");
 
-    // Initialize Bluefruit with maximum connections as Peripheral = 0, Central = 1
+    init_scan();
+
+    uint8_t air_time = 120;
+
+    //check if scanning timer has finished
+    timer = millis();
+    while(millis()-timer < air_time*100)
+    {
+      uint16_t time_left = air_time*100 - (millis()-timer);
+      Serial.printf("time left: %d", time_left);
+      
+      start_scan(time_left);
+
+      //perform scanning
+      while(Bluefruit.Scanner.isRunning())
+      {
+          
+      }
+      
+    }
+    Serial.println("Finished air_time");
+}
+
+void init_scan(){
+      // Initialize Bluefruit with maximum connections as Peripheral = 0, Central = 1
     // SRAM usage required by SoftDevice will increase dramatically with number of connections
     Bluefruit.begin(0, 2);
     Bluefruit.setTxPower(4); // Check bluefruit.h for supported values
-    Bluefruit.setName("Bluefruit52");
-
+    Bluefruit.setName((const char*)("I2C SSR data"));
+    
     // Start Central Scan
     Bluefruit.setConnLedInterval(250);
     Bluefruit.Scanner.setRxCallback(scan_callback);
     Bluefruit.Central.setConnectCallback(connect_callback);
+    Bluefruit.Scanner.setStopCallback(stop_callback);
 
     // Bluefruit.Scanner.useActiveScan(true);        // Request scan response data
     // Bluefruit.Scanner.restartOnDisconnect(false);   //Stops when a beacon is found and an ACK is sended over
-    Bluefruit.Scanner.restartOnDisconnect(true);
-    Bluefruit.Scanner.start(0); // 500 is 5 seconds
+    Bluefruit.Scanner.restartOnDisconnect(false);
+    //Bluefruit.Scanner.start(0); // 500 is 5 seconds
+}
 
-    Serial.println("setup - Scanning ...");
+void start_scan(uint16_t timer){
+  uint8_t timer_sec = timer/1000;
+  Serial.printf("start_scan - timer_sec: %d\r\n", timer_sec);
+  if (timer_sec <= 0)
+    Bluefruit.Scanner.start(1*100);
+  else
+    Bluefruit.Scanner.start(timer_sec*100);
 
-
-    //check if scanning timer has finished
-    
+    Serial.println("start_scan - start scan ...");
+}
+void stop_callback()
+{
+  Serial.println("stop_callback - stopped");
 }
 
 void connect_callback(uint16_t conn_handle)
@@ -92,6 +133,7 @@ void connect_callback(uint16_t conn_handle)
     Serial.println("connect_callback - A connection is made");
     conn->disconnect(); // in order to drop the connection
     Serial.println("connect_callback - The connection is disconnected");
+    Bluefruit.Scanner.stop();
     delay(100);
 }
 
@@ -102,42 +144,25 @@ void scan_callback(ble_gap_evt_adv_report_t *report)
     uint8_t beacon_id = fetch_id(report);
     uint8_t ssr_id = fetch_ssr_id(report);
 
-//    Serial.printf("%02X\r\n",beacon_id);
-//    Serial.println(ssr_id_exists(ssr_id));
-//    Serial.println(index_beacon_data);
-    
-
     if (beacon_id == BEACON_SSR_ID && !ssr_id_exists(ssr_id))
     {
-        Serial.println("                       BLE SSR Beacon service detected");
+        Serial.println(" ----- BLE SSR Beacon service detected ----- ");
         Serial.printf(" Rssi: %d ", report->rssi);
         Serial.printf("bid: 0x%02X ssrid: 0x%02X", beacon_id, ssr_id);
 
-        // devId[0] = ssr_id; //fetch SSR Id received in major LSB
-
         set_beacon_data(report);
-
-        Serial.printf(" address: %d ", index_beacon_data);
-
-        // MAC is in little endian --> print reverse
-
-        //Serial.printBufferReverse(report->peer_addr.addr, 6, ':');
-        //Serial.printf(" address: %d ", *report->peer_addr.addr);
-
-        Serial.printf(" Rssi: %d ", report->rssi);
 
         Serial.printBuffer(report->data.p_data, report->data.len, '-');
         Serial.println();
 
         Serial.printf("bid: 0x%02X ssrid: 0x%02X \r\n", beacon_id, ssr_id);
-        // Check if beacon has a certain address. Not good to use in global environment
-        // Check
         Serial.printf("temp: %d \r\n", received_beacon_data[index_beacon_data].temperature);
         Serial.printf("hum: %d \r\n", received_beacon_data[index_beacon_data].humidity);
         Serial.printf("lux: %d \r\n", received_beacon_data[index_beacon_data].lux);
         Serial.printf("voltage: %d \r\n", received_beacon_data[index_beacon_data].voltage);
+        Serial.printf("rssi: %d \r\n", received_beacon_data[index_beacon_data].rssi);
 
-        Serial.println(" All data reviewed.");
+        Serial.println("All data reviewed.");
 
         // Connect to the beacon
         Bluefruit.Central.connect(report);
@@ -150,7 +175,7 @@ void scan_callback(ble_gap_evt_adv_report_t *report)
 
     // For Softdevice v6: after received a report, scanner will be paused
     // We need to call Scanner resume() to continue scanning
-    Bluefruit.Scanner.resume();
+    //Bluefruit.Scanner.resume();
 }
 
 uint8_t fetch_id(ble_gap_evt_adv_report_t *report)
@@ -202,6 +227,7 @@ void set_beacon_data(ble_gap_evt_adv_report_t *report)
     received_beacon_data[index_beacon_data].humidity = report->data.p_data[HUM];
     received_beacon_data[index_beacon_data].lux = report->data.p_data[LUX_MSB] << 8 | report->data.p_data[LUX_LSB];
     received_beacon_data[index_beacon_data].voltage = report->data.p_data[VCC_MSB] << 8 | report->data.p_data[VCC_LSB];
+    received_beacon_data[index_beacon_data].rssi = report->rssi;
 }
 
 void loop()
