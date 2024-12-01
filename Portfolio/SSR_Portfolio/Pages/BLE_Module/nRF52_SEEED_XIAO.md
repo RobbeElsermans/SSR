@@ -59,6 +59,13 @@ To know on the STM32L4 side that the received data is valid, their is a small "c
 
 In order to not let the BLE-Module wait infinite on the request of the STM32L4, there is a timeout implemented that after 2 seconds, will trigger after the BLE-module has completed its task. This to prevent power consumption if the SMT32L4 missed something or that something went wrong. When the receive window ends, the data will be lost.
 
+![BLE scan response with emulated STM32L4](BLE_Scan_Response.png)
+**ttyUSB0** (left) represents the emulated STM32 which triggers the BLE-module in mode 1 and waits for its response.
+**ttyACM2** (middle) represents the BLE-module in scanning mode (mode 1) and will scan the medium until a beacon is discovered as shown.
+**ttyACM3** (right) represents the beacon BLE-module and is connected to the STM32L4.
+
+As can be observed, a beacon gets fireded where the scanner detect the beacon. The scanner saves the UUID values of the beacon which has $SSR_{id}=0x81$. This ID can be spotted at the received data on the emulated STM32L4. The same holds for the temperature $0x71 = 113$, humidity $0x00 = 0$, lux $0x72=114$, voltage $0x73 = 115$, and rssi $0xd4 = -44$.
+
 ## Modes
 ### Mode 0
 Mode 0 or beacon mode will transmit a beacon. This beacon will be in air for *air_time* and will have a customised UUID of 16-bytes which is structured the following:

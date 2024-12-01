@@ -22,7 +22,7 @@ void loop() {
   Wire.beginTransmission(I2C_DEV_ADDR);
   Wire.write(1);
   Wire.write(0x21);
-  Wire.write(1000); //10 sec scan time
+  Wire.write(100); //10 sec scan time
   Wire.write(0);
   Wire.write(20);
   Wire.write(0);
@@ -36,7 +36,7 @@ void loop() {
   uint8_t error = Wire.endTransmission(true);
   Serial.printf("endTransmission: %u\n", error);
 
-  delay(5000 + 200);
+  delay(10000 + 200);
 
 
   //Read all scan bytes from the slave

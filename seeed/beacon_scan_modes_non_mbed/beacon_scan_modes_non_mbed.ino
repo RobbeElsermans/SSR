@@ -133,6 +133,7 @@ void setup()
   while(!received_data); //Wait for I2C transfer
   Serial.println("data received! ");
   received_data = false;
+  uint16_t time_left = 0;
 
   if(i2c_data.mode == 0)
   {
@@ -142,7 +143,7 @@ void setup()
     timer = millis();
     while(millis()-timer < i2c_data.air_time*100)
     {
-      uint16_t time_left = i2c_data.air_time*100 - (millis()-timer);
+      time_left = i2c_data.air_time*100 - (millis()-timer);
       //Pass through the amount of seconds it has to wait.
       Serial.printf("time left: %d", time_left);
       start_beacon(time_left);
@@ -167,7 +168,7 @@ void setup()
     timer = millis();
     while(millis()-timer < i2c_data.air_time*100)
     {
-      uint16_t time_left = i2c_data.air_time*100 - (millis()-timer);
+      time_left = i2c_data.air_time*100 - (millis()-timer);
       Serial.printf("time left: %d", time_left);
       
       start_scan(time_left);
@@ -182,9 +183,12 @@ void setup()
   }
 
   //Wait for I2C read from master
+  if (time_left > 0)
+    time_left += TIMEOUT_RECEIVE_WINDOW; //Make sure the STM32 waits evenly
+  //time_left = i2c_data.air_time*100 - (millis()-timer) + TIMEOUT_RECEIVE_WINDOW;
   device_is_done = true;
   timer = millis();
-  while(!transmited_data && (millis()-timer) < TIMEOUT_RECEIVE_WINDOW)
+  while(!transmited_data && (millis()-timer) < time_left)
   {
     delay(10);
   }
