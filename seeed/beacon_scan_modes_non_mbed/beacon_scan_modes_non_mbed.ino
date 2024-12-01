@@ -34,6 +34,8 @@
 #define MINOR_LSB 28
 #define RSSI 30
 
+#define TIMEOUT_RECEIVE_WINDOW 2000
+
 // "nRF Connect" app can be used to detect beacon
 uint8_t beaconUuid[16] =
 {
@@ -181,14 +183,14 @@ void setup()
 
   //Wait for I2C read from master
   device_is_done = true;
-  while(!transmited_data)
+  timer = millis();
+  while(!transmited_data && (millis()-timer) < TIMEOUT_RECEIVE_WINDOW)
   {
     delay(10);
   }
 
   
   deep_sleep();
-  
 }
 
 void loop() 

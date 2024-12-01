@@ -24,6 +24,41 @@ The STM32L4 will wake-up at a certain point and will check if the BLE-Beacon mus
 Then, STM32L4 will wait when the device is available on the I2C bus. After the BLE-module has set itself as available, the STM32L4 sends the *ble_module_data_t* struct with certain values over I2C to BLE-module.
 
 Based on the *mode* it will either perform a beacon or a scanning operation for *air_time* amount of seconds.
+
+After the performed *mode*, the BLE-module will wait for the STM32L4 to reach out to get the result of the performed mode.
+The result can be a *ble_beacon_result_t* or a *ble_scan_result_t* depending on the selected mode at the beginning of the computation.
+
+*ble_beacon_result_t*  is selected when we had mode 0 or beacon mode.
+```
+struct ble_beacon_result_t
+{
+uint8_t amount_of_ack;
+};
+```
+This result will yield the amount of acknowledgements from scanners in the area.
+
+The *ble_scan_result_t* gives a more detailed result of the found beacon in the area.
+```
+struct ble_scan_result_t
+{
+uint8_t ssr_id; // The ID of the source
+int16_t temperature; // temperature
+uint8_t humidity; // humidity
+uint16_t lux; // lux (light)
+uint16_t voltage; // voltage
+int8_t rssi; //rssi
+};
+```
+For now, only 1 beacon gets saved and returned to the STM32L4 on request.
+
+To know on the STM32L4 side that the received data is valid, their is a small "check" build in that will be the difference of $255$ with the first written byte. This value is added to the return value.
+
+> For example, given this first byte: $15$ for the return struct of *ble_beacon_result_t*. 
+> There is only 1 byte present in this struct, so we add another byte which has value $15-255=230$
+> Total bytes transmitted: $[15,230]$
+
+In order to not let the BLE-Module wait infinite on the request of the STM32L4, there is a timeout implemented that after 2 seconds, will trigger after the BLE-module has completed its task. This to prevent power consumption if the SMT32L4 missed something or that something went wrong. When the receive window ends, the data will be lost.
+
 ## Modes
 ### Mode 0
 Mode 0 or beacon mode will transmit a beacon. This beacon will be in air for *air_time* and will have a customised UUID of 16-bytes which is structured the following:
@@ -55,7 +90,7 @@ The minor and major will have a certain purpose as well.
 
 When a scanner ACKs a beacon, the beacon gets halted for a moment. The beacon will count the amount of ACKs received. The amount of received ACKs will determine the amount of devices in present surrounding.
 
-After the *air_time* has finished, the beacon will stop. The BLE module now waits for the STM32 to reached back. After the STM32 reached back, the BLE goes to sleep again.
+After the *air_time* has finished, the beacon will stop. The BLE module now waits for the STM32 to reached back. After the STM32 reached back or if the window has passed, the BLE goes to sleep again.
 
 ### Mode 1
 Mode 1 is when we use the BLE module as scanner to search for BLE beacons in the proximity area. This allows for intercommunication between the SSRs. Same as Beacon, the scan will be in air for *air_time* and will have a named that represents the BLE-devide ID and the *ssr_id*.
@@ -128,3 +163,7 @@ An example where we distinguish all elements in the full Bluetooth BLE packet
     - Decoded as `-54 dBm` (signed integer).
 
 [Source](https://semiwiki.com/semiconductor-services/einfochips/302892-understanding-ble-beacons-and-their-applications/)
+
+For now, we only save 1 beacon in our memory and we do not continue with scanning the medium. Nevertheless, the code is adapted to save multiple founded beacons within a specified *ari-time*.
+
+After the *air_time* has finished or their was a beacon found, the scanner will stop. The BLE module now waits for the STM32 to reached back. After the STM32 reached back or if the window has passed, the BLE goes to sleep again.

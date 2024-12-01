@@ -2,7 +2,7 @@
 
 struct ble_module_data_t ble_data;
 struct ble_beacon_result_t ble_beacon_data;
-struct ble_scan_data_t ble_scan_data;
+struct ble_scan_result_t ble_scan_data;
 
 uint8_t send_ble_data(I2C_HandleTypeDef *hi2c1, struct ble_module_data_t *data)
 {

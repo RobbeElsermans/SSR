@@ -32,9 +32,9 @@
 		{"id":"28d055a39dfb14ac","type":"text","text":"BLE Scan max air-time","x":1043,"y":-660,"width":250,"height":60,"color":"5"},
 		{"id":"9bd1789da30f9254","type":"text","text":"BLE Beacon max air-time","x":1043,"y":-600,"width":250,"height":60,"color":"5"},
 		{"id":"76dfb6612756fbc6","type":"text","text":"BLE beacon and scan in 1 code","x":193,"y":-780,"width":250,"height":60,"color":"5"},
-		{"id":"ac2af3eeca999949","type":"text","text":"BLE Beacon code and send data back over I2C","x":193,"y":-720,"width":250,"height":60,"color":"5"},
 		{"id":"b041949ad8da93ce","type":"text","text":"Implement brain code awareness reading available energy","x":-407,"y":-540,"width":250,"height":100,"color":"4"},
-		{"id":"85e88aa687efbdc9","type":"text","text":"Implement energy aware tasks selection","x":-407,"y":-440,"width":250,"height":60,"color":"4"}
+		{"id":"85e88aa687efbdc9","type":"text","text":"Implement energy aware tasks selection","x":-407,"y":-440,"width":250,"height":60,"color":"4"},
+		{"id":"ac2af3eeca999949","type":"text","text":"BLE Beacon code and send data back over I2C","x":1043,"y":-540,"width":250,"height":60,"color":"5"}
 	],
 	"edges":[]
 }
