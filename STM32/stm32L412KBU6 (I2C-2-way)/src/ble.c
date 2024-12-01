@@ -33,9 +33,17 @@ uint8_t send_ble_data(I2C_HandleTypeDef *hi2c1, struct ble_module_data_t *data)
     return 0; // Bad
 }
 
-void receive_ble_data(I2C_HandleTypeDef *hi2c1, uint8_t* buffer, uint8_t size)
+uint8_t receive_ble_data(I2C_HandleTypeDef *hi2c1)
 {
-    HAL_I2C_Master_Receive(hi2c1, BLE_ADDRESS, buffer, size, 100);
+    uint8_t buffer[1];
+    HAL_I2C_Master_Receive(hi2c1, BLE_ADDRESS, buffer, sizeof(buffer), 100);
+    if(buffer[0] == 255)
+    {
+        return 0;
+    }
+    else{
+        return buffer[0];
+    }
 }
 
 uint8_t ble_device_ready(I2C_HandleTypeDef *hi2c1){

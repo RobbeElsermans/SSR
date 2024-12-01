@@ -96,7 +96,7 @@ struct ble_beacon_result_t
 struct ble_scan_data_t
 {
     uint8_t ssr_id;       // The ID of the source
-    uint16_t temperature; // temperature
+    int16_t temperature; // temperature
     uint8_t humidity;     // humidity
     uint16_t lux;         // lux (light)
     uint16_t voltage;     // voltage
@@ -149,6 +149,8 @@ void setup()
       Serial.println("advertising done");
       delay(1);
       Bluefruit.Periph.clearBonds();
+
+      //Continue the loop for beacon
     }
   
     //Transfer data of beacon to master
@@ -170,9 +172,11 @@ void setup()
 
       //perform scanning
       while(Bluefruit.Scanner.isRunning());
-      
-    }
 
+      //Stop the loop for scanner
+      // request_event must be altered if more beacons can be scanned.
+      break;
+    }
   }
 
   //Wait for I2C read from master
@@ -181,8 +185,10 @@ void setup()
   {
     delay(10);
   }
+
   
   deep_sleep();
+  
 }
 
 void loop() 
@@ -399,15 +405,44 @@ void request_event()
   {
     transmited_data = true;
 
-    if(i2c_data.mode = 0){
-      Wire.write(10);
+    //In scan mode
+    if(i2c_data.mode == 1)
+    {
+      if(received_beacon_data[0].ssr_id != 0x00)
+      {
+        //For now, we only transpit the first beacon found.
+        //Later optimize this so we can transmit multiple beacons that are found
+        
+        Wire.write(received_beacon_data[0].ssr_id);
+        Wire.write((received_beacon_data[0].temperature >> 8) & 0xFF);
+        Wire.write(received_beacon_data[0].temperature & 0xFF);
+        Wire.write(received_beacon_data[0].humidity);
+        Wire.write((received_beacon_data[0].lux >> 8) & 0xFF);
+        Wire.write(received_beacon_data[0].lux & 0xFF);
+        Wire.write((received_beacon_data[0].voltage >> 8) & 0xFF);
+        Wire.write(received_beacon_data[0].voltage & 0xFF);
+        Wire.write(received_beacon_data[0].rssi - 255);
+        Wire.write(received_beacon_data[0].ssr_id - 255);
+        Serial.printf("write mode 1: %d\r\n", received_beacon_data[0].ssr_id);
+      }
+      else
+      {
+        for(uint8_t i = 0; i < 9; i++)
+        {
+            Wire.write(0);
+        }
+        Wire.write(255);
+      }
     }
-    else{
+    else // in beacon mode
+    {
+      //Create a failsafe value to make sure the sended value is correct.
       Wire.write(beacon_data.amount_of_ack);
+      Wire.write(255-beacon_data.amount_of_ack);
+      Serial.printf("write mode 0: %d\r\n", beacon_data.amount_of_ack);
     }
     
-    Serial.printf("A request on I2C: %d\r\n", Wire.read());
-    //Wire.write(20); 
+    Serial.printf("A request on I2C\r\n");
   }
 }
 
@@ -415,65 +450,70 @@ void request_event()
 // this function is registered as an event, see setup()
 void receive_event(int howMany)
 {
-    uint8_t i = 0;
+  uint8_t i = 0;
+
+  Serial.printf("size available: %d, hommany: %d", Wire.available(), howMany);
+  if(howMany == 13) //To make sure we recieve the correct amount of data
+  {
     while (Wire.available()) // loop through all but the last
     {
-        uint8_t c = Wire.read(); // receive byte as a character
-        if (i == 0)
-           i2c_data.mode = (uint8_t)c;
-        if (i == 1) // ssr_id
-           i2c_data.ssr_id = (uint8_t)c;
-        if (i == 2) // beacon_time
-           i2c_data.air_time = (uint8_t)c;
-        if (i == 3) // env_temperature HSB
-        {
-            i++;
-            uint8_t c1 = Wire.read();            
-           i2c_data.env_temperature = (int16_t)(c << 8 | c1);
-        }
-        
-        if (i == 5) // env_humidity
-           i2c_data.env_humidity = (uint8_t)c;
-        if (i == 6) // env_lux
-        {
-            i++;
-            
-            uint8_t c1 = Wire.read();
-           i2c_data.env_lux = (int16_t)(c << 8 | c1);
-        }
-
-        if (i == 8) // dev_voltage
-        {   
-            i++;
-            uint8_t c1 = Wire.read();
-           i2c_data.dev_voltage = (uint16_t) (c << 8 | c1);
-        }
-
+      uint8_t c = Wire.read(); // receive byte as a character
+      if (i == 0)
+         i2c_data.mode = (uint8_t)c;
+      if (i == 1) // ssr_id
+         i2c_data.ssr_id = (uint8_t)c;
+      if (i == 2) // beacon_time
+         i2c_data.air_time = (uint8_t)c;
+      if (i == 3) // env_temperature HSB
+      {
+          i++;
+          uint8_t c1 = Wire.read();            
+         i2c_data.env_temperature = (int16_t)(c << 8 | c1);
+      }
+      
+      if (i == 5) // env_humidity
+         i2c_data.env_humidity = (uint8_t)c;
+      if (i == 6) // env_lux
+      {
         i++;
+          
+        uint8_t c1 = Wire.read();
+        i2c_data.env_lux = (int16_t)(c << 8 | c1);
+      }
+
+      if (i == 8) // dev_voltage
+      {   
+        i++;
+        uint8_t c1 = Wire.read();
+        i2c_data.dev_voltage = (uint16_t) (c << 8 | c1);
+      }
+
+      i++;
     }
+  }
 
-    //If ID has a good value
-    if (i2c_data.ssr_id != 0x00)
-      received_data = true;
+  //If ID has a good value
+  if (i2c_data.ssr_id != 0x00)
+    received_data = true;
 
 
-    if (received_data){
-        //Print the whole struct
-        Serial.print("m: ");
-        Serial.print(i2c_data.mode);
-        Serial.print(" id: ");
-        Serial.print(i2c_data.ssr_id);
-        Serial.print(" at: ");
-        Serial.print(i2c_data.air_time);
-        Serial.print(" et: ");
-        Serial.print(i2c_data.env_temperature);
-        Serial.print(" eh: ");
-        Serial.print(i2c_data.env_humidity);
-        Serial.print(" el: ");
-        Serial.print(i2c_data.env_lux);
-        Serial.print(" dv: ");
-        Serial.println(i2c_data.dev_voltage);
-    }
+  if (received_data){
+      //Print the whole struct
+      Serial.print("m: ");
+      Serial.print(i2c_data.mode);
+      Serial.print(" id: ");
+      Serial.print(i2c_data.ssr_id);
+      Serial.print(" at: ");
+      Serial.print(i2c_data.air_time);
+      Serial.print(" et: ");
+      Serial.print(i2c_data.env_temperature);
+      Serial.print(" eh: ");
+      Serial.print(i2c_data.env_humidity);
+      Serial.print(" el: ");
+      Serial.print(i2c_data.env_lux);
+      Serial.print(" dv: ");
+      Serial.println(i2c_data.dev_voltage);
+  }
 }
 
 void deep_sleep(){

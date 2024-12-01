@@ -66,101 +66,29 @@ int main(void)
     Error_Handler();
   }
 
-  // Blinky blinky
-  blink_led(1000);
+  BLE_Init();
 
-  /* Check if the system was resumed from StandBy mode */
-  if (__HAL_PWR_GET_FLAG(PWR_FLAG_SB) != RESET)
+  uint8_t counter = 0;
+  uint8_t buffer[4];
+
+  while (1)
   {
-    /* Clear Standby flag */
-    __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
-    blink_led(100);
+    //Size is available in the onReceive method in Wire.
+
+    HAL_I2C_Master_Transmit(&hi2c1, BLE_ADDRESS, &counter, 2, 1);
+    HAL_Delay(1000);
+
+    //Size is not communicated. This is pure for the local buffer.
+    //So know whath to send back to the STM32 from the slave based on previously sended values?
+    HAL_I2C_Master_Receive(&hi2c1, BLE_ADDRESS, buffer, sizeof(buffer), 1);
+
+    uint8_t Buffer[20] = {0};
+    sprintf(Buffer, "tx:%d, rx:%d,%d,%d,%d \r\n",counter, buffer[0],buffer[1],buffer[2],buffer[3]);
+    HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
+
+    counter = buffer[0];
+    counter++;
   }
-    ble_data.env_temperature = 0;
-    ble_data.env_lux = 1;
-    ble_data.dev_voltage = 2;
-
-  while(1){
-    ble_data.env_temperature++;
-    ble_data.env_lux++;
-    ble_data.dev_voltage++;
-
-    //DEBUG
-    ble_data.ssr_id++; 
-    beacon();
-    //half_sleep(5000);
-    HAL_Delay(5000);
-  }
-
-  // case sens:
-  //   // Read the sensors values
-
-  //   // Read out the energy available
-  //   // Determine what option to take hereafter
-  //   task_state = beacon;
-
-  //   setBool(&boolean_holder_1, BOOL_MEASUREMENT_TAKEN);
-  //   break;
-
-  // case beacon:
-  //   // initialize
-  //   BLE_Init();
-
-  //   // wait until device is available
-  //   while (ble_device_ready(&hi2c1))
-  //   {
-  //   }
-
-  //   // Add measurement to data struct
-  //   ble_data.beacon_time = 50; // 50*100 = 5000ms 5 second
-  //   ble_data.env_temperature++;
-  //   ble_data.env_humidity++;
-  //   ble_data.dev_voltage++;
-
-  //   // Send out a value
-  //   send_ble_data(&hi2c1, &ble_data);
-
-  //   // Go to deep sleep
-  //   task_state = deep_sleep;
-  //   break;
-
-  // case scan:
-  //   break;
-
-  // case transmit:
-  //   break;
-
-  // case sleep:
-  //   // The stop 2 mode
-  //   MX_RTC_Init();
-  //   HAL_SuspendTick();
-  //   HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0x2806, RTC_WAKEUPCLOCK_RTCCLK_DIV16, 0);
-  //   // check_reg = seconds / 0.000488;
-
-  //   /* Enter STOP 2 mode */
-  //   HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
-  //   HAL_RTCEx_DeactivateWakeUpTimer(&hrtc);
-  //   SystemClock_Config();
-  //   HAL_ResumeTick();
-
-  //   break;
-
-  // case deep_sleep:
-
-  //   /* Enter the Standby mode */
-  //   if (lowPower_init())
-  //   {
-  //     Error_Handler();
-  //   }
-  //   else
-  //   {
-  //     HAL_PWR_EnterSTANDBYMode();
-  //   }
-  //   // Will not reach this code
-  //   break;
-
-  // Code shouldn't reach this point after entering standby mode
-  Error_Handler();
 }
 
 void beacon()
@@ -188,26 +116,22 @@ void beacon()
   // Send out a value
   send_ble_data(&hi2c1, &ble_data);
 
-  //Sleep for air_time
-  //half_sleep(ble_data.air_time * 100);
+  // Sleep for air_time
+  // half_sleep(ble_data.air_time * 100);
   HAL_Delay(ble_data.air_time * 100);
 
-  //read scan data
-  uint8_t received_data[2] = {0};
+  // read scan data
+  uint8_t received_data = 0;
   do
   {
-    //half_sleep(100);
+    // half_sleep(100);
     HAL_Delay(100);
-    receive_ble_data(&hi2c1, received_data, 2);
-  }
-  while((received_data[0] + received_data[1]) != 255);
-  //Make sure the received value is correct based on the second value
+    received_data = receive_ble_data(&hi2c1);
+  } while (received_data == 0);
 
-  //Set the value in our own data struct
-  ble_beacon_data.amount_of_ack = received_data[0];
-  // uint8_t Buffer[10] = {0};
-  // sprintf(Buffer, "%d\r\n", received_data[0]);
-  // HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
+  uint8_t Buffer[10] = {0};
+  sprintf(Buffer, "%d\r\n", received_data);
+  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
 }
 
 void scan()
@@ -235,31 +159,19 @@ void scan()
   // Send out the BLE data value
   send_ble_data(&hi2c1, &ble_data);
 
-  //Sleep for air_time
-  //half_sleep(ble_data.air_time * 100);
-  HAL_Delay(ble_data.air_time * 100);
+  // Sleep for air_time
+  half_sleep(ble_data.air_time * 100);
 
-  //read scan data
-  uint8_t received_data[9+1] = {0};
+  // read scan data
+  uint8_t received_data = 0;
   do
   {
-    //half_sleep(100);
-    HAL_delay(100);
-    receive_ble_data(&hi2c1, received_data, 9+1);
-  }
-  while(received_data[0] + received_data[9] == 255);
-
-  //If all are 0 except for received_data[9], then no beacon found
-
-  ble_scan_data.ssr_id = received_data[0];
-  ble_scan_data.temperature = received_data[1]>>8 | received_data[2];
-  ble_scan_data.humidity = received_data[3];
-  ble_scan_data.lux = received_data[4]>>8 | received_data[5];
-  ble_scan_data.voltage = received_data[6]>>8 | received_data[7];
-  ble_scan_data.rssi = received_data[8];
+    half_sleep(100);
+    received_data = receive_ble_data(&hi2c1);
+  } while (received_data == 0);
 
   uint8_t Buffer[10] = {0};
-  sprintf(Buffer, "%d\r\n", ble_scan_data.rssi);
+  sprintf(Buffer, "%d\r\n", received_data);
   HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
 }
 void sens()
