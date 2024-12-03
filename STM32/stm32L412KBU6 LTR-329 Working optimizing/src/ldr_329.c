@@ -1,7 +1,8 @@
 #include "ldr_329.h"
 
-void LTR329_Init(I2C_HandleTypeDef* hi2c1) 
+void LTR329_Init(I2C_HandleTypeDef* hi2c1)
 {
+
   uint8_t data[2];
 
   // Enable ALS sensor, set to active mode
@@ -68,4 +69,25 @@ uint16_t GetLuxIR(I2C_HandleTypeDef* hi2c1)
     uint16_t ch0 = LTR329_ReadALS(hi2c1, 0); // Read channel 0 data
 
     return ch0;
+}
+
+void LTR329_Sleep(I2C_HandleTypeDef* hi2c1) {
+    uint8_t data[2];
+    
+    // Write to ALS_CONTR register to set the sensor in standby mode (0x00).
+    data[0] = LTR329_ALS_CONTR;
+    data[1] = 0x00; // Standby mode
+    HAL_I2C_Master_Transmit(hi2c1, LTR329_I2C_ADDR, data, 2, HAL_MAX_DELAY);
+}
+
+void LTR329_WakeUp(I2C_HandleTypeDef* hi2c1) {
+    uint8_t data[2];
+
+    // Write to ALS_CONTR register to set the sensor in active mode.
+    data[0] = LTR329_ALS_CONTR;
+    data[1] = 0x01; // Active mode with default gain
+    HAL_I2C_Master_Transmit(hi2c1, LTR329_I2C_ADDR, data, 2, HAL_MAX_DELAY);
+
+    // Wait for the sensor to wake up.
+    HAL_Delay(10); // According to the sensor datasheet
 }

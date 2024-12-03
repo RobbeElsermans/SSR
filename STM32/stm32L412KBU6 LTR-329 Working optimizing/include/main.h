@@ -29,9 +29,6 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
-
-extern struct ble_module_data_t ble_data;
-
 /* Exported constants --------------------------------------------------------*/
 
 /* Exported macro ------------------------------------------------------------*/
@@ -40,28 +37,6 @@ extern struct ble_module_data_t ble_data;
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-
-void MCU_Init();
-void sensor_Init();
-void BLE_Init();
-void LoRa_Init();
-
-//tasks
-void beacon();
-void scan();
-void sens();
-void transmit();
-
-//sleep modes
-void half_sleep(uint16_t time);
-void deep_sleep(uint16_t time);
-
-//Helpers
-void blink_led_times(uint16_t time, uint8_t times);
-void blink_led(uint16_t time);
-void setBool(uint8_t *bool_carrier, uint8_t bool_place);
-void clearBool(uint8_t *bool_carrier, uint8_t bool_place);
-uint8_t checkBool(uint8_t *bool_carrier, uint8_t bool_place);
 
 /* USER CODE END EFP */
 
@@ -74,13 +49,8 @@ uint8_t checkBool(uint8_t *bool_carrier, uint8_t bool_place);
 #define SWCLK_GPIO_Port GPIOA
 #define VCP_RX_Pin GPIO_PIN_15
 #define VCP_RX_GPIO_Port GPIOA
-
-#define USER_LED_Pin GPIO_PIN_3
-#define USER_LED_GPIO_Port GPIOB
-#define BLE_nSLEEP_Pin GPIO_PIN_6
-#define BLE_nSLEEP_GPIO_Port GPIOB
-
-#define SSR_ID 0x10
+#define LD3_Pin GPIO_PIN_3
+#define LD3_GPIO_Port GPIOB
 
 #ifdef __cplusplus
 }

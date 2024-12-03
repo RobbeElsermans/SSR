@@ -11,10 +11,11 @@ extern "C" {
 
 #define RTC_ASYNCH_PREDIV    0x7F
 #define RTC_SYNCH_PREDIV     0x00F9  /* 32 kHz RC/128 - 1 */
+#define LED_TOGGLE_DELAY         100
 
-void GPIO_Disable(void);
+void SystemPower_Config(void);
 uint8_t RTC_Config(void);
-uint8_t lowPower_init(uint16_t time);
+uint8_t lowPower_init(void);
 
 #ifdef __cplusplus
 }
