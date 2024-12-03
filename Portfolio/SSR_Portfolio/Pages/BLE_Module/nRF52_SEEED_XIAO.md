@@ -1,5 +1,6 @@
 ## BLE and STM32 I2C communication
-![BLE_block_diagram](../../Images/Block_Diagram_BLE.png)
+![BLE code flow](../../Images/BLE_Code_flow.png)
+
 To enable the BLE inter-communication, we use I2C as device connection to the STM32L4. 
 Here, the BLE module shall have the address $0x12$ and the following struct will be send over.
 ```
