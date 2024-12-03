@@ -104,6 +104,35 @@ Then, the beacon is transmitted for 5 seconds ($\pm0.46mA$) where after that, a 
 
 This yields a result of $0.3566mA$ average consumption.
 
+#### beacon low power mode
+In this mode, the beacon gets an air-time of 10 seconds and after that, as sleep of $\pm14s$.
+![[Pasted image 20241203130032.png]]
+This configuration takes $\pm3.15mA$ over a period of 23 seconds.
+
+![[Pasted image 20241203130320.png]]
+The beacon itself consumes $\pm 6.44mA$.
+
+In deep sleep, the beacon module consumes $\pm179.2µA$
+#### scan low power mode
+
+In this mode, the scanner gets an air-time of 10 seconds and after that, a sleep of $\pm 14s$.
+
+![[BLE_Scan_Full_LPMode.png]]
+
+This configuration takes $\pm5.26mA$  if no beacon is detected when scanning the medium.
+The scanning itself consumes $\pm11.4mA$ which is quite a lot.
+
+Compared to the beacon mode, the scanning mode consumes more power then the beacon mode. This is taken into consideration in the air-time of the BLE-modules modes.
+
+As described in [nRF52 code description](../BLE_module/nRF52_SEEED_XIAO.md), the scanner will stop scanning when 1 beacon is found.
+![[BLE_Scan_Half_LPMode.png]]
+
+Here, a consumption of $\pm1.01mA$ is used over a period of 25 seconds. This is a reduction of $\pm5$ which is good.
+
+In deep sleep, the beacon module consumes $\pm19.5µA$. 
+
+>The huge difference between the beacon and scan mode is due to the powering method. Here, we power the board through 3.3V pin and in the beacon case, we power the board also through 3.3V pin. The difference is that in the beacon case, we use 2 pull-up resistors for the I2C communication which implies the higher current consumption.
+
 ### LTR-329 Light Sensor
 #### Default operation
 Joule scope is used as amp meter (by using only the red wires).

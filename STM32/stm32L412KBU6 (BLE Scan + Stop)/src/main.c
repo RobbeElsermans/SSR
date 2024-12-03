@@ -89,7 +89,7 @@ int main(void)
     ble_data.ssr_id++; 
     beacon();
     //half_sleep(5000);
-    HAL_Delay(5000);
+    HAL_Delay(12000);
   }
 
   // case sens:
@@ -180,7 +180,7 @@ void beacon()
 
   // Add measurement to data struct
   ble_data.mode = 0;
-  ble_data.air_time = 50; // 50*100 = 5000ms 5 second
+  ble_data.air_time = 100; // 50*100 = 5000ms 5 second
   // ble_data.env_temperature++;
   // ble_data.env_humidity++;
   // ble_data.dev_voltage++;
