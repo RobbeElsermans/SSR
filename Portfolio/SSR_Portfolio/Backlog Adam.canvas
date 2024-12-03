@@ -1,8 +1,7 @@
 {
 	"nodes":[
-		{"id":"fae673db3cca5acb","type":"text","text":"ToDo","x":-440,"y":-920,"width":565,"height":950},
-		{"id":"a421c2471b515622","type":"text","text":"In Progress","x":160,"y":-920,"width":565,"height":950},
-		{"id":"2d6e8ab64c6f07de","type":"text","text":"Done","x":760,"y":-920,"width":565,"height":950},
+		{"id":"fae673db3cca5acb","type":"text","text":"ToDo","x":-440,"y":-920,"width":565,"height":29},
+		{"id":"2d6e8ab64c6f07de","type":"text","text":"Done","x":760,"y":-920,"width":565,"height":29},
 		{"id":"666df8d3c06a777f","type":"text","text":"Robbe","x":-440,"y":-1180,"width":250,"height":60,"color":"5"},
 		{"id":"53a57fe57467eb78","type":"text","text":"Tom","x":-440,"y":-1100,"width":250,"height":60,"color":"1"},
 		{"id":"c725be551ee86567","type":"text","text":"Power profile STM32 in Standby","x":793,"y":-840,"width":250,"height":60,"color":"5"},
@@ -23,10 +22,15 @@
 		{"id":"aad74e62b874fde8","type":"text","text":"I2C with Temp&Hum sensor","x":793,"y":-360,"width":250,"height":60,"color":"3"},
 		{"id":"c70e1036dfca425a","type":"text","text":"I2C with Light Sensor","x":793,"y":-300,"width":250,"height":60,"color":"3"},
 		{"id":"e270e680dfca4d5a","type":"text","text":"Meassuring cappacitor behaviour (AEM10941) ","x":792,"y":-240,"width":250,"height":60,"color":"3"},
-		{"id":"11931e3e373e5d75","type":"text","text":"Sending sensors to sleep","x":193,"y":-720,"width":250,"height":60,"color":"3"},
 		{"id":"e0ced2667d369c40","type":"text","text":"SHT40 - sleeping","x":792,"y":-180,"width":250,"height":60,"color":"3"},
 		{"id":"3a449c3e7e8b381e","type":"text","text":"Implement energy harvesting to power sensors","x":-407,"y":-600,"width":250,"height":120,"color":"3"},
-		{"id":"ce307bc69aed504d","type":"text","text":"Power Profile of sleeping sensors / wake sensors","x":-407,"y":-480,"width":250,"height":60,"color":"3"}
+		{"id":"ce307bc69aed504d","type":"text","text":"Power Profile of sleeping sensors / wake sensors","x":-407,"y":-480,"width":250,"height":60,"color":"3"},
+		{"id":"a421c2471b515622","type":"text","text":"In Progress","x":161,"y":-925,"width":565,"height":29},
+		{"id":"11931e3e373e5d75","type":"text","text":"LTR-329 is sleeping\n","x":792,"y":-120,"width":250,"height":60,"color":"3"},
+		{"id":"012c269b2ddc3d0b","type":"text","text":"combining sensor codes ?","x":-407,"y":-420,"width":250,"height":60,"color":"3"},
+		{"id":"aca8913f5cb312ff","type":"text","text":"Sending STM32to sleep and power it by solar","x":193,"y":-720,"width":250,"height":60,"color":"3"},
+		{"id":"3a9b68359d631370","x":194,"y":-660,"width":250,"height":60,"type":"text","text":"Measuring Voltage of the capacitor"},
+		{"id":"148702c002315018","type":"text","text":"","x":-407,"y":-360,"width":250,"height":60,"color":"3"}
 	],
 	"edges":[]
 }

@@ -127,10 +127,10 @@ void setup()
   Wire.onRequest(request_event);
 
   // Uncomment to blocking wait for Serial connection
-  while ( !Serial ) delay(10);
+  //while ( !Serial ) delay(10);
 
   Serial.println("Wait for data");
-  while(!received_data); //Wait for I2C transfer
+  //while(!received_data); //Wait for I2C transfer
   Serial.println("data received! ");
   received_data = false;
   uint16_t time_left = 0;
@@ -205,7 +205,7 @@ void loop()
 void init_beacon()
 {
   Bluefruit.begin();
-  Bluefruit.autoConnLed(true);
+  Bluefruit.autoConnLed(false);
   Bluefruit.setTxPower(0);    // Check bluefruit.h for supported values
   beacon.setManufacturer(MANUFACTURER_ID);
   beacon.setMajorMinor((BEACON_SSR_ID << 8 |i2c_data.ssr_id), 0x0000);
@@ -296,9 +296,9 @@ void init_scan(){
     Bluefruit.begin(0, 2);
     Bluefruit.setTxPower(4); // Check bluefruit.h for supported values
     Bluefruit.setName((const char*)("I2C SSR data"));
-    
+    Bluefruit.autoConnLed(false);
     // Start Central Scan
-    Bluefruit.setConnLedInterval(250);
+    //Bluefruit.setConnLedInterval(250);
     Bluefruit.Scanner.setRxCallback(scan_callback);
     Bluefruit.Central.setConnectCallback(connect_callback);
     Bluefruit.Scanner.setStopCallback(stop_callback);
