@@ -26,8 +26,23 @@
 #include "ble.h"
 #include "rtc.h"
 
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
+/* Flash as EEPROM */
+#define FLASH_USER_START_ADDR ADDR_FLASH_PAGE_60                     /* Start @ of user Flash area */
+#define FLASH_USER_END_ADDR ADDR_FLASH_PAGE_63 + FLASH_PAGE_SIZE - 1 /* End @ of user Flash area */
+
+#define DATA_64 ((uint64_t)0x1234577712345777)
+#define DATA_32 ((uint32_t)0x12345777)
+
+uint32_t FirstPage = 0, NbOfPages = 0, BankNumber = 0;
+uint32_t Address = 0, PAGEError = 0;
+__IO uint32_t data32 = 0, MemoryProgramStatus = 0;
+
+/*Variable used for Erase procedure*/
+static FLASH_EraseInitTypeDef EraseInitStruct;
+
+static uint32_t GetPage(uint32_t Address);
+static uint32_t GetBank(uint32_t Address);
+/* Flash as EEPROM */
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -53,13 +68,121 @@ void Error_Handler(void);
  */
 int main(void)
 {
-  // Set ID of the SSR
-  ble_data.ssr_id = SSR_ID;
-
   MCU_Init();
 
   // Debug UART
   MX_UART2_UART_Init();
+
+  // If we came out a deep sleep state
+  if (__HAL_PWR_GET_FLAG(PWR_FLAG_SB) != RESET)
+  {
+    __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
+  }
+  // An initial startup from boot?
+  else
+  {
+    
+  }
+
+  /* Unlock the Flash to enable the flash control register access *************/
+  HAL_FLASH_Unlock();
+
+  /* Erase the user Flash area
+    (area defined by FLASH_USER_START_ADDR and FLASH_USER_END_ADDR) ***********/
+
+    /* Get the 1st page to erase */
+    FirstPage = GetPage(FLASH_USER_START_ADDR);
+
+    /* Get the number of pages to erase from 1st page */
+    NbOfPages = GetPage(FLASH_USER_END_ADDR) - FirstPage + 1;
+
+    /* Get the bank */
+    BankNumber = GetBank(FLASH_USER_START_ADDR);
+
+    /* Fill EraseInit structure*/
+    EraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
+    EraseInitStruct.Banks = BankNumber;
+    EraseInitStruct.Page = FirstPage;
+    EraseInitStruct.NbPages = NbOfPages;
+
+    /* Note: If an erase operation in Flash memory also concerns data in the data or instruction cache,
+       you have to make sure that these data are rewritten before they are accessed during code
+       execution. If this cannot be done safely, it is recommended to flush the caches by setting the
+       DCRST and ICRST bits in the FLASH_CR register. */
+    if (HAL_FLASHEx_Erase(&EraseInitStruct, &PAGEError) != HAL_OK)
+    {
+      /*
+        Error occurred while page erase.
+        User can add here some code to deal with this error.
+        PAGEError will contain the faulty page and then to know the code error on this page,
+        user can call function 'HAL_FLASH_GetError()'
+      */
+      /* Infinite loop */
+      while (1)
+      {
+        /* Make LED3 blink (100ms on, 2s off) to indicate error in Erase operation */
+        Error_Handler();
+      }
+    }
+
+  /* Program the user Flash area word by word
+  (area defined by FLASH_USER_START_ADDR and FLASH_USER_END_ADDR) ***********/
+
+  Address = FLASH_USER_START_ADDR;
+
+  while (Address < FLASH_USER_END_ADDR)
+  {
+    if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, Address, DATA_64) == HAL_OK)
+    {
+      Address = Address + 8;
+    }
+    else
+    {
+      /* Error occurred while writing data in Flash memory.
+         User can add here some code to deal with this error */
+      while (1)
+      {
+        /* Make LED3 blink (100ms on, 2s off) to indicate error in Write operation */
+        Error_Handler();
+      }
+    }
+  }
+
+  /* Lock the Flash to disable the flash control register access (recommended
+     to protect the FLASH memory against possible unwanted operation) *********/
+  HAL_FLASH_Lock();
+
+  /* Check if the programmed data is OK
+      MemoryProgramStatus = 0: data programmed correctly
+      MemoryProgramStatus != 0: number of words not programmed correctly ******/
+  Address = FLASH_USER_START_ADDR;
+  MemoryProgramStatus = 0x0;
+
+  while (Address < FLASH_USER_END_ADDR)
+  {
+    data32 = *(__IO uint32_t *)Address;
+
+    if (data32 != DATA_32)
+    {
+      MemoryProgramStatus++;
+    }
+    Address = Address + 4;
+  }
+
+  /*Check if there is an issue to program data*/
+  if (MemoryProgramStatus == 0)
+  {
+    /* No error detected. Switch on LED3*/
+    blink_led_times(1000, 2);
+  }
+  else
+  {
+    /* Error detected. LED3 will blink with 1s period */
+    while (1)
+    {
+      Error_Handler();
+    }
+  }
 
   /* Configure RTC */
   if (RTC_Config())
@@ -70,113 +193,45 @@ int main(void)
   // Blinky blinky
   blink_led(1000);
 
-  /* Check if the system was resumed from StandBy mode */
-  if (__HAL_PWR_GET_FLAG(PWR_FLAG_SB) != RESET)
-  {
-    /* Clear Standby flag */
-    __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
-    blink_led(100);
-  }
+  deep_sleep(8000);
 
-  half_sleep(5000);
-
-  blink_led_times(100, 8);
-
-  // beacon();
-
-  // Read out the energy available
-  // Set the state accordingly
-
-  if (!checkBool(&boolean_holder_1, BOOL_SENS))
-  {
-    setBool(&boolean_holder_1, BOOL_SENS);
-    // Do sensing
-  }
-
-  if (!checkBool(&boolean_holder_1, BOOL_BEACON))
-  {
-    setBool(&boolean_holder_1, BOOL_BEACON);
-    // Send out the beacon
-    beacon();
-  }
-
-  blink_led_times(1000,2);
-  deep_sleep(5000);
-
-  while(1)
+  while (1)
   {
     blink_led(50);
   }
+}
 
-  // case sens:
-  //   // Read the sensors values
+/**
+ * @brief  Gets the page of a given address
+ * @param  Addr: Address of the FLASH Memory
+ * @retval The page of a given address
+ */
+static uint32_t GetPage(uint32_t Addr)
+{
+  uint32_t page = 0;
 
-  //   // Read out the energy available
-  //   // Determine what option to take hereafter
-  //   task_state = beacon;
+  if (Addr < (FLASH_BASE + FLASH_BANK_SIZE))
+  {
+    /* Bank 1 */
+    page = (Addr - FLASH_BASE) / FLASH_PAGE_SIZE;
+  }
+  else
+  {
+    /* Bank 2 */
+    page = (Addr - (FLASH_BASE + FLASH_BANK_SIZE)) / FLASH_PAGE_SIZE;
+  }
 
-  //   setBool(&boolean_holder_1, BOOL_MEASUREMENT_TAKEN);
-  //   break;
+  return page;
+}
 
-  // case beacon:
-  //   // initialize
-  //   BLE_Init();
-
-  //   // wait until device is available
-  //   while (ble_device_ready(&hi2c1))
-  //   {
-  //   }
-
-  //   // Add measurement to data struct
-  //   ble_data.beacon_time = 50; // 50*100 = 5000ms 5 second
-  //   ble_data.env_temperature++;
-  //   ble_data.env_humidity++;
-  //   ble_data.dev_voltage++;
-
-  //   // Send out a value
-  //   send_ble_data(&hi2c1, &ble_data);
-
-  //   // Go to deep sleep
-  //   task_state = deep_sleep;
-  //   break;
-
-  // case scan:
-  //   break;
-
-  // case transmit:
-  //   break;
-
-  // case sleep:
-  //   // The stop 2 mode
-  //   MX_RTC_Init();
-  //   HAL_SuspendTick();
-  //   HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0x2806, RTC_WAKEUPCLOCK_RTCCLK_DIV16, 0);
-  //   // check_reg = seconds / 0.000488;
-
-  //   /* Enter STOP 2 mode */
-  //   HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
-  //   HAL_RTCEx_DeactivateWakeUpTimer(&hrtc);
-  //   SystemClock_Config();
-  //   HAL_ResumeTick();
-
-  //   break;
-
-  // case deep_sleep:
-
-  //   /* Enter the Standby mode */
-  //   if (lowPower_init())
-  //   {
-  //     Error_Handler();
-  //   }
-  //   else
-  //   {
-  //     HAL_PWR_EnterSTANDBYMode();
-  //   }
-  //   // Will not reach this code
-  //   break;
-
-  // Code shouldn't reach this point after entering standby mode
-  Error_Handler();
+/**
+ * @brief  Gets the bank of a given address
+ * @param  Addr: Address of the FLASH Memory
+ * @retval The bank of a given address
+ */
+static uint32_t GetBank(uint32_t Addr)
+{
+  return FLASH_BANK_1;
 }
 
 void beacon()
@@ -204,22 +259,21 @@ void beacon()
   // Send out a value
   send_ble_data(&hi2c1, &ble_data);
 
-  //Sleep for air_time
-  //half_sleep(ble_data.air_time * 100);
+  // Sleep for air_time
+  // half_sleep(ble_data.air_time * 100);
   HAL_Delay(ble_data.air_time * 100);
 
-  //read scan data
+  // read scan data
   uint8_t received_data[2] = {0};
   do
   {
-    //half_sleep(100);
+    // half_sleep(100);
     HAL_Delay(100);
     receive_ble_data(&hi2c1, received_data, 2);
-  }
-  while((received_data[0] + received_data[1]) != 255);
-  //Make sure the received value is correct based on the second value
+  } while ((received_data[0] + received_data[1]) != 255);
+  // Make sure the received value is correct based on the second value
 
-  //Set the value in our own data struct
+  // Set the value in our own data struct
   ble_beacon_data.amount_of_ack = received_data[0];
   // uint8_t Buffer[10] = {0};
   // sprintf(Buffer, "%d\r\n", received_data[0]);
@@ -251,27 +305,26 @@ void scan()
   // Send out the BLE data value
   send_ble_data(&hi2c1, &ble_data);
 
-  //Sleep for air_time
-  //half_sleep(ble_data.air_time * 100);
+  // Sleep for air_time
+  // half_sleep(ble_data.air_time * 100);
   HAL_Delay(ble_data.air_time * 100);
 
-  //read scan data
-  uint8_t received_data[9+1] = {0};
+  // read scan data
+  uint8_t received_data[9 + 1] = {0};
   do
   {
-    //half_sleep(100);
+    // half_sleep(100);
     HAL_delay(100);
-    receive_ble_data(&hi2c1, received_data, 9+1);
-  }
-  while(received_data[0] + received_data[9] == 255);
+    receive_ble_data(&hi2c1, received_data, 9 + 1);
+  } while (received_data[0] + received_data[9] == 255);
 
-  //If all are 0 except for received_data[9], then no beacon found
+  // If all are 0 except for received_data[9], then no beacon found
 
   ble_scan_data.ssr_id = received_data[0];
-  ble_scan_data.temperature = received_data[1]>>8 | received_data[2];
+  ble_scan_data.temperature = received_data[1] >> 8 | received_data[2];
   ble_scan_data.humidity = received_data[3];
-  ble_scan_data.lux = received_data[4]>>8 | received_data[5];
-  ble_scan_data.voltage = received_data[6]>>8 | received_data[7];
+  ble_scan_data.lux = received_data[4] >> 8 | received_data[5];
+  ble_scan_data.voltage = received_data[6] >> 8 | received_data[7];
   ble_scan_data.rssi = received_data[8];
 
   uint8_t Buffer[10] = {0};
@@ -457,9 +510,9 @@ void Error_Handler(void)
   while (1)
   {
     HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_SET);
-    HAL_Delay(500);
+    HAL_Delay(100);
     HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_RESET);
-    HAL_Delay(500);
+    HAL_Delay(100);
   }
 }
 
