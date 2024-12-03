@@ -92,7 +92,22 @@ according to datasheet
 It takes about 1h 35m to charge the Cap. to 2,3V WITH additional artiffical lights
 ![[Pasted image 20241129210421.png]]
 
+### Voltage measurement of the energy harvesting module
+Hardware Setup: 
+- Use the **ADC (Analog-to-Digital Converter)** on the STM32 to measure the voltage of the energy storage device.
+- Connect the energy storage's (SUPERCAP) positive terminal to a voltage divider to scale it down if it exceeds the ADC input range of the STM32.
+- Connect the output of the voltage divider to an ADC pin.
+**Supercapacitor:**
 
+- For supercapacitors, the energy is directly proportional to the square of the voltage:
+ E = 1/2 C V^2
+    - Measuring voltage allows you to calculate energy, provided you know the capacitance.
+
+https://www.youtube.com/watch?v=EsZLgqhqfO0
+ADC1_IN8 PA3 A2 - reading pin 
+![[Pasted image 20241203172736.png]]
+We have been succesfull in reading voltage on a potenciometer 
+### Decision making
 ## UART Communication with LoRa-Module
 For the LoRa-Module, we utilize the Wio-e5 mini board.
 ![[lora_e5_mini_pinout.jpg]]
