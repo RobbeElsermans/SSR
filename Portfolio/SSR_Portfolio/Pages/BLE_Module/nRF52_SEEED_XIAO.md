@@ -60,7 +60,7 @@ To know on the STM32L4 side that the received data is valid, their is a small "c
 
 In order to not let the BLE-Module wait infinite on the request of the STM32L4, there is a timeout implemented that after 2 seconds, will trigger after the BLE-module has completed its task. This to prevent power consumption if the SMT32L4 missed something or that something went wrong. When the receive window ends, the data will be lost.
 
-![BLE scan response with emulated STM32L4](BLE_Scan_Response.png)
+![BLE scan response with emulated STM32L4](../../Images/BLE_Scan_Response.png)
 **ttyUSB0** (left) represents the emulated STM32 which triggers the BLE-module in mode 1 and waits for its response.
 **ttyACM2** (middle) represents the BLE-module in scanning mode (mode 1) and will scan the medium until a beacon is discovered as shown.
 **ttyACM3** (right) represents the beacon BLE-module and is connected to the STM32L4.
@@ -94,7 +94,7 @@ The minor and major will have a certain purpose as well.
   A total of *256* devices can exist at the same time for the same purpose.
 - The lower byte of the major is the ID of the SSR-rover itself. This ID is defined in *ble_module_data_t* as *ssr_id*.
 **Minor**
-- The minor is not touched at the moment and is set to $0x00000$.
+- The minor is not touched at the moment and is set to $0x0000$.
 
 When a scanner ACKs a beacon, the beacon gets halted for a moment. The beacon will count the amount of ACKs received. The amount of received ACKs will determine the amount of devices in present surrounding.
 
@@ -109,13 +109,13 @@ All this data is encapsulated in the advertisement data packet. This consists of
 - Protocol Data Unit (2-39-bytes)
 - CRC (3-bytes)
 
-![PDU Packet](BLE_LE_Packet.png)
+![PDU Packet](../../Images/BLE_LE_Packet.png)
 
 Our wanted data will be situated in the Protocol Data Unit or PDU packet. Here we have the following structure:
 - Header (2-bytes)
 - Payload (0-37-bytes)
 
-![PDU Packet](PDU_Packet.png)
+![PDU Packet](../../Images/PDU_Packet.png)
 
 And the header can be subdivided into:
 - PDU types (4-bits)

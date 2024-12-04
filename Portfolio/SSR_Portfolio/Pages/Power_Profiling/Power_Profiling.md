@@ -138,10 +138,10 @@ This yields a result of $0.3566mA$ average consumption.
 
 #### beacon low power mode
 In this mode, the beacon gets an air-time of 10 seconds and after that, as sleep of $\pm14s$.
-![[Pasted image 20241203130032.png]]
+![BLE_beacon_full_power_profile](../../Images/Power_Profiling/BLE_Beacon_consumation_full.png)
 This configuration takes $\pm3.15mA$ over a period of 23 seconds.
 
-![[Pasted image 20241203130320.png]]
+![BLE_beacon_power_profile](../../Images/Power_Profiling/BLE_Beacon_consumation.png)
 The beacon itself consumes $\pm 6.44mA$.
 
 In deep sleep, the beacon module consumes $\pm179.2µA$
