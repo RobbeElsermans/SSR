@@ -79,10 +79,10 @@ int main(void)
   {
     // Blinky blinky
     blink_led(1000);
-    HAL_delay(2000);
+    HAL_Delay(2000);
     //half_sleep(5000);
-    //deep_sleep(5000);
-    HAL_Delay(5000);
+    deep_sleep(5000);
+    //HAL_Delay(5000);
   }
 }
 

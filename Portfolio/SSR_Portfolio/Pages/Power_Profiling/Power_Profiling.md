@@ -46,6 +46,38 @@ A current of $709µA$ is used when in stop mode 2.
 To compare this while running, we have a consumption of $4.54mA$. This is a huge difference in consumption. Therefore, this stop mode 2 can surely be used.
 
 We can also see that the while loop keeps running in loops and the RAM is fully retained.
+#### Global comparison
+A global comparison between delay, stop 2 mode and standby. These measurements where done on the same sketch in the same environment with the following code 
+```
+init();
+while(1)
+{
+	// Blinky blinky
+	blink_led(1000);
+	HAL_Delay(2000);
+	
+	//Change these accordingly to the mode we want
+	//half_sleep(5000); //Stop mode 2
+	//deep_sleep(5000);   //Standby mode
+	//HAL_Delay(5000);  //Yust plain waiting
+}
+```
+
+##### normal delay
+![STM32 stop 2 mode profile](../../Images/Power_profiling/STM32_Delay_mode.png)
+##### stop mode 2
+![STM32 stop 2 mode profile](../../Images/Power_profiling/STM32_Stop_2_mode.png)
+
+##### standby mode
+![STM32 stop 2 mode profile](../../Images/Power_profiling/STM32_Standby_mode.png)
+There can be seen that the STM32 needs to reinitialise in full. This can be seen by the short duration before the led goes on. This phenomena doesn't occur in the other graphs.
+##### Conclusion
+It can be concluded that we need to replace any delay in our code by the stop 2 mode. This to ensure best power reduction while maintaining the RAM so our code can continue its work when we wake it up to continue.
+
+If we do not need RAM retention, standby mode can be utilised to reduce the power even more.
+![STM_wait_modes.png](../../Images/STM_wait_modes.png)
+
+
 ### XIAO nRF52840 
 #### peripheral mode
 A small pseudo-code on what the device does 
@@ -132,6 +164,53 @@ Here, a consumption of $\pm1.01mA$ is used over a period of 25 seconds. This is 
 In deep sleep, the beacon module consumes $\pm19.5µA$. 
 
 >The huge difference between the beacon and scan mode is due to the powering method. Here, we power the board through 3.3V pin and in the beacon case, we power the board also through 3.3V pin. The difference is that in the beacon case, we use 2 pull-up resistors for the I2C communication which implies the higher current consumption.
+
+#### wait power comparison
+When the BLE-module is waiting for a trigger from the STM32 module, it needs to be in low-power mode as possible. Therefore, a comparison must be made between running mode without any power optimisations and deep sleep mode.
+
+The following code is used
+```
+init();
+while(1)
+{
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(1000);
+  digitalWrite(LED_BUILTIN, HIGH);  
+  delay(1000);
+
+  // Normal mode
+  while(!digitalRead(2)) //Wait for pin change
+  {
+    //delay(1); //normal
+    //delay(1000); //normal modified
+  }
+  // End normal mode
+
+  //deep sleep mode
+  //deep_sleep(); //Wake-up based on external pin change
+  // End deep sleep mode
+}
+```
+
+> The nRF52 will automatically shut of some unused peripherals while running without user intervention. This can also be seen in the power profile measurements.
+
+##### basic wait on flank
+![[Pasted image 20241204101423.png]]
+As can be observed, the led on and off flanks are whitenest in the beginning of the line. Then, we enter the ```while(!digitalRead(2))``` code which just waits infinitely on a high flank on pin 2. This wil give more consumption to the MCU because it must constantly power the peripherals and use the MCU in full. Therefore, the consumption rises significantly.
+
+If a flank is detected, it again will blink the led once.
+##### low-power wait on flank
+![[Pasted image 20241204102136.png]]
+Here, it again starts with a blink of a led. Then it enters a deep sleep mode. As can be observed, the nRF52 has a deep sleep enabled when the delay of 1000ms is initiated in the blink led. There is not much difference here. Therefore, another measurement will be conducted in the while loop where we set the internal delay to 500ms to test this theory out.
+
+##### basic wait on fank modified
+![[Pasted image 20241204103118.png]]
+The power profiling answers our assumptions as the nRF52 self adjusts its power consumption optimisations. 
+##### Conclusion
+Using a delay of 1 second or entering deep sleep gives the same power consumption. However, the 1 second gives us RAM retention as the values keep assigned where this is not the case for deep sleep mode.
+Another advantage in using just a delay of 1 second is the wake-up duration. In deel_sleep, the trigger and wake-up duration is around 1 second. Therefore, the delay of 1 second is faster in operation.
+![[BLE_wait_modes.png]]
+
 
 ### LTR-329 Light Sensor
 #### Default operation
