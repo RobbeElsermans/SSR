@@ -195,21 +195,21 @@ while(1)
 > The nRF52 will automatically shut of some unused peripherals while running without user intervention. This can also be seen in the power profile measurements.
 
 ##### basic wait on flank
-![[Pasted image 20241204101423.png]]
+![BLE_basic_wait_power_profile](../../Images/Power_Profiling/BLE_Basic_wait.png)
 As can be observed, the led on and off flanks are whitenest in the beginning of the line. Then, we enter the ```while(!digitalRead(2))``` code which just waits infinitely on a high flank on pin 2. This wil give more consumption to the MCU because it must constantly power the peripherals and use the MCU in full. Therefore, the consumption rises significantly.
 
 If a flank is detected, it again will blink the led once.
 ##### low-power wait on flank
-![[Pasted image 20241204102136.png]]
+![BLE_basic_low_power_power_profile](../../Images/Power_Profiling/BLE_low_power_wait.png)
 Here, it again starts with a blink of a led. Then it enters a deep sleep mode. As can be observed, the nRF52 has a deep sleep enabled when the delay of 1000ms is initiated in the blink led. There is not much difference here. Therefore, another measurement will be conducted in the while loop where we set the internal delay to 500ms to test this theory out.
 
 ##### basic wait on fank modified
-![[Pasted image 20241204103118.png]]
+![BLE_basic_wait_altered_power_profile](../../Images/Power_Profiling/BLE_Basic_wait_altered.png)
 The power profiling answers our assumptions as the nRF52 self adjusts its power consumption optimisations. 
 ##### Conclusion
 Using a delay of 1 second or entering deep sleep gives the same power consumption. However, the 1 second gives us RAM retention as the values keep assigned where this is not the case for deep sleep mode.
 Another advantage in using just a delay of 1 second is the wake-up duration. In deel_sleep, the trigger and wake-up duration is around 1 second. Therefore, the delay of 1 second is faster in operation.
-![[BLE_wait_modes.png]]
+![bar chart about BLE different wait modes](../images/BLE_wait_modes.png)
 
 
 ### LTR-329 Light Sensor
