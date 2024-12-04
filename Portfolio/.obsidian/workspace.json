@@ -1,24 +1,24 @@
 {
   "main": {
-    "id": "8bcc5f5cdbe8d1af",
+    "id": "5570229c1e04a773",
     "type": "split",
     "children": [
       {
-        "id": "312be9b68f4a9747",
+        "id": "627b288d7cdb8b1c",
         "type": "tabs",
         "children": [
           {
-            "id": "773aa94207e3b0a1",
+            "id": "0b491b70410e3e40",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "SSR_Portfolio/Fixes Software installations.md",
+                "file": "SSR_Portfolio/Portfolio.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Fixes Software installations"
+              "title": "Portfolio"
             }
           }
         ]
@@ -27,15 +27,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "9c71b15f120aaa88",
+    "id": "103055f8fd79d8bd",
     "type": "split",
     "children": [
       {
-        "id": "6ba32301cd1e3768",
+        "id": "f358118d855026cb",
         "type": "tabs",
         "children": [
           {
-            "id": "8a6576b4950a82bc",
+            "id": "62268da639510867",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -47,7 +47,7 @@
             }
           },
           {
-            "id": "695c1d6a4b26f675",
+            "id": "18cc0a35cd87592d",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -64,7 +64,7 @@
             }
           },
           {
-            "id": "ac892c9b663a0b4d",
+            "id": "e3f07e145ba7c4de",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -77,23 +77,23 @@
       }
     ],
     "direction": "horizontal",
-    "width": 395.5
+    "width": 300
   },
   "right": {
-    "id": "fa0f3ca27e38a992",
+    "id": "fe96bce125d98adc",
     "type": "split",
     "children": [
       {
-        "id": "38932c5f93823f48",
+        "id": "55e3907ae250eef9",
         "type": "tabs",
         "children": [
           {
-            "id": "a0c4fbbcc4ba35df",
+            "id": "3737a7f232a62cef",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "SSR_Portfolio/Pages/Server side.md",
+                "file": "SSR_Portfolio/Portfolio.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,25 +103,25 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for Server side"
+              "title": "Backlinks for Portfolio"
             }
           },
           {
-            "id": "5330560d460d681d",
+            "id": "6c89313087cdd018",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "SSR_Portfolio/Pages/Server side.md",
+                "file": "SSR_Portfolio/Portfolio.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from Server side"
+              "title": "Outgoing links from Portfolio"
             }
           },
           {
-            "id": "552e12439208484f",
+            "id": "c49a96e02c05d089",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -134,15 +134,15 @@
             }
           },
           {
-            "id": "45aaa251b9c27733",
+            "id": "bd78d70853fa2e8c",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "SSR_Portfolio/Pages/Server side.md"
+                "file": "SSR_Portfolio/Portfolio.md"
               },
               "icon": "lucide-list",
-              "title": "Outline of Server side"
+              "title": "Outline of Portfolio"
             }
           }
         ]
@@ -162,42 +162,6 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "773aa94207e3b0a1",
-  "lastOpenFiles": [
-    "SSR_Portfolio/Portfolio.md",
-    "SSR_Portfolio/Pasted image 20241203130320.png",
-    "SSR_Portfolio/Pasted image 20241203130032.png",
-    "SSR_Portfolio/Images/I2C/mpu_sleep_cycle.png",
-    "SSR_Portfolio/Images/I2C/mpu_full_sleep.png",
-    "SSR_Portfolio/Images/I2C/mpu_all_sensors.png",
-    "SSR_Portfolio/Images/I2C/mode6.png",
-    "SSR_Portfolio/Images/I2C/mode1.png",
-    "SSR_Portfolio/Images/I2C/max_acc.png",
-    "SSR_Portfolio/Images/I2C/gyroZ_ref.png",
-    "SSR_Portfolio/Images/I2C/gyroY_ref.png",
-    "SSR_Portfolio/Pages/LoRa/UART communications.md",
-    "SSR_Portfolio/Pages/LoRa/TheThingsNetwork.md",
-    "Untitled.canvas",
-    "SSR_Portfolio/Datasheets/STM32 Reference manual.pdf",
-    "SSR_Portfolio/Datasheets/Nano_BLE_MCU-nRF52840_PS_v1.1.pdf",
-    "SSR_Portfolio/Datasheets/GATT_Specification_Supplement.pdf",
-    "SSR_Portfolio/Datasheets/bluefruit-nrf52-feather-learning-guide.pdf",
-    "SSR_Portfolio/Datasheets/BLE_Assigned_Numbers.pdf",
-    "SSR_Portfolio/Datasheets/STM32_EEPROM.pdf",
-    "SSR_Portfolio/Datasheets/an4894-how-to-use-eeprom-emulation-on-stm32-mcus-stmicroelectronics.pdf",
-    "SSR_Portfolio/Datasheets/SHT4x Datasheet.pdf",
-    "SSR_Portfolio/Datasheets/LTR-329ALS Datasheet.pdf",
-    "SSR_Portfolio/Nice links.md",
-    "SSR_Portfolio/Fixes Software installations.md",
-    "SSR_Portfolio/Datasheets/MPU-6050 Datasheet.pdf",
-    "SSR_Portfolio/Pages/LoRa/Back-End.md",
-    "SSR_Portfolio/Pages/LoRa/Back-End.md",
-    "ttn_create_application.md",
-    "SSR_Portfolio/Images/LoRa/putty_uart_settings.md",
-    "SSR_Portfolio/Pages/LoRa/UART.md",
-    "Pages/LoRa/UART.md",
-    "UART.md",
-    "install docker on linux.md",
-    "portfolio.md"
-  ]
+  "active": "0b491b70410e3e40",
+  "lastOpenFiles": []
 }

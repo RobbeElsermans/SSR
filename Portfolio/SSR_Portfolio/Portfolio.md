@@ -52,6 +52,7 @@ The MVP (Minimal Vital Product) contains the following items:
 
 ## I2C communication of LTR-329
 [LTR-329](Pages/Sensor/LTR-329.md)
+>>>>>>> 880ef34d66397736c50f0bb7b2a132d3fa3406d6
 ![[SHT4x Datasheet.pdf]]
 Some conclusions: 
 - address can range from 0x44 to 0x46.
