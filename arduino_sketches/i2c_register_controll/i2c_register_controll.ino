@@ -79,7 +79,7 @@ void setMotionTracking() {
   i2c_write(MPU6050_MOT_THR, reg_val);
 }
 void setFifoBuffer() {
-  //Set FIFO buffer access of sensors
+  // Set FIFO buffer access of sensors
   reg_val &= ~(0b10000000);     // Disable temperature sensor acces [7]
   reg_val |=  (0b01110000);     // Eneable gyroscope sensor acces [6:4]
   reg_val &= ~(0b00001000);     // Disable accelerometer sensor acces [3]
@@ -113,7 +113,7 @@ void setPowerManagement1() {
   reg_val &= ~(1 << 5);     // No timed measurements [5]
   reg_val |=  (1 << 3);     // Disable temperature sensor [3]
   // reg_val &= ~(0b00000111); // Set clock reference to 8MHz [2:0]
-  reg_val &= ~(0b00000011); // Gyroscope as a reference
+  reg_val |=  (0b00000011); // Gyroscope as a reference
   i2c_write(MPU6050_PWR_MGMT_1, reg_val);
 }
 void setSleep(bool activateSleep) {
