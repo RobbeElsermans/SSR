@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "SSR_Portfolio/Portfolio.md",
+                "file": "SSR_Portfolio/Fixes Software installations.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Portfolio"
+              "title": "Fixes Software installations"
             }
           }
         ]
@@ -164,11 +164,19 @@
   },
   "active": "773aa94207e3b0a1",
   "lastOpenFiles": [
+    "SSR_Portfolio/Portfolio.md",
+    "SSR_Portfolio/Pasted image 20241203130320.png",
+    "SSR_Portfolio/Pasted image 20241203130032.png",
+    "SSR_Portfolio/Images/I2C/mpu_sleep_cycle.png",
+    "SSR_Portfolio/Images/I2C/mpu_full_sleep.png",
+    "SSR_Portfolio/Images/I2C/mpu_all_sensors.png",
+    "SSR_Portfolio/Images/I2C/mode6.png",
+    "SSR_Portfolio/Images/I2C/mode1.png",
+    "SSR_Portfolio/Images/I2C/max_acc.png",
+    "SSR_Portfolio/Images/I2C/gyroZ_ref.png",
+    "SSR_Portfolio/Images/I2C/gyroY_ref.png",
     "SSR_Portfolio/Pages/LoRa/UART communications.md",
     "SSR_Portfolio/Pages/LoRa/TheThingsNetwork.md",
-    "SSR_Portfolio/Images/LoRa/lora_working.png",
-    "SSR_Portfolio/Images/I2C/Screenshot from 2024-11-24 22-18-03.png",
-    "SSR_Portfolio/Portfolio.md",
     "Untitled.canvas",
     "SSR_Portfolio/Datasheets/STM32 Reference manual.pdf",
     "SSR_Portfolio/Datasheets/Nano_BLE_MCU-nRF52840_PS_v1.1.pdf",
@@ -181,17 +189,9 @@
     "SSR_Portfolio/Datasheets/LTR-329ALS Datasheet.pdf",
     "SSR_Portfolio/Nice links.md",
     "SSR_Portfolio/Fixes Software installations.md",
-    "SSR_Portfolio/Images/I2C/mpu6050_i2c_message.png",
-    "SSR_Portfolio/Images/I2C/I2C_FirstBit_SHT40.png",
     "SSR_Portfolio/Datasheets/MPU-6050 Datasheet.pdf",
-    "SSR_Portfolio/Images/Power_Profiling/standby_stm32_current_consumption_close_look.png",
-    "SSR_Portfolio/Images/Power_Profiling/standby_stm32_current_consumption.png",
-    "SSR_Portfolio/Images/Power_Profiling/sht40_consumption.png",
-    "SSR_Portfolio/Images/Power_Profiling/ltr_329_consumption.png",
-    "block diagram.png",
     "SSR_Portfolio/Pages/LoRa/Back-End.md",
     "SSR_Portfolio/Pages/LoRa/Back-End.md",
-    "SSR_Portfolio/Images/LoRa/uart_settings.png",
     "ttn_create_application.md",
     "SSR_Portfolio/Images/LoRa/putty_uart_settings.md",
     "SSR_Portfolio/Pages/LoRa/UART.md",
