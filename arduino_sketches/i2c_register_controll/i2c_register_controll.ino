@@ -42,6 +42,8 @@
 
 uint8_t read_buffer[6];
 uint8_t reg_val = 0x00;
+int8_t gyro_x, gyro_y, gyro_z;
+uint8_t gyro_scale;
 
 void setGyroSampleRateDevider() {
   // Gyroscope sampling frequency 8kHz
@@ -63,6 +65,7 @@ void setGyroMeasureAccuracy() {
   reg_val &= ~(0b00011000);     // Clear all FS_SEL bits [4:3] - Lowest accuracy
   //reg_val |=  (0b00011000);     // Set scale range to mode 3   - Highest accuracy
   i2c_write(MPU6050_GYRO_CONFIG, reg_val);
+  gyro_scale = 131; // 1: 131, 2: 65.5, 3: 32.8, 4: 16.4
 }
 void setAccelMeasureAccuracy() {
   // Set accelerometer measuring accuracy
@@ -109,7 +112,13 @@ void setPowerManagement1() {
   reg_val &= ~(1 << 6);     // No sleep mode [6] <-----------------------
   reg_val &= ~(1 << 5);     // No timed measurements [5]
   reg_val |=  (1 << 3);     // Disable temperature sensor [3]
-  reg_val &= ~(0b00000111); // Set clock reference to 8MHz [2:0]
+  // reg_val &= ~(0b00000111); // Set clock reference to 8MHz [2:0]
+  reg_val &= ~(0b00000011); // Gyroscope as a reference
+  i2c_write(MPU6050_PWR_MGMT_1, reg_val);
+}
+void setSleep(bool activateSleep) {
+  reg_val = 0b01001000;
+  reg_val &= (activateSleep << 6);
   i2c_write(MPU6050_PWR_MGMT_1, reg_val);
 }
 void setPowerManagement2() {
@@ -122,9 +131,6 @@ void setPowerManagement2() {
 
 void setup() {
   Serial.begin(115200);
-  while (!Serial) {
-    delay(10); // Wait for Serial Monitor
-  }
 
   Wire.begin(); // Initialize I2C
 
@@ -154,17 +160,19 @@ void setup() {
 }
 
 void loop() {
+  setSleep(false);
   // Read gyroscope data
   i2c_read(MPU6050_GYRO_OUT, read_buffer, 6);
 
-  int16_t gyroX = (read_buffer[0] << 8) | read_buffer[1];
-  int16_t gyroY = (read_buffer[2] << 8) | read_buffer[3];
-  int16_t gyroZ = (read_buffer[4] << 8) | read_buffer[5];
+  gyro_x = ((read_buffer[0] << 8) | read_buffer[1])/gyro_scale;
+  gyro_y = ((read_buffer[2] << 8) | read_buffer[3])/gyro_scale;
+  gyro_z = ((read_buffer[4] << 8) | read_buffer[5])/gyro_scale;
 
-  Serial.print("Gyro X: "); Serial.print(gyroX);
-  Serial.print(" | Gyro Y: "); Serial.print(gyroY);
-  Serial.print(" | Gyro Z: "); Serial.println(gyroZ);
+  Serial.print("Gyro X: "); Serial.print(gyro_x);
+  Serial.print(" | Gyro Y: "); Serial.print(gyro_y);
+  Serial.print(" | Gyro Z: "); Serial.println(gyro_z);
 
+  setSleep(true);
   delay(1000);
 }
 
