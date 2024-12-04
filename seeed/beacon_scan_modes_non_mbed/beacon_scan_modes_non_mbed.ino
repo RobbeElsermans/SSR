@@ -522,7 +522,8 @@ void receive_event(int howMany)
   }
 }
 
-void deep_sleep(){
+void deep_sleep()
+{
   Serial.println("Go to deep sleep");
   delay(1000);
   //https://pperego83.medium.com/how-to-sleep-arduino-nano-ble-33-c4fe4d38b357

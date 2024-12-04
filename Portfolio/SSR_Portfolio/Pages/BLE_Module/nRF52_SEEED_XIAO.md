@@ -43,11 +43,14 @@ The *ble_scan_result_t* gives a more detailed result of the found beacon in the 
 struct ble_scan_result_t
 {
 uint8_t ssr_id; // The ID of the source
-int16_t temperature; // temperature
-uint8_t humidity; // humidity
-uint16_t lux; // lux (light)
-uint16_t voltage; // voltage
+int16_t temperature; // Range from -327.68 to 327.67 °C (val/100=°C)
+uint8_t humidity; // Range from -0-100%
+uint16_t lux; // Range from 0 to 1000
+uint16_t voltage; // Range from 0-6.5535V (val/10000=V) (val/10=mV)
 int8_t rssi; //rssi
+int8_t gyro_x; // Range from -60 to 60 (val*3=°)
+int8_t gyro_y; // Range from -60 to 60 (val*3=°)
+int8_t gyro_z; // Range from -60 to 60 (val*3=°)
 };
 ```
 For now, only 1 beacon gets saved and returned to the STM32L4 on request.
@@ -78,9 +81,9 @@ Mode 0 or beacon mode will transmit a beacon. This beacon will be in air for *ai
 [4] ->  Lux LSB(yte)
 [5] ->  Device Supercap Voltage MSB(yte)
 [6] ->  Device Supercap Voltage LSB(yte)
-[7] ->  /0xFF
-[8] ->  /0xFF
-[9] ->  /0xFF
+[7] ->  gyro-x
+[8] ->  gyro-y
+[9] ->  gyro-z
 [10] -> /0xFF
 [11] -> /0xFF
 [12] -> /0xFF
@@ -95,6 +98,9 @@ The minor and major will have a certain purpose as well.
 - The lower byte of the major is the ID of the SSR-rover itself. This ID is defined in *ble_module_data_t* as *ssr_id*.
 **Minor**
 - The minor is not touched at the moment and is set to $0x0000$.
+```
+beacon.setMajorMinor((BEACON_SSR_ID << 8 |i2c_data.ssr_id), 0x0000);
+```
 
 When a scanner ACKs a beacon, the beacon gets halted for a moment. The beacon will count the amount of ACKs received. The amount of received ACKs will determine the amount of devices in present surrounding.
 
@@ -124,8 +130,6 @@ And the header can be subdivided into:
 - TxAdd (1-bit)
 - RxAdd (1-bit)
 - Length (8-bit)
-
-![Header Packet](../../Images/Header_Packet.png)
 
 [reference for images of packet structures](https://academy.nordicsemi.com/courses/bluetooth-low-energy-fundamentals/lessons/lesson-2-bluetooth-le-advertising/topic/advertisement-packet/)
 
