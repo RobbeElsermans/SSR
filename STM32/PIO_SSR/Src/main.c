@@ -23,7 +23,7 @@
 #include "rtc.h"
 #include "usart.h"
 #include "gpio.h"
-#include "ldr_329.h"
+#include "ltr_329.h"
 #include "ble_module.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -92,8 +92,10 @@ int main(void)
   bleAvailableCallback(HAL_I2C_IsDeviceReady);
   bleWakeCallback(wakeBleModule);
 
-  /* LDR-386 lib function calls */
-  ldrDelayCallback(HAL_Delay);
+  /* ltr-386 lib function calls */
+  ltrDelayCallback(HAL_Delay);
+  //ltrWakeCallback(wakeltrModule);
+  //ltrSleepCallback(sleepltrModule);
 
   /* USER CODE END Init */
 
@@ -113,25 +115,24 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
-  /* Initialize the lux sensor*/
-  LTR329_Init(&hi2c1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
+    /* Initialize the lux sensor*/
+    LTR329_Init(&hi2c1);
     //Read out the light value
-    uint16_t lux = GetLuxAll(&hi2c1);
+    uint16_t lux = LTR329_GetLuxAll(&hi2c1);
+    LTR329_Sleep(&hi2c1);
 
     uint8_t Buffer[20] = {0};
-    sprintf(Buffer, "lux: %d\r\n", lux);
+    sprintf((char *)Buffer, "lux: %d\r\n", lux);
     HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 10);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
     HAL_Delay(2000);
   }
   /* USER CODE END 3 */
@@ -187,6 +188,14 @@ void wakeBleModule()
   HAL_GPIO_WritePin(BLE_EN_GPIO_Port, BLE_EN_Pin, GPIO_PIN_SET);
   HAL_Delay(10);
   HAL_GPIO_WritePin(BLE_EN_GPIO_Port, BLE_EN_Pin, GPIO_PIN_RESET);
+}
+void wakeltrModule()
+{
+  HAL_GPIO_WritePin(LTR329_EN_GPIO_Port, LTR329_EN_Pin, GPIO_PIN_SET);
+}
+void sleepltrModule()
+{
+  HAL_GPIO_WritePin(LTR329_EN_GPIO_Port, LTR329_EN_Pin, GPIO_PIN_RESET);
 }
 /* USER CODE END 4 */
 

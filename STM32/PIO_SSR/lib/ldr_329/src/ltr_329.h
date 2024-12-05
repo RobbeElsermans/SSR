@@ -15,16 +15,25 @@
 #define LTR329_ALS_DATA_CH0_1 0x8B // ALS Channel 0 high byte
 
 typedef void (*delay_callback_t)(uint32_t time);
-void ldrDelayCallback(delay_callback_t dc_fp);
+void ltrDelayCallback(delay_callback_t dc_fp);
 extern delay_callback_t _delay_callback;
 
-typedef void (*wake_device_t)();
-void ldrWakeCallback(wake_device_t wake_device_fp);
-extern wake_device_t _wake_device;
+// typedef void (*wake_device_t)();
+// void ltrWakeCallback(wake_device_t wake_device_fp);
+// extern wake_device_t _wake_device;
+
+// typedef void (*sleep_device_t)();
+// void ltrSleepCallback(sleep_device_t sleep_device_fp);
+// extern sleep_device_t _sleep_device;
+
+extern uint8_t device_active;
 
 void LTR329_Init(I2C_HandleTypeDef* i2c_obj);
 uint16_t LTR329_ReadALS(I2C_HandleTypeDef* i2c_obj, uint8_t channel);
-uint16_t GetLuxAll(I2C_HandleTypeDef* i2c_obj);
-uint16_t GetLuxIR(I2C_HandleTypeDef* i2c_obj);
+uint16_t LTR329_GetLuxAll(I2C_HandleTypeDef* i2c_obj);
+uint16_t LTR329_GetLuxIR(I2C_HandleTypeDef* i2c_obj);
+void LTR329_Sleep(I2C_HandleTypeDef* hi2c1);
+void LTR329_WakeUp(I2C_HandleTypeDef* hi2c1);
+// void ltrSleep();
 
 #endif
