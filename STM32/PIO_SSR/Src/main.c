@@ -121,10 +121,11 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* Initialize the lux sensor*/
+    /* Initialize the lux sensor */
     LTR329_Init(&hi2c1);
-    //Read out the light value
+    /* Read out the light value */
     uint16_t lux = LTR329_GetLuxAll(&hi2c1);
+    /* Sleep */
     LTR329_Sleep(&hi2c1);
 
     uint8_t Buffer[20] = {0};
