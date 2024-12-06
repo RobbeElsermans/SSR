@@ -28,12 +28,12 @@ extern delay_callback_t _delay_callback;
 
 extern uint8_t device_active;
 
-void LTR329_Init(I2C_HandleTypeDef* i2c_obj);
-uint16_t LTR329_ReadALS(I2C_HandleTypeDef* i2c_obj, uint8_t channel);
-uint16_t LTR329_GetLuxAll(I2C_HandleTypeDef* i2c_obj);
-uint16_t LTR329_GetLuxIR(I2C_HandleTypeDef* i2c_obj);
-void LTR329_Sleep(I2C_HandleTypeDef* hi2c1);
-void LTR329_WakeUp(I2C_HandleTypeDef* hi2c1);
+void ltr329Init(I2C_HandleTypeDef* i2c_obj);
+HAL_StatusTypeDef ltr329ReadALS(I2C_HandleTypeDef* i2c_obj, uint8_t channel, uint16_t* lux);
+HAL_StatusTypeDef ltr329GetLuxAll(I2C_HandleTypeDef* i2c_obj, uint16_t* lux);
+HAL_StatusTypeDef ltr329GetLuxIR(I2C_HandleTypeDef* i2c_obj, uint16_t* lux);
+HAL_StatusTypeDef ltr329Sleep(I2C_HandleTypeDef* hi2c1);
+HAL_StatusTypeDef ltr329WakeUp(I2C_HandleTypeDef* hi2c1);
 // void ltrSleep();
 
 #endif
