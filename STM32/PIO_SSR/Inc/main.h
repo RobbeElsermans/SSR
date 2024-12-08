@@ -110,8 +110,21 @@ uint16_t counter_value(uint16_t time_millis);
 void half_sleep(RTC_HandleTypeDef* hrtc, uint16_t time);
 void deep_sleep(RTC_HandleTypeDef* hrtc, uint16_t time);
 
+/**
+ * @brief set a bit inside a byte
+ */
 void setBool(uint8_t *bool_carrier, uint8_t bool_place);
+
+/**
+ * @brief clear a bit inside a byte
+ */
 void clearBool(uint8_t *bool_carrier, uint8_t bool_place);
+
+/**
+ * @brief check a bit inside a byte
+ * 
+ * @return true if bit is set, else false
+ */
 uint8_t checkBool(uint8_t *bool_carrier, uint8_t bool_place);
 /* USER CODE END EFP */
 

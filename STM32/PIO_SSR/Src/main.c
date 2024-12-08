@@ -174,17 +174,17 @@ int main(void)
 
     if (checkBool(&bool_buffer, TASK_DEEP_SLEEP))
     {
-      taskDrive();                              // Do the task
+      taskDeepSleep();                              // Do the task
       clearBool(&bool_buffer, TASK_DEEP_SLEEP); // Clear the bit in bool_buffer
     }
 
     if (checkBool(&bool_buffer, TASK_LIGHT_SLEEP))
     {
-      taskLightSleep();                              // Do the task
+      taskLightSleep();                           // Do the task
       clearBool(&bool_buffer, TASK_LIGHT_SLEEP); // Clear the bit in bool_buffer
     }
 
-    // Program shouldn't reach this place if deep sleep used
+    // Program shouldn't reach this place if deep sleep is used
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -240,10 +240,10 @@ void SystemClock_Config(void)
 
 void taskReadBattery()
 {
+  //TODO
+  
   //do something
-
-
-
+  
   //ssr_data.dev_voltage = something
 }
 
@@ -262,17 +262,15 @@ void taskSens()
   float temperature = 0;
   float humidity = 0;
 
-  /* Initialize the lux sensor */
+  /* Initialize sensors */
   ltr329Init(&hi2c1);
-
-  /* Initialize the temperature and humidity sensor*/
   sht40Init(&hi2c1);
 
   /* Read out the sens values */
   ltr329GetLuxAll(&hi2c1, &lux);
   sht40ReadTempAndHumidity(&hi2c1, &temperature, &humidity, SHT40_HIGH_PRECISION); // highest precision.
 
-  /* Sleep */
+  /* put to sleep/ halt */
   ltr329Sleep(&hi2c1);
   sht40Sleep(&hi2c1);
 
@@ -297,7 +295,7 @@ void taskSens()
 
 void taskStore()
 {
-  // TODO
+  // TODO see Flash-Write project
 }
 
 void taskLora()
@@ -308,8 +306,6 @@ void taskLora()
 void taskScan()
 {
   uint16_t air_time = 5000; // 5 seconds scanning
-  //ble_module_data_t ble_data;
-  //ble_scan_result_t ble_result;
 
   ble_data.mode = 1;
   ble_data.ssr_id = SSR_ID;
@@ -325,8 +321,6 @@ void taskScan()
 
   ble_scan_result = scan(&hi2c1, &ble_data);
 
-  //Do something with the data
-  //TODO
   /* Display onto serial monitor */
 
   int *debug_uart_buffer;
@@ -346,8 +340,6 @@ void taskScan()
 void taskBeacon()
 {
   uint16_t air_time = 10000; // 10 seconds beacon
-  //ble_module_data_t ble_data;
-  //ble_beacon_result_t ble_result;
 
   ble_data.mode = 0;
   ble_data.ssr_id = SSR_ID;
@@ -363,8 +355,6 @@ void taskBeacon()
 
   ble_beacon_result = beacon(&hi2c1, &ble_data);
 
-  //Do something with amount of ack's
-  //TODO
   /* Display onto serial monitor */
 
   int *debug_uart_buffer;
@@ -380,18 +370,19 @@ void taskBeacon()
 
 void taskDrive()
 {
+  //Do something with the struct *ble_scan_result* and gyro measurements + RSSI?
+  //Do something with the struct *ble_beacon_result*?
   // TODO
 }
 
 void taskDeepSleep()
 {
-  // TODO
-  
+  deep_sleep(&hrtc, 20000); //20 seconds deep sleep  
 }
 
 void taskLightSleep()
 {
-
+  half_sleep(&hrtc, 20000); //20 seconds half sleep  
 }
 
 void wakeBleModule()
@@ -408,7 +399,6 @@ void sleepltrModule()
 {
   HAL_GPIO_WritePin(LTR329_EN_GPIO_Port, LTR329_EN_Pin, GPIO_PIN_RESET);
 }
-
 
 uint16_t counter_value(uint16_t time_millis)
 {
