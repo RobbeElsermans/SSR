@@ -29,9 +29,6 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
-
-extern struct ble_module_data_t ble_data;
-
 /* Exported constants --------------------------------------------------------*/
 #define MPU6050_DEV_ADDR          0x68 // I2C address of the MPU6050
 
@@ -40,11 +37,13 @@ extern struct ble_module_data_t ble_data;
 #define MPU6050_GYRO_CONFIG       0x1B // Gyro specfic configuration register
 #define MPU6050_ACCEL_CONFIG      0x1C // Accelerometer specific configration register
 #define MPU6050_MOT_THR           0x1F // Motion detection threshold bits [7:0]
+
 #define MPU6050_FIFO_EN           0x23 // Which sensor measurements are loaded into the FIFO buffer
 #define MPU6050_INT_PIN_CONFIG    0x37 // Interrupt pin configuration register
 #define MPU6050_INT_ENABLE        0x38 // Interrupt enable configuration register
 #define MPU6050_GYRO_OUT          0x43 // Base address for gyroscope sensor data reads
 #define MPU6050_USER_CTRL         0x6A // FIFO and I2C Master control register
+
 #define MPU6050_PWR_MGMT_1        0x6B // Primary power/sleep control register
 #define MPU6050_PWR_MGMT_2        0x6C // Secondary power/sleep control register
 #define MPU6050_WHO_AM_I          0x75 // Divice ID register
@@ -55,16 +54,14 @@ extern struct ble_module_data_t ble_data;
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-
 void MCU_Init();
 void sensor_Init();
 void BLE_Init();
 void LoRa_Init();
 
 // I2C
-HAL_StatusTypeDef ret;
-uint8_t data_tx[1];
-uint8_t data_rx[6];
+void i2c_write(uint8_t address, uint8_t* data_tx, uint8_t tx_size);
+void i2c_write_read(uint8_t address, uint8_t* data_tx, uint8_t tx_size, uint8_t* data_rx, uint8_t rx_size);
 
 // MPU6050
 void setMPU6050();
@@ -85,6 +82,8 @@ void blink_led(uint16_t time);
 void setBool(uint8_t *bool_carrier, uint8_t bool_place);
 void clearBool(uint8_t *bool_carrier, uint8_t bool_place);
 uint8_t checkBool(uint8_t *bool_carrier, uint8_t bool_place);
+
+/* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */
 
