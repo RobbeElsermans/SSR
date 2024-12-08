@@ -33,7 +33,7 @@ HAL_StatusTypeDef sht40ReadTempAndHumidity(I2C_HandleTypeDef *hi2c, float *tempe
     wait_duration = 2;
   }
 
-  ret = HAL_I2C_Master_Transmit(&hi2c, SHT40_I2C_ADDR, reg_address, 1, 1);
+  ret = HAL_I2C_Master_Transmit(hi2c, SHT40_I2C_ADDR, &reg_address, 1, 1);
   if (ret != HAL_OK)
   {
     return ret;
@@ -42,7 +42,7 @@ HAL_StatusTypeDef sht40ReadTempAndHumidity(I2C_HandleTypeDef *hi2c, float *tempe
   _delay_callback(wait_duration);
 
   int *buffer = (int *)calloc(6, sizeof(uint8_t));
-  ret = HAL_I2C_Master_Receive(&hi2c, SHT40_I2C_ADDR, buffer, 6, 1000);
+  ret = HAL_I2C_Master_Receive(hi2c, SHT40_I2C_ADDR, (uint8_t *)buffer, 6, 1000);
 
   if (ret != HAL_OK)
   {
@@ -65,5 +65,5 @@ HAL_StatusTypeDef sht40ReadTempAndHumidity(I2C_HandleTypeDef *hi2c, float *tempe
 
 HAL_StatusTypeDef sht40Sleep(I2C_HandleTypeDef *hi2c)
 {
-  return HAL_I2C_Master_Transmit(hi2c, SHT40_I2C_ADDR, SHT40_REG_SOFT_RESET, 1, 1);
+  return HAL_I2C_Master_Transmit(hi2c, SHT40_I2C_ADDR, (uint8_t *)SHT40_REG_SOFT_RESET, 1, 1);
 }

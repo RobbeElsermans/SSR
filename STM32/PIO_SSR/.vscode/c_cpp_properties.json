@@ -10,7 +10,7 @@
             "includePath": [
                 "/home/robbe/Documents/GitHub/SSR/STM32/PIO_SSR/Inc",
                 "/home/robbe/Documents/GitHub/SSR/STM32/PIO_SSR/Src",
-                "/home/robbe/Documents/GitHub/SSR/STM32/PIO_SSR/lib/sht40",
+                "/home/robbe/Documents/GitHub/SSR/STM32/PIO_SSR/lib/sht40/src",
                 "/home/robbe/Documents/GitHub/SSR/STM32/PIO_SSR/lib/ldr_329/src",
                 "/home/robbe/Documents/GitHub/SSR/STM32/PIO_SSR/lib/BLE_module/src",
                 "/home/robbe/.platformio/packages/framework-stm32cubel4/Drivers/CMSIS/Include",
@@ -18,7 +18,6 @@
                 "/home/robbe/.platformio/packages/framework-stm32cubel4/Drivers/STM32L4xx_HAL_Driver/Inc",
                 "/home/robbe/.platformio/packages/framework-stm32cubel4/Drivers/STM32L4xx_HAL_Driver/Src",
                 "/home/robbe/.platformio/packages/framework-stm32cubel4/Drivers/CMSIS/DSP/Include",
-                "/home/robbe/Documents/GitHub/SSR/STM32/PIO_SSR/lib/low_power",
                 "/home/robbe/.platformio/packages/framework-stm32cubel4/Drivers/BSP/Components/cs42l51",
                 "/home/robbe/.platformio/packages/framework-stm32cubel4/Drivers/BSP/Components/hx8347g",
                 "/home/robbe/.platformio/packages/framework-stm32cubel4/Drivers/BSP/Components/ls016b8uy",
@@ -96,7 +95,7 @@
                 "path": [
                     "/home/robbe/Documents/GitHub/SSR/STM32/PIO_SSR/Inc",
                     "/home/robbe/Documents/GitHub/SSR/STM32/PIO_SSR/Src",
-                    "/home/robbe/Documents/GitHub/SSR/STM32/PIO_SSR/lib/sht40",
+                    "/home/robbe/Documents/GitHub/SSR/STM32/PIO_SSR/lib/sht40/src",
                     "/home/robbe/Documents/GitHub/SSR/STM32/PIO_SSR/lib/ldr_329/src",
                     "/home/robbe/Documents/GitHub/SSR/STM32/PIO_SSR/lib/BLE_module/src",
                     "/home/robbe/.platformio/packages/framework-stm32cubel4/Drivers/CMSIS/Include",
@@ -104,7 +103,6 @@
                     "/home/robbe/.platformio/packages/framework-stm32cubel4/Drivers/STM32L4xx_HAL_Driver/Inc",
                     "/home/robbe/.platformio/packages/framework-stm32cubel4/Drivers/STM32L4xx_HAL_Driver/Src",
                     "/home/robbe/.platformio/packages/framework-stm32cubel4/Drivers/CMSIS/DSP/Include",
-                    "/home/robbe/Documents/GitHub/SSR/STM32/PIO_SSR/lib/low_power",
                     "/home/robbe/.platformio/packages/framework-stm32cubel4/Drivers/BSP/Components/cs42l51",
                     "/home/robbe/.platformio/packages/framework-stm32cubel4/Drivers/BSP/Components/hx8347g",
                     "/home/robbe/.platformio/packages/framework-stm32cubel4/Drivers/BSP/Components/ls016b8uy",

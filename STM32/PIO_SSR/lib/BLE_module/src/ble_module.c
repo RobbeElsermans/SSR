@@ -52,9 +52,9 @@ uint8_t send_ble_data(I2C_HandleTypeDef *hi2c1, ble_module_data_t *data)
   buf[7] = (uint8_t) data->env_lux & 0xFF; 
   buf[8] = (uint8_t) (data->dev_voltage >> 8) & 0xFF; 
   buf[9] = (uint8_t) data->dev_voltage & 0xFF; 
-  buf[10] = data->gyro_x;
-  buf[11] = data->gyro_y;
-  buf[12] = data->gyro_z;
+  buf[10] = data->dev_gyro_x;
+  buf[11] = data->dev_gyro_y;
+  buf[12] = data->dev_gyro_z;
 
   ret = _ble_send(hi2c1, BLE_ADDRESS, buf, sizeof(buf), 10);
 
@@ -73,30 +73,17 @@ uint8_t ble_device_ready(I2C_HandleTypeDef *hi2c1)
   return _ble_slave_available(hi2c1, BLE_ADDRESS, 1, 1);
 }
 
-ble_beacon_result_t beacon(I2C_HandleTypeDef *hi2c1, uint16_t air_time, ble_module_data_t* ble_data)
+ble_beacon_result_t beacon(I2C_HandleTypeDef *hi2c1, ble_module_data_t* ble_data)
 {
   ble_beacon_result_t beacon_result = {0};
-
-  // Must be done by user
-  // HAL_GPIO_WritePin(BLE_nSLEEP_GPIO_Port, BLE_nSLEEP_Pin, GPIO_PIN_SET);
-  // HAL_Delay(10);
-  // HAL_GPIO_WritePin(BLE_nSLEEP_GPIO_Port, BLE_nSLEEP_Pin, GPIO_PIN_RESET);
 
   if(_wake_device) _wake_device();
 
   // wait until device is available
   while (ble_device_ready(hi2c1))
   {
-    // To test in power profiling
-    // half_sleep(100);
+    _delay_callback(10);
   }
-
-  // Add measurement to data struct
-  ble_data->mode = 0;
-  ble_data->air_time = air_time; // 50*100 = 5000ms 5 second
-  // ble_data.env_temperature++;
-  // ble_data.env_humidity++;
-  // ble_data.dev_voltage++;
 
   // Send out a value
   send_ble_data(hi2c1, ble_data);
@@ -125,7 +112,7 @@ ble_beacon_result_t beacon(I2C_HandleTypeDef *hi2c1, uint16_t air_time, ble_modu
   return beacon_result;
 }
 
-ble_scan_result_t scan(I2C_HandleTypeDef *hi2c1, uint16_t air_time, ble_module_data_t* ble_data)
+ble_scan_result_t scan(I2C_HandleTypeDef *hi2c1, ble_module_data_t* ble_data)
 {
   ble_scan_result_t ble_scan_data = {0};
   if(_wake_device) _wake_device();
@@ -133,46 +120,36 @@ ble_scan_result_t scan(I2C_HandleTypeDef *hi2c1, uint16_t air_time, ble_module_d
   // wait until device is available
   while (ble_device_ready(hi2c1))
   {
-    // To test in power profiling
     _delay_callback(100);
   }
-
-  // Add measurement to data struct
-  ble_data->mode = 1;
-  ble_data->air_time = 80; // 50*100 = 5000ms 5 second
-  ble_data->env_temperature++;
-  ble_data->env_humidity++;
-  ble_data->dev_voltage++;
 
   // Send out the BLE data value
   send_ble_data(hi2c1, ble_data);
 
-  //Sleep for air_time
-  //half_sleep(ble_data.air_time * 100);
   _delay_callback(ble_data->air_time * 100);
 
   //read scan data
-  uint8_t received_data[9+1] = {0};
+  uint8_t received_data[12+1] = {0};
   do
   {
     //half_sleep(100);
     _delay_callback(100);
-    receive_ble_data(hi2c1, received_data, 9+1);
+    receive_ble_data(hi2c1, received_data, 12+1);
   }
-  while(received_data[0] + received_data[9] == 255);
+  while(received_data[0] + received_data[12] == 255);
+  //TODO add gyroscope
 
-  //If all are 0 except for received_data[9], then no beacon found
+  //If all are 0 except for received_data[12], then no beacon found
 
   ble_scan_data.ssr_id = received_data[0];
-  ble_scan_data.temperature = received_data[1]>>8 | received_data[2];
-  ble_scan_data.humidity = received_data[3];
-  ble_scan_data.lux = received_data[4]>>8 | received_data[5];
-  ble_scan_data.voltage = received_data[6]>>8 | received_data[7];
-  ble_scan_data.rssi = received_data[8];
-
-  // uint8_t Buffer[10] = {0};
-  // sprintf(Buffer, "%d\r\n", ble_scan_data.rssi);
-  // HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
-
+  ble_scan_data.env_temperature = received_data[1]>>8 | received_data[2];
+  ble_scan_data.env_humidity = received_data[3];
+  ble_scan_data.env_lux = received_data[4]>>8 | received_data[5];
+  ble_scan_data.dev_voltage = received_data[6]>>8 | received_data[7];
+  ble_scan_data.dev_gyro_x = received_data[8];
+  ble_scan_data.dev_gyro_y = received_data[9];
+  ble_scan_data.dev_gyro_z = received_data[10];
+  ble_scan_data.rssi = received_data[11];
+  //TODO add gyroscope
   return ble_scan_data;
 }

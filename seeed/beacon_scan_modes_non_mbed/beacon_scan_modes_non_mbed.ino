@@ -19,9 +19,9 @@
 #define LUX_LSB 13
 #define VCC_MSB 14
 #define VCC_LSB 15
-//#define RESERVED_1 16
-//#define RESERVED_1 17
-//#define RESERVED_1 18
+#define GYRO_X 16
+#define GYRO_Y 17
+#define GYRO_Z 18
 //#define RESERVED_1 19
 //#define RESERVED_1 20
 //#define RESERVED_1 21
@@ -55,7 +55,6 @@ void init_beacon();             //Initialize the beacon BLE.
 void set_data_beacon();         //Set the data received by I2C in the UUID and major, minor.
 void start_beacon(uint16_t timer);  //Start the actual beacon and let it stop at a certain time defined in seconds.
 
-
 //--------------scanner functions-------------//
 uint8_t ssr_id_exists(uint8_t ssr_id_unknown);
 //void connect_callback(uint16_t conn_handle);
@@ -77,16 +76,16 @@ uint32_t devId = 0;
 
 struct ble_module_data_t
 {
-    uint8_t mode;             // The mode of the BLE-module, 0 -> beacon, 1-> scan
-    uint8_t ssr_id;           // The ID of the rover itself
-    uint8_t air_time; // How long the beacon may last (val*100=ms)
-    int16_t env_temperature;  // Range from -327.68 to 327.67 °C (val/100=°C)
-    uint8_t env_humidity;     // Range from -0-100%
-    uint16_t env_lux;         // Range from 0 to 1000
-    uint16_t dev_voltage;     // Range from 0-6.5535V (val/10000=V) (val/10=mV)
-    // x gyro 8bit?
-    // y gyro 8bit?
-    // z gyro 8bit?
+  uint8_t mode; // The mode of the BLE-module, 0 -> beacon, 1-> scan
+  uint8_t ssr_id; // The ID of the rover itself
+  uint8_t air_time; // How long the beacon may last (val*100=ms)
+  int16_t env_temperature; // Range from -327.68 to 327.67 °C (val/100=°C)
+  uint8_t env_humidity; // Range from -0-100%
+  uint16_t env_lux; // Range from 0 to 1000
+  uint16_t dev_voltage; // Range from 0-6.5535V (val/10000=V) (val/10=mV)
+  int8_t dev_gyro_x; // Range from -60 to 60 (val*3=°)
+  int8_t dev_gyro_y; // Range from -60 to 60 (val*3=°)
+  int8_t dev_gyro_z; // Range from -60 to 60 (val*3=°)
 };
 
 struct ble_beacon_result_t
@@ -97,17 +96,20 @@ struct ble_beacon_result_t
 
 struct ble_scan_data_t
 {
-    uint8_t ssr_id;       // The ID of the source
-    int16_t temperature; // temperature
-    uint8_t humidity;     // humidity
-    uint16_t lux;         // lux (light)
-    uint16_t voltage;     // voltage
-    int8_t rssi;           //rssi
+  uint8_t ssr_id;         // The ID of the source
+  int16_t env_temperature;// temperature
+  uint8_t env_humidity;   // humidity
+  uint16_t env_lux;       // lux (light)
+  uint16_t dev_voltage;   // voltage
+  int8_t dev_gyro_x;      // Range from -60 to 60 (val*3=°)
+  int8_t dev_gyro_y;      // Range from -60 to 60 (val*3=°)
+  int8_t dev_gyro_z;      // Range from -60 to 60 (val*3=°)
+  int8_t rssi;            //rssi
 };
 
 volatile struct ble_module_data_t i2c_data;
 volatile struct ble_beacon_result_t beacon_data;
-volatile struct ble_scan_data_t received_beacon_data[256];
+volatile struct ble_scan_data_t received_beacon_data[2];
 volatile int16_t index_beacon_data = -1;
 
 volatile bool received_data = false;
@@ -193,7 +195,6 @@ void setup()
     delay(10);
   }
 
-  
   deep_sleep();
 }
 
@@ -215,12 +216,14 @@ void set_data_beacon()
 {
   beaconUuid[0] = (i2c_data.env_temperature & 0xFF) >> 8;
   beaconUuid[1] = (i2c_data.env_temperature & 0xFF);
-  
   beaconUuid[2] = i2c_data.env_humidity;
   beaconUuid[3] = (i2c_data.env_lux & 0xFF) >> 8;
   beaconUuid[4] = (i2c_data.env_lux & 0xFF);
   beaconUuid[5] = (i2c_data.dev_voltage & 0xFF) >> 8;
   beaconUuid[6] = (i2c_data.dev_voltage & 0xFF);
+  beaconUuid[7] = (i2c_data.dev_gyro_x);
+  beaconUuid[8] = (i2c_data.dev_gyro_y);
+  beaconUuid[9] = (i2c_data.dev_gyro_z);
 }
 
 void start_beacon(uint16_t timer)
@@ -249,10 +252,10 @@ void start_beacon(uint16_t timer)
     
   //Bluefruit.Advertising.restartOnDisconnect(false); //in order so the beacon stops sending after ACK.
   Bluefruit.Advertising.restartOnDisconnect(false);
-  Bluefruit.Advertising.setInterval(160,160);    // in unit of 0.625 ms
+  Bluefruit.Advertising.setInterval(160,160);         // in unit of 0.625 ms
   
-  Bluefruit.Advertising.setFastTimeout(1);      // number of seconds in fast mode
-  //Bluefruit.Advertising.start(data.air_time/10);                // 0 = Don't stop advertising after n seconds  
+  Bluefruit.Advertising.setFastTimeout(1);            // number of seconds in fast mode
+  //Bluefruit.Advertising.start(data.air_time/10);    // 0 = Don't stop advertising after n seconds  
 
   uint8_t timer_sec = timer/1000;
 
@@ -309,12 +312,10 @@ void init_scan(){
 void start_scan(uint16_t timer){
   uint8_t timer_sec = timer/1000;
   Serial.printf("start_scan - timer_sec: %d\r\n", timer_sec);
-  if (timer_sec <= 0)
-    Bluefruit.Scanner.start(1*100);
-  else
-    Bluefruit.Scanner.start(timer_sec*100);
+  if (timer_sec <= 0) Bluefruit.Scanner.start(1*100);
+  else Bluefruit.Scanner.start(timer_sec*100);
 
-    Serial.println("start_scan - start scan ...");
+  Serial.println("start_scan - start scan ...");
 }
 
 void scan_callback(ble_gap_evt_adv_report_t *report)
@@ -335,10 +336,13 @@ void scan_callback(ble_gap_evt_adv_report_t *report)
         Serial.println();
 
         Serial.printf("bid: 0x%02X ssrid: 0x%02X \r\n", beacon_id, ssr_id);
-        Serial.printf("temp: %d \r\n", received_beacon_data[index_beacon_data].temperature);
-        Serial.printf("hum: %d \r\n", received_beacon_data[index_beacon_data].humidity);
-        Serial.printf("lux: %d \r\n", received_beacon_data[index_beacon_data].lux);
-        Serial.printf("voltage: %d \r\n", received_beacon_data[index_beacon_data].voltage);
+        Serial.printf("temp: %d \r\n", received_beacon_data[index_beacon_data].env_temperature);
+        Serial.printf("hum: %d \r\n", received_beacon_data[index_beacon_data].env_humidity);
+        Serial.printf("lux: %d \r\n", received_beacon_data[index_beacon_data].env_lux);
+        Serial.printf("voltage: %d \r\n", received_beacon_data[index_beacon_data].dev_voltage);
+        Serial.printf("gx: %d \r\n", received_beacon_data[index_beacon_data].dev_gyro_x);
+        Serial.printf("gy: %d \r\n", received_beacon_data[index_beacon_data].dev_gyro_y);
+        Serial.printf("gz: %d \r\n", received_beacon_data[index_beacon_data].dev_gyro_z);
         Serial.printf("rssi: %d \r\n", received_beacon_data[index_beacon_data].rssi);
 
         Serial.println("All data reviewed.");
@@ -380,7 +384,6 @@ uint8_t ssr_id_exists(uint8_t ssr_id_unknown)
 
 void increase_beacon_data_index()
 {
-    
     if (index_beacon_data == 255)
     {
         index_beacon_data = 255;
@@ -398,10 +401,13 @@ void set_beacon_data(ble_gap_evt_adv_report_t *report)
     increase_beacon_data_index();
 
     received_beacon_data[index_beacon_data].ssr_id = fetch_ssr_id(report);
-    received_beacon_data[index_beacon_data].temperature = report->data.p_data[TEMP_MSB] << 8 | report->data.p_data[TEMP_LSB];
-    received_beacon_data[index_beacon_data].humidity = report->data.p_data[HUM];
-    received_beacon_data[index_beacon_data].lux = report->data.p_data[LUX_MSB] << 8 | report->data.p_data[LUX_LSB];
-    received_beacon_data[index_beacon_data].voltage = report->data.p_data[VCC_MSB] << 8 | report->data.p_data[VCC_LSB];
+    received_beacon_data[index_beacon_data].env_temperature = report->data.p_data[TEMP_MSB] << 8 | report->data.p_data[TEMP_LSB];
+    received_beacon_data[index_beacon_data].env_humidity = report->data.p_data[HUM];
+    received_beacon_data[index_beacon_data].env_lux = report->data.p_data[LUX_MSB] << 8 | report->data.p_data[LUX_LSB];
+    received_beacon_data[index_beacon_data].dev_voltage = report->data.p_data[VCC_MSB] << 8 | report->data.p_data[VCC_LSB];
+    received_beacon_data[index_beacon_data].dev_gyro_x = report->data.p_data[GYRO_X];
+    received_beacon_data[index_beacon_data].dev_gyro_y = report->data.p_data[GYRO_Y];
+    received_beacon_data[index_beacon_data].dev_gyro_z = report->data.p_data[GYRO_Z];
     received_beacon_data[index_beacon_data].rssi = report->rssi;
 }
 
@@ -420,13 +426,16 @@ void request_event()
         //Later optimize this so we can transmit multiple beacons that are found
         
         Wire.write(received_beacon_data[0].ssr_id);
-        Wire.write((received_beacon_data[0].temperature >> 8) & 0xFF);
-        Wire.write(received_beacon_data[0].temperature & 0xFF);
-        Wire.write(received_beacon_data[0].humidity);
-        Wire.write((received_beacon_data[0].lux >> 8) & 0xFF);
-        Wire.write(received_beacon_data[0].lux & 0xFF);
-        Wire.write((received_beacon_data[0].voltage >> 8) & 0xFF);
-        Wire.write(received_beacon_data[0].voltage & 0xFF);
+        Wire.write((received_beacon_data[0].env_temperature >> 8) & 0xFF);
+        Wire.write(received_beacon_data[0].env_temperature & 0xFF);
+        Wire.write(received_beacon_data[0].env_humidity);
+        Wire.write((received_beacon_data[0].env_lux >> 8) & 0xFF);
+        Wire.write(received_beacon_data[0].env_lux & 0xFF);
+        Wire.write((received_beacon_data[0].dev_voltage >> 8) & 0xFF);
+        Wire.write(received_beacon_data[0].dev_voltage & 0xFF);
+        Wire.write(received_beacon_data[0].dev_gyro_x);
+        Wire.write(received_beacon_data[0].dev_gyro_y);
+        Wire.write(received_beacon_data[0].dev_gyro_z);
         Wire.write(received_beacon_data[0].rssi - 255);
         Wire.write(received_beacon_data[0].ssr_id - 255);
         Serial.printf("write mode 1: %d\r\n", received_beacon_data[0].ssr_id);
@@ -472,8 +481,8 @@ void receive_event(int howMany)
          i2c_data.air_time = (uint8_t)c;
       if (i == 3) // env_temperature HSB
       {
-          i++;
-          uint8_t c1 = Wire.read();            
+         i++;
+         uint8_t c1 = Wire.read();            
          i2c_data.env_temperature = (int16_t)(c << 8 | c1);
       }
       
@@ -482,7 +491,6 @@ void receive_event(int howMany)
       if (i == 6) // env_lux
       {
         i++;
-          
         uint8_t c1 = Wire.read();
         i2c_data.env_lux = (int16_t)(c << 8 | c1);
       }
@@ -494,6 +502,21 @@ void receive_event(int howMany)
         i2c_data.dev_voltage = (uint16_t) (c << 8 | c1);
       }
 
+      if (i == 10) // dev_gyro_x
+      {   
+        i2c_data.dev_gyro_x = (uint16_t)c;
+      }
+
+      if (i == 11) // dev_gyro_y
+      {   
+        i2c_data.dev_gyro_y = (uint16_t)c;
+      }
+
+      if (i == 12) // dev_gyro_z
+      {   
+        i2c_data.dev_gyro_z = (uint16_t)c;
+      }
+
       i++;
     }
   }
@@ -501,7 +524,6 @@ void receive_event(int howMany)
   //If ID has a good value
   if (i2c_data.ssr_id != 0x00)
     received_data = true;
-
 
   if (received_data){
       //Print the whole struct
@@ -517,6 +539,12 @@ void receive_event(int howMany)
       Serial.print(i2c_data.env_humidity);
       Serial.print(" el: ");
       Serial.print(i2c_data.env_lux);
+      Serial.print(" egx: ");
+      Serial.print(i2c_data.dev_gyro_y);
+      Serial.print(" egy: ");
+      Serial.print(i2c_data.dev_gyro_z);
+      Serial.print(" egz: ");
+      Serial.print(i2c_data.dev_gyro_x);
       Serial.print(" dv: ");
       Serial.println(i2c_data.dev_voltage);
   }
@@ -524,6 +552,8 @@ void receive_event(int howMany)
 
 void deep_sleep()
 {
+  BLE.end(); //Didn't tested yet
+  
   Serial.println("Go to deep sleep");
   delay(1000);
   //https://pperego83.medium.com/how-to-sleep-arduino-nano-ble-33-c4fe4d38b357
@@ -533,10 +563,10 @@ void deep_sleep()
 
   //nrf_gpio_cfg_sense_input(digitalPinToInterrupt(2), NRF_GPIO_PIN_PULLDOWN, NRF_GPIO_PIN_SENSE_HIGH);
 
-  //Works
+
   //Found it on https://forum.seeedstudio.com/t/xiao-ble-sense-in-deep-sleep-mode/263477/129?page=7
   //nrf_gpio_cfg_sense_input(g_ADigitalPinMap[2], NRF_GPIO_PIN_PULLUP, NRF_GPIO_PIN_SENSE_LOW); //wake from deep sleep
   nrf_gpio_cfg_sense_input(g_ADigitalPinMap[2], NRF_GPIO_PIN_PULLDOWN, NRF_GPIO_PIN_SENSE_HIGH); //wake from deep sleep
-
+  delay(200);
   NRF_POWER->SYSTEMOFF = 1;
 }

@@ -16,9 +16,9 @@ struct ble_module_data
   uint8_t env_humidity; // Range from -0-100%
   uint16_t env_lux; // Range from 0 to 1000
   uint16_t dev_voltage; // Range from 0-6.5535V (val/10000=V) (val/10=mV)
-  int8_t gyro_x; // Range from -60 to 60 (val*3=°)
-  int8_t gyro_y; // Range from -60 to 60 (val*3=°)
-  int8_t gyro_z; // Range from -60 to 60 (val*3=°)
+  int8_t dev_gyro_x; // Range from -60 to 60 (val*3=°)
+  int8_t dev_gyro_y; // Range from -60 to 60 (val*3=°)
+  int8_t dev_gyro_z; // Range from -60 to 60 (val*3=°)
 };
 typedef struct ble_module_data ble_module_data_t;
 
@@ -31,15 +31,15 @@ typedef struct ble_beacon_result ble_beacon_result_t;
 
 struct ble_scan_result
 {
-  uint8_t ssr_id;     // The ID of the source
-  int16_t temperature;// temperature
-  uint8_t humidity;   // humidity
-  uint16_t lux;       // lux (light)
-  uint16_t voltage;   // voltage
-  int8_t rssi;        //rssi
-  int8_t gyro_x;      // Range from -60 to 60 (val*3=°)
-  int8_t gyro_y;      // Range from -60 to 60 (val*3=°)
-  int8_t gyro_z;      // Range from -60 to 60 (val*3=°)
+  uint8_t ssr_id;         // The ID of the source
+  int16_t env_temperature;// temperature
+  uint8_t env_humidity;   // humidity
+  uint16_t env_lux;       // lux (light)
+  uint16_t dev_voltage;   // voltage
+  int8_t rssi;            //rssi
+  int8_t dev_gyro_x;      // Range from -60 to 60 (val*3=°)
+  int8_t dev_gyro_y;      // Range from -60 to 60 (val*3=°)
+  int8_t dev_gyro_z;      // Range from -60 to 60 (val*3=°)
 };
 typedef struct ble_scan_result ble_scan_result_t ;
 
@@ -67,7 +67,7 @@ uint8_t send_ble_data(I2C_HandleTypeDef *hi2c1, ble_module_data_t *data);
 void receive_ble_data(I2C_HandleTypeDef *hi2c1, uint8_t* buffer, uint8_t size);
 uint8_t ble_device_ready(I2C_HandleTypeDef *hi2c1);
 
-ble_beacon_result_t beacon(I2C_HandleTypeDef *hi2c1, uint16_t air_time, ble_module_data_t* ble_data);
-ble_scan_result_t scan(I2C_HandleTypeDef *hi2c1, uint16_t air_time, ble_module_data_t* ble_data);
+ble_beacon_result_t beacon(I2C_HandleTypeDef *hi2c1, ble_module_data_t* ble_data);
+ble_scan_result_t scan(I2C_HandleTypeDef *hi2c1, ble_module_data_t* ble_data);
 
 #endif

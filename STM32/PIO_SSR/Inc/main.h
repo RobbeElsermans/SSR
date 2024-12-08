@@ -32,6 +32,7 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -49,10 +50,34 @@ struct ssr_data
 };
 typedef struct ssr_data ssr_data_t;
 extern ssr_data_t ssr_data;
+
+/*  
+    0: SENS, 
+    1: STORE, 
+    2: LORA, 
+    3: SCAN, 
+    4: BEACON, 
+    5: DRIVE, 
+    6: DEEP_SLEEP, 
+    7: LIGHT_SLEEP 
+*/
+extern uint8_t bool_buffer;
+
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
+
+#define TASK_SENS 0
+#define TASK_STORE 1
+#define TASK_LORA 2
+#define TASK_SCAN 3
+#define TASK_BEACON 4
+#define TASK_DRIVE 5
+#define TASK_DEEP_SLEEP 6
+#define TASK_LIGHT_SLEEP 7
+
+#define SSR_ID 0x10
 
 /* USER CODE END EC */
 
@@ -65,9 +90,29 @@ extern ssr_data_t ssr_data;
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
+void taskReadBattery();
+void taskDetermineTasks();
+void taskSens();
+void taskStore();
+void taskLora();
+void taskScan();
+void taskBeacon();
+void taskDrive();
+void taskDeepSleep();
+void taskLightSleep();
+
 void wakeBleModule();
 void wakeltrModule();
 void sleepltrModule();
+void GPIO_Disable(void);
+
+uint16_t counter_value(uint16_t time_millis);
+void half_sleep(RTC_HandleTypeDef* hrtc, uint16_t time);
+void deep_sleep(RTC_HandleTypeDef* hrtc, uint16_t time);
+
+void setBool(uint8_t *bool_carrier, uint8_t bool_place);
+void clearBool(uint8_t *bool_carrier, uint8_t bool_place);
+uint8_t checkBool(uint8_t *bool_carrier, uint8_t bool_place);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

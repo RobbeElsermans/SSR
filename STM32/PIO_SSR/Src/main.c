@@ -29,6 +29,7 @@
 #include "ltr_329.h"
 #include "ble_module.h"
 #include "sht40.h"
+//#include "lp.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -53,6 +54,9 @@ ble_module_data_t ble_data;
 ble_beacon_result_t ble_beacon_result;
 ble_scan_result_t ble_scan_result;
 ssr_data_t ssr_data;
+
+uint8_t bool_buffer = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -106,6 +110,9 @@ int main(void)
 
   /* USER CODE BEGIN SysInit */
 
+  /* low power clock configuration */
+  //lpClockConfigCallback(SystemClock_Config);
+
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -122,43 +129,62 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  int *debug_uart_buffer;
-  debug_uart_buffer = (int *)malloc(40 * sizeof(char));
-
   while (1)
   {
-    /* Read the ADC voltage */
+    void taskReadBattery();               // Read the ADC voltage
 
-    /* Determine path of execution based on voltage (energy) available */
+    // Determine path of execution based on voltage (energy) available
+    taskDetermineTasks();
 
-    /* Initialize the lux sensor */
-    ltr329Init(&hi2c1);
+    if (checkBool(&bool_buffer, TASK_SENS))
+    {
+      taskSens();                         // Do the task
+      clearBool(&bool_buffer, TASK_SENS); // Clear the bit in bool_buffer
+    }
 
-    /* Initialize the temperature and humidity sensor*/
-    sht40Init(&hi2c1);
+    if (checkBool(&bool_buffer, TASK_STORE))
+    {
+      taskStore();                         // Do the task
+      clearBool(&bool_buffer, TASK_STORE); // Clear the bit in bool_buffer
+    }
 
-    /* Read out the light value */
-    uint16_t lux = 0;
-    float temperature = 0;
-    float humidity = 0;
+    if (checkBool(&bool_buffer, TASK_LORA))
+    {
+      taskLora();                         // Do the task
+      clearBool(&bool_buffer, TASK_LORA); // Clear the bit in bool_buffer
+    }
 
-    ltr329GetLuxAll(&hi2c1, &lux);
-    sht40ReadTempAndHumidity(&hi2c1, &temperature, &humidity, SHT40_HIGH_PRECISION); // highest precision.
+    if (checkBool(&bool_buffer, TASK_SCAN))
+    {
+      taskScan();                         // Do the task
+      clearBool(&bool_buffer, TASK_SCAN); // Clear the bit in bool_buffer
+    }
 
-    /* Sleep */
-    ltr329Sleep(&hi2c1);
-    sht40Sleep(&hi2c1);
+    if (checkBool(&bool_buffer, TASK_BEACON))
+    {
+      taskBeacon();                         // Do the task
+      clearBool(&bool_buffer, TASK_BEACON); // Clear the bit in bool_buffer
+    }
 
-    /* Compose data structure of the environment */
-    ssr_data.env_humidity = (uint8_t)(humidity);
-    ssr_data.env_temperature = (uint16_t)(temperature * 100);
-    ssr_data.env_lux = (uint16_t)(lux);
+    if (checkBool(&bool_buffer, TASK_DRIVE))
+    {
+      taskDrive();                         // Do the task
+      clearBool(&bool_buffer, TASK_DRIVE); // Clear the bit in bool_buffer
+    }
 
-    /* Display onto serial monitor */
-    for(uint8_t i = 0; i < 30; i++) debug_uart_buffer[i]=32; //space character
-    sprintf((char *)debug_uart_buffer, "lux: %d, t: %d, h: %d \r\n", ssr_data.env_lux, ssr_data.env_temperature, ssr_data.env_lux);
-    HAL_UART_Transmit(&huart2, (uint8_t*)debug_uart_buffer, sizeof(debug_uart_buffer), 1);
+    if (checkBool(&bool_buffer, TASK_DEEP_SLEEP))
+    {
+      taskDrive();                              // Do the task
+      clearBool(&bool_buffer, TASK_DEEP_SLEEP); // Clear the bit in bool_buffer
+    }
 
+    if (checkBool(&bool_buffer, TASK_LIGHT_SLEEP))
+    {
+      taskLightSleep();                              // Do the task
+      clearBool(&bool_buffer, TASK_LIGHT_SLEEP); // Clear the bit in bool_buffer
+    }
+
+    // Program shouldn't reach this place if deep sleep used
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -211,6 +237,163 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+void taskReadBattery()
+{
+  //do something
+
+
+
+  //ssr_data.dev_voltage = something
+}
+
+void taskDetermineTasks()
+{
+  //Do this based on the voltage value.
+
+
+  // Here, the boolean buffer **bool_buffer** is used with the defines of TASK described in main.h.
+  bool_buffer = 0b010000011; // Set SLEEP,
+}
+
+void taskSens()
+{
+  uint16_t lux = 0;
+  float temperature = 0;
+  float humidity = 0;
+
+  /* Initialize the lux sensor */
+  ltr329Init(&hi2c1);
+
+  /* Initialize the temperature and humidity sensor*/
+  sht40Init(&hi2c1);
+
+  /* Read out the sens values */
+  ltr329GetLuxAll(&hi2c1, &lux);
+  sht40ReadTempAndHumidity(&hi2c1, &temperature, &humidity, SHT40_HIGH_PRECISION); // highest precision.
+
+  /* Sleep */
+  ltr329Sleep(&hi2c1);
+  sht40Sleep(&hi2c1);
+
+  /* Compose data structure of the environment */
+  ssr_data.env_humidity = (uint8_t)(humidity);
+  ssr_data.env_temperature = (uint16_t)(temperature * 100);
+  ssr_data.env_lux = (uint16_t)(lux);
+
+  /* Display onto serial monitor */
+
+  int *debug_uart_buffer;
+  uint8_t size_buffer = 60;
+  debug_uart_buffer = (int *)malloc(size_buffer * sizeof(char));
+
+  for (uint8_t i = 0; i < size_buffer; i++)
+    debug_uart_buffer[i] = 32; // space character
+  sprintf((char *)debug_uart_buffer, "taskSens - lux: %d, t: %d, h: %d \r\n", ssr_data.env_lux, ssr_data.env_temperature, ssr_data.env_lux);
+  HAL_UART_Transmit(&huart2, (uint8_t *)debug_uart_buffer, sizeof(debug_uart_buffer), 1);
+
+  free(debug_uart_buffer);
+}
+
+void taskStore()
+{
+  // TODO
+}
+
+void taskLora()
+{
+  // TODO
+}
+
+void taskScan()
+{
+  uint16_t air_time = 5000; // 5 seconds scanning
+  //ble_module_data_t ble_data;
+  //ble_scan_result_t ble_result;
+
+  ble_data.mode = 1;
+  ble_data.ssr_id = SSR_ID;
+  ble_data.air_time = air_time;
+
+  ble_data.env_temperature = ssr_data.env_temperature;  // Range from -327.68 to 327.67 °C (val/100=°C)
+  ble_data.env_humidity = ssr_data.env_humidity;        // Range from -0-100%
+  ble_data.env_lux = ssr_data.env_lux;                  // Range from 0 to 1000
+  ble_data.dev_voltage = ssr_data.dev_voltage;          // Range from 0-6.5535V (val/10000=V) (val/10=mV)
+  ble_data.dev_gyro_x = ssr_data.gyro_x;                    // Range from -60 to 60 (val*3=°)
+  ble_data.dev_gyro_y = ssr_data.gyro_y;                    // Range from -60 to 60 (val*3=°)
+  ble_data.dev_gyro_z = ssr_data.gyro_z;                    // Range from -60 to 60 (val*3=°)
+
+  ble_scan_result = scan(&hi2c1, &ble_data);
+
+  //Do something with the data
+  //TODO
+  /* Display onto serial monitor */
+
+  int *debug_uart_buffer;
+  uint8_t size_buffer = 120;
+  debug_uart_buffer = (int *)malloc(size_buffer * sizeof(char));
+
+  for (uint8_t i = 0; i < size_buffer; i++)
+    debug_uart_buffer[i] = 32; // space character
+  sprintf((char *)debug_uart_buffer, 
+  "taskScan - \r\n ssr_id: %d\r\n temp: %d\r\n h: %d\r\n l: %d\r\n x: %d\r\n y: %d\r\n z: %d\r\n vcc: %d\r\n rssi: %d\r\n",
+  ble_scan_result.ssr_id, ble_scan_result.env_temperature, ble_scan_result.env_humidity, ble_scan_result.env_lux, ble_scan_result.dev_voltage, ble_scan_result.dev_gyro_x, ble_scan_result.dev_gyro_y, ble_scan_result.dev_gyro_z, ble_scan_result.rssi);
+  HAL_UART_Transmit(&huart2, (uint8_t *)debug_uart_buffer, sizeof(debug_uart_buffer), 1);
+
+  free(debug_uart_buffer);
+}
+
+void taskBeacon()
+{
+  uint16_t air_time = 10000; // 10 seconds beacon
+  //ble_module_data_t ble_data;
+  //ble_beacon_result_t ble_result;
+
+  ble_data.mode = 0;
+  ble_data.ssr_id = SSR_ID;
+  ble_data.air_time = air_time;
+
+  ble_data.env_temperature = ssr_data.env_temperature;  // Range from -327.68 to 327.67 °C (val/100=°C)
+  ble_data.env_humidity = ssr_data.env_humidity;        // Range from -0-100%
+  ble_data.env_lux = ssr_data.env_lux;                  // Range from 0 to 1000
+  ble_data.dev_voltage = ssr_data.dev_voltage;          // Range from 0-6.5535V (val/10000=V) (val/10=mV)
+  ble_data.dev_gyro_x = ssr_data.gyro_x;                    // Range from -60 to 60 (val*3=°)
+  ble_data.dev_gyro_y = ssr_data.gyro_y;                    // Range from -60 to 60 (val*3=°)
+  ble_data.dev_gyro_z = ssr_data.gyro_z;                    // Range from -60 to 60 (val*3=°)
+
+  ble_beacon_result = beacon(&hi2c1, &ble_data);
+
+  //Do something with amount of ack's
+  //TODO
+  /* Display onto serial monitor */
+
+  int *debug_uart_buffer;
+  uint8_t size_buffer = 60;
+  debug_uart_buffer = (int *)malloc(size_buffer * sizeof(char));
+
+  for (uint8_t i = 0; i < size_buffer; i++) debug_uart_buffer[i] = 32; // space character
+  sprintf((char *)debug_uart_buffer, "taskBeacon - amount of ACK: %d \r\n",ble_beacon_result.amount_of_ack);
+  HAL_UART_Transmit(&huart2, (uint8_t *)debug_uart_buffer, sizeof(debug_uart_buffer), 1);
+
+  free(debug_uart_buffer);
+}
+
+void taskDrive()
+{
+  // TODO
+}
+
+void taskDeepSleep()
+{
+  // TODO
+  
+}
+
+void taskLightSleep()
+{
+
+}
+
 void wakeBleModule()
 {
   HAL_GPIO_WritePin(BLE_EN_GPIO_Port, BLE_EN_Pin, GPIO_PIN_SET);
@@ -224,6 +407,101 @@ void wakeltrModule()
 void sleepltrModule()
 {
   HAL_GPIO_WritePin(LTR329_EN_GPIO_Port, LTR329_EN_Pin, GPIO_PIN_RESET);
+}
+
+
+uint16_t counter_value(uint16_t time_millis)
+{
+  uint16_t counter_value = 0xFFFF; //= 0x2806; // 5 seconds
+  // Calculate the time
+  if (time_millis > 31981) //Maximum available wait time
+    counter_value = 0xFFFF; // Set maximum available time
+  else
+    counter_value = (uint16_t)((time_millis / 1000.0) / 0.000488);
+
+  if (counter_value <= 0x1)
+  {
+    counter_value = 0x2; //Correspondent to 0.976 ms
+  }
+
+  return counter_value;
+}
+
+void half_sleep(RTC_HandleTypeDef* hrtc, uint16_t time)
+{
+  //Setup RTC and setup interupt
+  // MX_RTC_Init(); //DOne in main.c
+  HAL_SuspendTick();
+  HAL_RTCEx_SetWakeUpTimer_IT(hrtc, counter_value(time), RTC_WAKEUPCLOCK_RTCCLK_DIV16, 0);
+
+  /* Enter STOP 2 mode */
+  HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
+  HAL_RTCEx_DeactivateWakeUpTimer(hrtc);
+  SystemClock_Config();
+  HAL_ResumeTick();
+}
+
+void deep_sleep(RTC_HandleTypeDef* hrtc, uint16_t time)
+{
+  GPIO_Disable();
+  HAL_PWREx_EnableSRAM2ContentRetention();
+  HAL_PWREx_EnableBORPVD_ULP();
+  HAL_RTCEx_DeactivateWakeUpTimer(hrtc);
+  HAL_RTCEx_SetWakeUpTimer_IT(hrtc, counter_value(time), RTC_WAKEUPCLOCK_RTCCLK_DIV16, 0);
+  HAL_PWR_EnterSTANDBYMode();  
+}
+
+void GPIO_Disable(void)
+{
+  /* Enable Power Clock */
+  __HAL_RCC_PWR_CLK_ENABLE();
+
+  // Set GPIO as analog read so floating.
+  GPIO_InitTypeDef GPIO_InitStructure;
+
+  /* Enable GPIOs clock */
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
+  __HAL_RCC_GPIOH_CLK_ENABLE();
+
+  /* Configure all GPIO port pins in Analog Input mode (floating input trigger OFF) */
+  /* Note: Debug using ST-Link is not possible during the execution of this   */
+  /*       example because communication between ST-link and the device       */
+  /*       under test is done through UART. All GPIO pins are disabled (set   */
+  /*       to analog input mode) including  UART I/O pins.           */
+  GPIO_InitStructure.Pin = GPIO_PIN_All;
+  GPIO_InitStructure.Mode = GPIO_MODE_ANALOG;
+  GPIO_InitStructure.Pull = GPIO_NOPULL;
+
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStructure);
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStructure);
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStructure);
+  HAL_GPIO_Init(GPIOH, &GPIO_InitStructure);
+
+  /* Disable GPIOs clock */
+  __HAL_RCC_GPIOA_CLK_DISABLE();
+  __HAL_RCC_GPIOB_CLK_DISABLE();
+  __HAL_RCC_GPIOC_CLK_DISABLE();
+  __HAL_RCC_GPIOD_CLK_DISABLE();
+  __HAL_RCC_GPIOH_CLK_DISABLE();
+}
+
+void setBool(uint8_t *bool_carrier, uint8_t bool_place)
+{
+  *bool_carrier |= 0b1 << bool_place;
+}
+
+void clearBool(uint8_t *bool_carrier, uint8_t bool_place)
+{
+  *bool_carrier &= ~(0b1 << bool_place);
+}
+
+uint8_t checkBool(uint8_t *bool_carrier, uint8_t bool_place)
+{
+  return *bool_carrier & (0b1 << bool_place);
 }
 /* USER CODE END 4 */
 
