@@ -1,0 +1,241 @@
+#include <bluefruit.h>
+
+#define BEACON_SSR_ID 0x3F
+
+// IBeacon format used
+// https://semiwiki.com/semiconductor-services/einfochips/302892-understanding-ble-beacons-and-their-applications/
+
+#define TEMP_MSB 9
+#define TEMP_LSB 10
+#define HUM 11
+#define LUX_MSB 12
+#define LUX_LSB 13
+#define VCC_MSB 14
+#define VCC_LSB 15
+#define RESERVED_1 16
+#define RESERVED_1 17
+#define RESERVED_1 18
+#define RESERVED_1 19
+#define RESERVED_1 20
+#define RESERVED_1 21
+#define RESERVED_1 22
+#define RESERVED_1 23
+#define RESERVED_1 24
+#define RESERVED_1 25
+#define MAJOR_MSB 26
+#define MAJOR_LSB 27
+#define MINOR_MSB 28
+#define MINOR_LSB 29
+#define RSSI 30
+
+// uint8_t devId[256] = {0};
+// uint8_t* dev_id_pointer = devId;
+
+struct ble_beacon_receive_data_t
+{
+    uint8_t ssr_id;       // The ID of the source
+    uint16_t temperature; // temperature
+    uint8_t humidity;     // humidity
+    uint16_t lux;         // lux (light)
+    uint16_t voltage;     // voltage
+};
+
+struct ble_beacon_receive_data_t received_beacon_data[256];
+uint16_t index_beacon_data = 65535;
+
+//--------------functions-------------//
+uint8_t ssr_id_exists(uint8_t ssr_id_unknown);
+void connect_callback(uint16_t conn_handle);
+void scan_callback(ble_gap_evt_adv_report_t *report);
+uint8_t fetch_id(ble_gap_evt_adv_report_t *report);
+uint8_t fetch_ssr_id(ble_gap_evt_adv_report_t *report);
+uint8_t ssr_id_exists(uint8_t ssr_id_unknown);
+void increase_beacon_data_index();
+void set_beacon_data(ble_gap_evt_adv_report_t *report);
+
+//--------------functions-------------//
+
+void setup()
+{
+    Serial.begin(115200);
+    while (!Serial)
+        delay(10); // for nrf52840 with native usb
+
+    Serial.println("Bluefruit52 Central Scan Example");
+    Serial.println("--------------------------------\n");
+
+    // Initialize Bluefruit with maximum connections as Peripheral = 0, Central = 1
+    // SRAM usage required by SoftDevice will increase dramatically with number of connections
+    Bluefruit.begin(0, 2);
+    Bluefruit.setTxPower(4); // Check bluefruit.h for supported values
+    Bluefruit.setName("Bluefruit52");
+
+    // Start Central Scan
+    Bluefruit.setConnLedInterval(250);
+    Bluefruit.Scanner.setRxCallback(scan_callback);
+    Bluefruit.Central.setConnectCallback(connect_callback);
+
+    // Bluefruit.Scanner.useActiveScan(true);        // Request scan response data
+    // Bluefruit.Scanner.restartOnDisconnect(false);   //Stops when a beacon is found and an ACK is sended over
+    Bluefruit.Scanner.restartOnDisconnect(true);
+    Bluefruit.Scanner.start(0); // 500 is 5 seconds
+
+    Serial.println("setup - Scanning ...");
+}
+
+void connect_callback(uint16_t conn_handle)
+{
+    BLEConnection *conn = Bluefruit.Connection(conn_handle);
+    Serial.println("connect_callback - A connection is made");
+    conn->disconnect(); // in order to drop the connection
+    Serial.println("connect_callback - The connection is disconnected");
+    delay(100);
+}
+
+void scan_callback(ble_gap_evt_adv_report_t *report)
+{
+    // Serial.println("Entered scan");
+    // The ID to identify
+    uint8_t beacon_id = fetch_id(report);
+    uint8_t ssr_id = fetch_ssr_id(report);
+
+    if (beacon_id == BEACON_SSR_ID && !ssr_id_exists(ssr_id))
+    {
+        Serial.println("                       BLE SSR Beacon service detected");
+        Serial.printf(" Rssi: %d ", report->rssi);
+        Serial.printf("bid: 0x%02X ssrid: 0x%02X", beacon_id, ssr_id);
+
+        // devId[0] = ssr_id; //fetch SSR Id received in major LSB
+
+        set_beacon_data(report);
+
+        Serial.printf(" address: %d ", index_beacon_data);
+
+        // MAC is in little endian --> print reverse
+
+        Serial.printBufferReverse(report->peer_addr.addr, 6, ':');
+        Serial.printf(" address: %d ", *report->peer_addr.addr);
+
+        Serial.printf(" Rssi: %d ", report->rssi);
+
+        Serial.printBuffer(report->data.p_data, report->data.len, '-');
+        Serial.println();
+
+        Serial.printf("bid: 0x%02X ssrid: 0x%02X", beacon_id, ssr_id);
+        // Check if beacon has a certain address. Not good to use in global environment
+        // Check
+        if (*report->peer_addr.addr == 242) // Bluefruit.Scanner.checkReportForUuid(report, BLEUART_UUID_SERVICE) )
+        {
+            Serial.println("                       BLE SSR Beacon service detected");
+            Serial.printf("%d ", report->data.len);
+            Serial.printf(" id: 0x%02X ", beacon_id);
+            uint8_t *pointer_to_data = report->data.p_data;
+            uint16_t data_length = report->data.len;
+
+            /*
+            for( uint16_t i = 0; i < report->data.len; i++){
+
+              Serial.print(i);
+              Serial.print(" ");
+              Serial.printf("%02X", pointer_to_data[0]);
+              //Serial.printf("%02X", pointer_to_data[1]);
+              //Serial.printf("%02X", pointer_to_data[2]);
+              //Serial.printf("%02X", pointer_to_data[3]);
+              Serial.print(" ; ");
+              pointer_to_data += 1;
+
+            }
+            */
+            //   Serial.printf("temp: %02X or %d \r\n", pointer_to_data[9] <<8 | (pointer_to_data[10]), pointer_to_data[9]<<8 | (pointer_to_data[10]));
+
+            //   Serial.printf("hum: %02X or %d \r\n", pointer_to_data[11], pointer_to_data[11]);
+
+            //   Serial.printf("lux: %02X or %d \r\n", pointer_to_data[12] <<8 | (pointer_to_data[13]), pointer_to_data[12]<<8 | (pointer_to_data[13]));
+            //   Serial.printf("voltage: %02X or %d \r\n", pointer_to_data[14] <<8 | (pointer_to_data[15]), pointer_to_data[14]<<8 | (pointer_to_data[15]));
+
+            //   Serial.printf(" length of data packet %d ", data_length);
+            set_beacon_data(report);
+
+            Serial.printf("temp: %d \r\n", received_beacon_data[index_beacon_data].temperature);
+            Serial.printf("hum: %d \r\n", received_beacon_data[index_beacon_data].humidity);
+            Serial.printf("lux: %d \r\n", received_beacon_data[index_beacon_data].lux);
+            Serial.printf("voltage: %d \r\n", received_beacon_data[index_beacon_data].voltage);
+
+            Serial.println(" All data reviewed.");
+
+            // Connect to the beacon
+            // Will fail but is to provide an ACK to the beacon
+
+            Serial.println("Before connect");
+            Bluefruit.Central.connect(report);
+            Serial.println("After connect");
+            delay(500);
+        }
+
+        Serial.println();
+    }
+    else
+    {
+        Bluefruit.Scanner.resume();
+    }
+
+    // For Softdevice v6: after received a report, scanner will be paused
+    // We need to call Scanner resume() to continue scanning
+    Bluefruit.Scanner.resume();
+}
+
+uint8_t fetch_id(ble_gap_evt_adv_report_t *report)
+{
+    return report->data.p_data[MAJOR_MSB];
+}
+
+uint8_t fetch_ssr_id(ble_gap_evt_adv_report_t *report)
+{
+    return report->data.p_data[MAJOR_LSB];
+}
+
+uint8_t ssr_id_exists(uint8_t ssr_id_unknown)
+{
+    uint8_t is_found = 0; // Set default on false
+
+    for (uint8_t i = 0; i <= index_beacon_data; i++)
+    {
+        if (received_beacon_data[i].ssr_id == ssr_id_unknown)
+        {
+            is_found = 1; // Set to true
+        }
+
+        if (received_beacon_data[i].ssr_id == 0)
+            break; // Break if no ID's are set.
+    }
+
+    return is_found; // Return founded items
+}
+
+void increase_beacon_data_index()
+{
+    if (index_beacon_data == 255)
+    {
+        index_beacon_data = 255;
+    }
+    else
+    {
+        index_beacon_data++;
+    }
+}
+
+void set_beacon_data(ble_gap_evt_adv_report_t *report)
+{
+    increase_beacon_data_index();
+
+    received_beacon_data[index_beacon_data].ssr_id = fetch_ssr_id(report);
+    received_beacon_data[index_beacon_data].temperature = report->data.p_data[TEMP_MSB] << 8 | report->data.p_data[TEMP_LSB];
+    received_beacon_data[index_beacon_data].humidity = report->data.p_data[HUM];
+    received_beacon_data[index_beacon_data].lux = report->data.p_data[LUX_MSB] << 8 | report->data.p_data[LUX_LSB];
+    received_beacon_data[index_beacon_data].voltage = report->data.p_data[VCC_MSB] << 8 | report->data.p_data[VCC_LSB];
+}
+
+void loop()
+{
+    // nothing to do
+}

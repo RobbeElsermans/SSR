@@ -23,24 +23,22 @@
 #include "usart.h"
 #include "gpio.h"
 #include "lp.h"
-
-/** @addtogroup STM32L4xx_HAL_Examples
- * @{
- */
-
-/** @addtogroup PWR_STANDBY_RTC
- * @{
- */
+#include "ble.h"
+#include "rtc.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 
-
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+struct ble_module_data_t ble_data;
 
-uint8_t BLE_Counter = 0;
-uint8_t buf[10]; // I2C recieve buffer
+uint8_t boolean_holder_1;
+#define BOOL_SEND 0
+#define BOOL_BEACON 1
+#define BOOL_SCAN 2
+#define BOOL_TRANSMIT 3
+#define BOOL_SENS 4
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -55,26 +53,13 @@ void Error_Handler(void);
  */
 int main(void)
 {
-  /* STM32L4xx HAL library initialization:
-       - Configure the Flash prefetch
-       - Systick timer is configured by default as source of time base, but user
-         can eventually implement his proper time base source (a general purpose
-         timer for example or other time source), keeping in mind that Time base
-         duration should be kept 1ms since PPP_TIMEOUT_VALUEs are defined and
-         handled in milliseconds basis.
-       - Set NVIC Group Priority to 4
-       - Low Level Initialization
-     */
-  HAL_Init();
+  // Set ID of the SSR
+  ble_data.ssr_id = SSR_ID;
 
-  /* Configure the system clock to 80 MHz */
-  SystemClock_Config();
+  MCU_Init();
 
-  // init pheripherals
-  MX_GPIO_Init();
-  MX_I2C1_Init();
+  // Debug UART
   MX_UART2_UART_Init();
-  LTR329_Init(&hi2c1); // Initialize LTR-329 sensor
 
   /* Configure RTC */
   if (RTC_Config())
@@ -82,75 +67,317 @@ int main(void)
     Error_Handler();
   }
 
-  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
-  HAL_Delay(1000);
-  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
+  // Blinky blinky
+  blink_led(1000);
 
   /* Check if the system was resumed from StandBy mode */
   if (__HAL_PWR_GET_FLAG(PWR_FLAG_SB) != RESET)
   {
     /* Clear Standby flag */
     __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
+    blink_led(100);
   }
 
-  /* Insert 5 seconds delay */
-  HAL_Delay(5000);
+  half_sleep(5000);
 
-  /* Enter the Standby mode */
-  // if (lowPower_init())
-  // {
-  //   Error_Handler();
-  // }
-  // else
-  // {
-  //   HAL_PWR_EnterSTANDBYMode();
-  // }
+  blink_led_times(100, 8);
 
-  /* Program should never reach this point (program restart when exiting from standby mode) */
-  // Error_Handler();
+  // beacon();
 
-  /* Use to find I2C addresses on the bus */
-  // uint8_t Buffer[25] = {0};
-  // uint8_t Space[] = " - ";
-  // uint8_t StartMSG[] = "Starting I2C Scanning: \r\n";
-  // uint8_t EndMSG[] = "Done! \r\n\r\n";
+  // Read out the energy available
+  // Set the state accordingly
 
-  // uint8_t i = 0, ret;
-  // HAL_UART_Transmit(&huart2, StartMSG, sizeof(StartMSG), 10000);
-  // for (i = 0; i < 128; i++)
-  // {
-  //   ret = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i << 1), 3, 5);
-  //   if (ret != HAL_OK) /* No ACK Received At That Address */
-  //   {
-  //     HAL_UART_Transmit(&huart2, Space, sizeof(Space), 10000);
-  //   }
-  //   else if (ret == HAL_OK)
-  //   {
-  //     sprintf(Buffer, "0x%X", i);
-  //     HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 10000);
-  //   }
-  // }
-  // HAL_UART_Transmit(&huart2, EndMSG, sizeof(EndMSG), 10000);
-
-  // while(1);
-  /* Use to find I2C addresses on the bus */
-
-
-  // Communication example with LTR-329
-  // Datasheet https://www.mouser.com/ds/2/239/Lite-On_LTR-329ALS-01%20DS_ver1.1-348647.pdf?srsltid=AfmBOoobAK_ALvR5tFcoa4jTsWqJiDY3eis2wNgfagfst2LBPezI4wsr
-  while (1)
+  if (!checkBool(&boolean_holder_1, BOOL_SENS))
   {
-    HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
-    HAL_Delay(1000);
-    HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
-
-
-    char Buffer[25] = {0};
-    sprintf(Buffer, "Lux: ! %d\r\n", GetLuxAll(&hi2c1));
-    HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
-
-    HAL_Delay(500); // Delay for the next measurement
+    setBool(&boolean_holder_1, BOOL_SENS);
+    // Do sensing
   }
+
+  if (!checkBool(&boolean_holder_1, BOOL_BEACON))
+  {
+    setBool(&boolean_holder_1, BOOL_BEACON);
+    // Send out the beacon
+    beacon();
+  }
+
+  blink_led_times(1000,2);
+  deep_sleep(5000);
+
+  while(1)
+  {
+    blink_led(50);
+  }
+
+  // case sens:
+  //   // Read the sensors values
+
+  //   // Read out the energy available
+  //   // Determine what option to take hereafter
+  //   task_state = beacon;
+
+  //   setBool(&boolean_holder_1, BOOL_MEASUREMENT_TAKEN);
+  //   break;
+
+  // case beacon:
+  //   // initialize
+  //   BLE_Init();
+
+  //   // wait until device is available
+  //   while (ble_device_ready(&hi2c1))
+  //   {
+  //   }
+
+  //   // Add measurement to data struct
+  //   ble_data.beacon_time = 50; // 50*100 = 5000ms 5 second
+  //   ble_data.env_temperature++;
+  //   ble_data.env_humidity++;
+  //   ble_data.dev_voltage++;
+
+  //   // Send out a value
+  //   send_ble_data(&hi2c1, &ble_data);
+
+  //   // Go to deep sleep
+  //   task_state = deep_sleep;
+  //   break;
+
+  // case scan:
+  //   break;
+
+  // case transmit:
+  //   break;
+
+  // case sleep:
+  //   // The stop 2 mode
+  //   MX_RTC_Init();
+  //   HAL_SuspendTick();
+  //   HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0x2806, RTC_WAKEUPCLOCK_RTCCLK_DIV16, 0);
+  //   // check_reg = seconds / 0.000488;
+
+  //   /* Enter STOP 2 mode */
+  //   HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
+  //   HAL_RTCEx_DeactivateWakeUpTimer(&hrtc);
+  //   SystemClock_Config();
+  //   HAL_ResumeTick();
+
+  //   break;
+
+  // case deep_sleep:
+
+  //   /* Enter the Standby mode */
+  //   if (lowPower_init())
+  //   {
+  //     Error_Handler();
+  //   }
+  //   else
+  //   {
+  //     HAL_PWR_EnterSTANDBYMode();
+  //   }
+  //   // Will not reach this code
+  //   break;
+
+  // Code shouldn't reach this point after entering standby mode
+  Error_Handler();
+}
+
+void beacon()
+{
+  BLE_Init();
+
+  HAL_GPIO_WritePin(BLE_nSLEEP_GPIO_Port, BLE_nSLEEP_Pin, GPIO_PIN_SET);
+  HAL_Delay(10);
+  HAL_GPIO_WritePin(BLE_nSLEEP_GPIO_Port, BLE_nSLEEP_Pin, GPIO_PIN_RESET);
+
+  // wait until device is available
+  while (ble_device_ready(&hi2c1))
+  {
+    // To test in power profiling
+    // half_sleep(100);
+  }
+
+  // Add measurement to data struct
+  ble_data.mode = 0;
+  ble_data.air_time = 100; // 50*100 = 5000ms 5 second
+  // ble_data.env_temperature++;
+  // ble_data.env_humidity++;
+  // ble_data.dev_voltage++;
+
+  // Send out a value
+  send_ble_data(&hi2c1, &ble_data);
+
+  //Sleep for air_time
+  //half_sleep(ble_data.air_time * 100);
+  HAL_Delay(ble_data.air_time * 100);
+
+  //read scan data
+  uint8_t received_data[2] = {0};
+  do
+  {
+    //half_sleep(100);
+    HAL_Delay(100);
+    receive_ble_data(&hi2c1, received_data, 2);
+  }
+  while((received_data[0] + received_data[1]) != 255);
+  //Make sure the received value is correct based on the second value
+
+  //Set the value in our own data struct
+  ble_beacon_data.amount_of_ack = received_data[0];
+  // uint8_t Buffer[10] = {0};
+  // sprintf(Buffer, "%d\r\n", received_data[0]);
+  // HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
+}
+
+void scan()
+{
+  BLE_Init();
+
+  HAL_GPIO_WritePin(BLE_nSLEEP_GPIO_Port, BLE_nSLEEP_Pin, GPIO_PIN_SET);
+  HAL_Delay(10);
+  HAL_GPIO_WritePin(BLE_nSLEEP_GPIO_Port, BLE_nSLEEP_Pin, GPIO_PIN_RESET);
+
+  // wait until device is available
+  while (ble_device_ready(&hi2c1))
+  {
+    // To test in power profiling
+    // half_sleep(100);
+  }
+
+  // Add measurement to data struct
+  ble_data.mode = 1;
+  ble_data.air_time = 80; // 50*100 = 5000ms 5 second
+  ble_data.env_temperature++;
+  ble_data.env_humidity++;
+  ble_data.dev_voltage++;
+
+  // Send out the BLE data value
+  send_ble_data(&hi2c1, &ble_data);
+
+  //Sleep for air_time
+  //half_sleep(ble_data.air_time * 100);
+  HAL_Delay(ble_data.air_time * 100);
+
+  //read scan data
+  uint8_t received_data[9+1] = {0};
+  do
+  {
+    //half_sleep(100);
+    HAL_delay(100);
+    receive_ble_data(&hi2c1, received_data, 9+1);
+  }
+  while(received_data[0] + received_data[9] == 255);
+
+  //If all are 0 except for received_data[9], then no beacon found
+
+  ble_scan_data.ssr_id = received_data[0];
+  ble_scan_data.temperature = received_data[1]>>8 | received_data[2];
+  ble_scan_data.humidity = received_data[3];
+  ble_scan_data.lux = received_data[4]>>8 | received_data[5];
+  ble_scan_data.voltage = received_data[6]>>8 | received_data[7];
+  ble_scan_data.rssi = received_data[8];
+
+  uint8_t Buffer[10] = {0};
+  sprintf(Buffer, "%d\r\n", ble_scan_data.rssi);
+  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
+}
+void sens()
+{
+  // TODO
+}
+void transmit()
+{
+  // TODO
+}
+
+void half_sleep(uint16_t time)
+{
+  uint16_t counter_value = 0x2806; // 5 seconds
+  // Calculate the time
+  if (time > 31981)
+    counter_value = 0xFFFF; // Set maximum available time
+  else
+    counter_value = (uint16_t)((time / 1000.0) / 0.000488);
+
+  // uint8_t Buffer[10] = {0};
+  // sprintf(Buffer, "%02X", counter_value);
+  // HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
+
+  // The stop 2 mode
+  MX_RTC_Init();
+  HAL_SuspendTick();
+  HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, counter_value, RTC_WAKEUPCLOCK_RTCCLK_DIV16, 0);
+  // check_reg = seconds / 0.000488;
+
+  /* Enter STOP 2 mode */
+  HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
+  HAL_RTCEx_DeactivateWakeUpTimer(&hrtc);
+  SystemClock_Config();
+  HAL_ResumeTick();
+}
+
+void deep_sleep(uint16_t time)
+{
+  /* Enter the Standby mode */
+  if (lowPower_init(time))
+  {
+    Error_Handler();
+  }
+  else
+  {
+    HAL_PWR_EnterSTANDBYMode();
+  }
+  // Will not reach this code
+}
+
+void blink_led(uint16_t time)
+{
+  blink_led_times(time, (uint8_t)1);
+}
+
+void blink_led_times(uint16_t time, uint8_t times)
+{
+  for (uint8_t i = 0; i < times; i++)
+  {
+    HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_SET);
+    HAL_Delay(time);
+    HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_RESET);
+    HAL_Delay(time);
+  }
+}
+
+// Mandatory to operate MCU in the first place
+void MCU_Init()
+{
+  HAL_Init();
+  SystemClock_Config();
+  MX_GPIO_Init();
+}
+
+void sensor_Init()
+{
+  LTR329_Init(&hi2c1);
+  // SHT40_Init(&hi2c1);
+}
+
+void BLE_Init()
+{
+  MX_I2C1_Init();
+}
+void LoRa_Init()
+{
+}
+
+void setBool(uint8_t *bool_carrier, uint8_t bool_place)
+{
+  *bool_carrier |= 0b1 << bool_place;
+}
+
+void clearBool(uint8_t *bool_carrier, uint8_t bool_place)
+{
+  *bool_carrier &= ~(0b1 << bool_place);
+}
+
+uint8_t checkBool(uint8_t *bool_carrier, uint8_t bool_place)
+{
+  return *bool_carrier & (0b1 << bool_place);
 }
 
 /**
@@ -229,9 +456,9 @@ void Error_Handler(void)
   MX_GPIO_Init();
   while (1)
   {
-    HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_SET);
     HAL_Delay(500);
-    HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_RESET);
     HAL_Delay(500);
   }
 }
@@ -255,11 +482,3 @@ void assert_failed(uint8_t *file, uint32_t line)
   }
 }
 #endif
-
-/**
- * @}
- */
-
-/**
- * @}
- */

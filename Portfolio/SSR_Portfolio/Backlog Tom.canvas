@@ -1,0 +1,24 @@
+{
+	"nodes":[
+		{"id":"fae673db3cca5acb","type":"text","text":"ToDo","x":-440,"y":-920,"width":565,"height":950},
+		{"id":"a421c2471b515622","type":"text","text":"In Progress","x":160,"y":-920,"width":565,"height":950},
+		{"id":"2d6e8ab64c6f07de","type":"text","text":"Done","x":760,"y":-920,"width":565,"height":950},
+		{"id":"666df8d3c06a777f","type":"text","text":"Robbe","x":-440,"y":-1180,"width":250,"height":60,"color":"5"},
+		{"id":"53a57fe57467eb78","type":"text","text":"Tom","x":-440,"y":-1100,"width":250,"height":60,"color":"1"},
+		{"id":"b234e01e07f7591e","type":"text","text":"Adam","x":-440,"y":-1020,"width":250,"height":60,"color":"3"},
+		{"id":"c725be551ee86567","type":"text","text":"Power profile STM32 in Standby","x":793,"y":-840,"width":250,"height":60,"color":"5"},
+		{"id":"50ea41bc66d953cc","type":"text","text":"Power profile BLE in deep_sleep","x":793,"y":-780,"width":250,"height":60,"color":"5"},
+		{"id":"66f19d3d73d39c7a","type":"text","text":"Power profile BLE in deep_sleep + beacon ","x":793,"y":-720,"width":250,"height":60,"color":"5"},
+		{"id":"aff0d7310237371f","type":"text","text":"STM32 <-> BLE through I2C","x":793,"y":-660,"width":250,"height":60,"color":"5"},
+		{"id":"290843d8f09f0234","type":"text","text":"Add content to PPT","x":793,"y":-600,"width":250,"height":60,"color":"5"},
+		{"id":"67cf93fed66c18fd","type":"text","text":"BLE Beacon with custom data received by I2C","x":793,"y":-540,"width":250,"height":60,"color":"5"},
+		{"id":"58302a6dc3e96b2a","type":"text","text":"I2C communication with light sensor","x":793,"y":-480,"width":250,"height":60,"color":"5"},
+		{"id":"e740488af8a5a3b5","type":"text","text":"BLE Scan code and send data back over I2C","x":193,"y":-840,"width":250,"height":60,"color":"5"},
+		{"id":"ab9567d12e2003d8","type":"text","text":"Power Profile STM32 in STOP 2 mode","x":793,"y":-420,"width":250,"height":60,"color":"5"},
+		{"id":"a4bcbba9da07c6d8","type":"text","text":"Power Profile LoRa","x":-407,"y":-840,"width":250,"height":60,"color":"5"},
+		{"id":"7a3f36592ebf4e08","type":"text","text":"Power Profile light sensor","x":-407,"y":-780,"width":250,"height":60,"color":"5"},
+		{"id":"23e065630663b641","type":"text","text":"Power Profile temperature and humidity sensor","x":-407,"y":-720,"width":250,"height":60,"color":"5"},
+		{"id":"447710117e5ee1e5","type":"text","text":"BLE wake-up STM32? Check if possible","x":-407,"y":-660,"width":250,"height":60,"color":"5"}
+	],
+	"edges":[]
+}
