@@ -6,156 +6,54 @@ By Adam Hejduk, Robbe Elsermans, and Thomas Kramp
 ## Intro
 As humanities interest in Mars grows, an understanding of its weather is needed. One of the greatest challenges that the planet provides are the frequent dust storms.
 This project will try to monitor the weather phenomenon (such as temperature, humidity, light, ...) to predict such storms.
+## Project goal
+1 systems that is his own master. They wonder around on the surface of mars. When a node gets lost or anything else, and another node approaches, it can share valuable information. For the rest, they act on their own.
+BLE is used to check proximities of each other and share some valuable information that could have been lost during dust storms (due to no communication available). Also, if a device is unable to move due to a mechanical problem, it can still transmit its data to surrounding nodes.
+## Project division
+#### to divide
 
+#### Adam
+- Environmental sensing
+- Energy harvesting
+#### Thomas
+- LoRa connectivity
+- Gyroscope
+- Rover actuation
+#### Robbe
+- Project management
+- BLE communication
+- Power Profiling
+- Energy awareness algorithm
 ## Board selection
-For our project, we had a STM32L4 available which needs to be the brain. Furthermore, a seeed XIAO nRF52840 board is provided to be used as BLE module. Although, the seeed XIAO nRF52840 has a MCU with 10 available IO's. Thus, if we count our required IO's and peripherals there is a change to use the seeed instead of an extra STM32 to act as the brain.
-![[block diagram.pdf]]
-As can be observed from the block diagram there is need for:
-- four IO's, 
-- one ADC, 
-- one I2C interface, 
-- and one 1-Wire interface.
-In total, these are 10-pins. This case is when we use the L412 as the brain and SEEED XIAO as a BLE module.
+[Brain Board Selection](Pages/Investigation/Brain_Board_Selection.md)
 
-When nRF52840 is the brain, 10 pins are needed.
-
-In order to select which MCU is the brain, some comparison is required.
-### STM32L4 VS nRF52840
-
-| MCU      | Power (V) | Flash (kB) | SRAM (40kB) | Sleep (µA) at 3V | Deep Sleep (µA) at 3V | IO  | Clock (MHz) |
-| -------- | --------- | ---------- | ----------- | ---------------- | --------------------- | --- | ----------- |
-| STM32L4  | 1.7-3.6   | 128        | 40          | 0.93-1.10        | 0.775-0.565           | 20  | 24          |
-| nRF52840 | 1.7-5.5   | 1024       | 256         | 2.35             | 0.4                   | 11  | 64          |
-nRF52840 and STM32L4 have different types of sleep modes. The table above is composed with the following assumptions:
-- STM32: Sleep mode is supply current in stop mode 2 with RTC enabled & RAM retention (p. 99)
-- STM32: Deep Sleep is in Standby mode with RTC enabled & no RAM retention (p. 105).
-- nRF52840: Sleep mode RAM is retained and an internal clock/ interrupt is used (p. 56).
-- nRF52840: Deep Sleep mode RAM is NOT retained and external interrupt is needed (p. 56).
-
-Conclusion: We continue with STM32L4 which has the ability to use the FLASH as EEPROM where this is not usable in nRF52840 (PROGMEN is read-only so not an option).
-With the usage of EEPROM, we can store the data before entering deep sleep and after the wake-up or reset it can fetch the data or add data to it if needed. This is not the case for nRF52840, although, it has better current consumption in Deep Sleep.
 
 ## MVP
 The MVP (Minimal Vital Product) contains the following items:
-- LoRa module connection that transmits data.
-- Dashboard to review received data.
+- LoRa-module that transmits data to a gateway.
+- Dashboard to review received data from LoRa-module.
 - The ability to measure temperature and humidity.
-- Only measure when there is enough energy available.
-- ..?
-
-## Brain code
-Our brain, STM32L412KB, will have a certain flow as depicted in the block schematic below.
-![[brain_flow_diagram.pdf]]
-This is coded in a finite state machine which cycles through the different states. This to provide a minimal code footprint onto the MCU.
-## Joule Scope Measurements
-### STM32L4 standby
-This measurement is conducted by using JP1 with the Joule scope as amp meter.
-
-The test code is the following pseudo code
-```
-while (1)
-	init_all
-	blink_led
-	wait 5 seconds
-	set pheripherals to go to sleep
-	enter standby sleep
-```
-
-The Standby code will last for $33$ seconds when we use a prescaler of $/16$ at the Low power Oscillator of $\pm 32kHz$ and a compare value of $0xFFFF$ which yields in $\frac{16}{\pm32kHz} = 0.5ms$ and
-$0.5ms \times 2^{16} = 32.768 \Rightarrow \pm 33 seconds$.
-
-For the measurements , we have taken a compare value of $0x8FFF$ which yield in $0.5ms \times 36863 = 32.768 \Rightarrow \pm 18.5 seconds$.
-![[standby_stm32_current_consumption.png]]
-We can deduct from this figure, the different steps
-1. The high peak is the led that blinks for 1 second $\pm 12.6mA$.
-2. Then, we wait for 5 seconds in running mode $\pm 10mA$
-3. Later, we initialize sleep and go to sleep which results in a significant reduce of current consumption to $\pm 7.75µA$
-
-![[standby_stm32_current_consumption_close_look.png]]
-A closer look at the standby mode current consumption.
-
-The total cycle uses an average current of $\pm 2.7mA$.
-This can be reduced by using a compare value of $0xFFFF$.
-### XIAO nRF52840 peripheral mode
-A small pseudo-code on what the device does 
-```
-setup 
-	setup custom service
-	setup custom charactersitic
-	setup led
-	setup BLE and Serial
-	do Advertise
-loop
-	if connected to a central
-		check value changes on charactersitic
-		write led accordingly to value
-```
-
-The nRF52840 module will constantly be advertising on a rate of $100ms$ (this is default in ArduinoBLE see [ArduinoBLE-setAdvertisingInterval()](https://reference.arduino.cc/reference/en/libraries/arduinoble/ble.setadvertisinginterval/)).
-
-On central connect, it will check constantly if the value has changed or not. The central is a smartphone which has the app nRF Connect installed and acts as a central.
-
-
-[[Nice links]]
-
-![[BLE_pheri_led_1.png]]
-Here, we can see the periodic advertisements that periodically occurs not every $100ms$, but around $40ms$. When the central connects to the peripheral, their is a heavily change of data present. Later, the central periodically checks the peripheral at a rate of $\pm 40ms$. This rate is defined by the smartphone. Weird. Further investigation is needed by manually setting the interval ranges and see if anything changes or not.
-
-![[BLE_pheri_led_2.png]]
-When connected, we can read and write the custom characteristic of the custom service. This characteristic's value is linked to an LED which is turned on and turned off as can be seen on the scope image above.
-
-![[BLE_pheri_led_anomalies.png]]
-The square wave like structure with again a square wave like structure on top of it is unknown why this is happening. Further investigation is needed in order to know what this $\pm 2mA$ deviation is in current consumption.
-
-Average consumption in advertising state is $11.12mA$.
-Average consumption in connection state is $11.01mA$.
-
-### LTR-329 Light Sensor
-Joule scope is used as amp meter (by using only the red wires).
-
-![[ltr_329_consumption.png]]
-==Adam==
-### SHT40 Light Sensor
-Joule scope is used as amp meter (by using only the red wires).
-![[sht40_consumption.png]]
-==Adam==
-### LoRa Module
-==Tom==
-
-## BLE inter-communication
-![[BLE-program_flow.pdf]]
-A starting point for the BLE flow
-I will describe here what I'll be using as raw advertisement or which services and characteristics I present with their UUID etc.
-
-## BLE I2C communication
-To enable the BLE inter-communication, we use I2C as device connection to the STM32L4. 
-Here, the BLE module shall have the address 0x10 and the following struct will be send over.
-```
-struct struct_BLE_object{
-	uint8_t ssr_id; //The ID of the rover itself
-	uint8_t beacon_time; //How long the beacon may last (val*100=ms)
-	uint8_t scan_time; //How long the scan may last (val*100=ms)
-	int16_t env_temperature; //Range from -327.68 to 327.67 °C (val/100=°C)
-	uint8_t env_humidity; //Range from -0-100%
-	uint16_t env_lux; //Range from 0 to 1000 
-	uint16_t dev_voltage; //Range from 0-6.5535V (val/10000=V) (val/10=mV)
-	//x gyro 8bit?
-	//y gyro 8bit?
-	//z gyro 8bit?
-};
-typedef structBLE_object BLE_object;
-```
-A total of 11 bytes.
-
-The BLE-advertisement can hold 7-bytes where we select the *dev_voltage* (2-bytes), *env_temperature* (2-bytes), and *env_humidity* (1-byte) in the respectively order for now.
-
-The BEL-object will be send over to the BLE module directly after. So we send a packet with 0x10 with the write bit enabled, and after that, we send 11 bytes.
-
-When the BLE-module has finished its flow, it goes to deep sleep.
-The SM32L4 needs to waken up the device by setting a specific GPIO HIGH.
-
+- Energy awareness
+- Use environmental source as energy source
+## Power Profiling
+[Power Profiling](Pages/Power_Profiling/Power_Profiling.md)
+## STM32 Module
+[STM32 module](Pages/Brain_module/STM32L412KB.md)
+## BLE Module code
+[BLE Module](Pages/BLE_Module/nRF52_SEEED_XIAO.md)
 ## I2C communication sensor SHT40
-![[HT_DS_Datasheet_SHT4x.pdf]]
+[SHT40](Pages/Sensor/SHT40.md)
+- addressing an array x addressing a place in an array 
+- UART printing is not the same as printf sprintf...
+- HAL libary learining
+- working with datasheets of more complex nature for the first time 
+- programing in more dvanced C
+
+
+## I2C communication of LTR-329
+[LTR-329](Pages/Sensor/LTR-329.md)
+>>>>>>> 880ef34d66397736c50f0bb7b2a132d3fa3406d6
+![[SHT4x Datasheet.pdf]]
 Some conclusions: 
 - address can range from 0x44 to 0x46.
 - Idle current = $0.08\mu A$
@@ -169,10 +67,65 @@ $RH = ( -6 + 125 \cdot \frac{S_{RH}}{2^{16} -1}) (\%RH)$
 $T = ( -45 + 175 \cdot \frac{S_{T}}{2^{16} -1}) (^\circ C)$
 
 ## I2C communication of LTR-329
-![[Lite-On_LTR-329ALS-01 DS_ver1.1-348647.pdf]]
+![[LTR-329ALS Datasheet.pdf]]
 ==For Adam==
+>>>>>>> 19efb96 (I2C register sketch)
 
 
+Sleepmode: 
+### . **How It Works**
+
+1. **Active State**:
+    
+    - The sensor reads ambient light data and transmits it via UART.
+    - The LED (`LD3_Pin`) is turned on to indicate the active state.
+2. **Sleep State**:
+    
+    - The `LTR329_Sleep` function puts the sensor into standby mode.
+    - The LED is turned off to indicate the sleep state.
+    - The system waits for 5 seconds (or your preferred duration).
+3. **Wake-Up State**:
+    
+    - The `LTR329_WakeUp` function sets the sensor back to active mode.
+    - A delay is added after wake-up to allow the sensor to stabilize before the next reading.
+![[Pasted image 20241203122154.png]] 
+according to datasheet: 
+standby current: 5 $micro$A
+initial startup: 100 ms
+waking up: 10 ms 
+## Energy Harvesting
+[Enegry Harvesting Module AEM1094](AEM10941.md)
+The goal is to pover as many peripherals as possible... SHT40, LTR-329, STM32, BLE ?
+We have:
+- Outside S.P.
+- Inside S.P.
+- 2x 2,7V1F Supercap
+- 2x AEM10941 Evaluation Kit 
+Note to self: Make sure to have SuperCap connected before connecting power source (S.P.)
+
+Tested Single Cell Configuration: It seems to be ok on 2,7V treshhold, the module gets slighty over 2,7 Volts and than regulates it down so that the Capacitor is okay. 
+HighOUT: 1,8V
+LowOUT? 1,2V
+according to datasheet
+It takes about 1h 35m to charge the Cap. to 2,3V WITH additional artiffical lights
+![[Pasted image 20241129210421.png]]
+
+### Voltage measurement of the energy harvesting module
+Hardware Setup: 
+- Use the **ADC (Analog-to-Digital Converter)** on the STM32 to measure the voltage of the energy storage device.
+- Connect the energy storage's (SUPERCAP) positive terminal to a voltage divider to scale it down if it exceeds the ADC input range of the STM32.
+- Connect the output of the voltage divider to an ADC pin.
+**Supercapacitor:**
+
+- For supercapacitors, the energy is directly proportional to the square of the voltage:
+ E = 1/2 C V^2
+    - Measuring voltage allows you to calculate energy, provided you know the capacitance.
+
+https://www.youtube.com/watch?v=EsZLgqhqfO0
+ADC1_IN8 PA3 A2 - reading pin 
+![[Pasted image 20241203172736.png]]
+We have been succesfull in reading voltage on a potenciometer 
+### Decision making
 ## UART Communication with LoRa-Module
 For the LoRa-Module, we utilize the Wio-e5 mini board.
 ![[lora_e5_mini_pinout.jpg]]
@@ -191,7 +144,9 @@ If we follow these pages we should get a connection as follows:
 ![[Wio-E5 Datasheet.pdf]]
 
 ==Tom==
+put the at commands in arduino code
 
 ## I2C Communication with Rover Bot
+![[MPU-6050 Datasheet.pdf]]
 ==Tom==
 
