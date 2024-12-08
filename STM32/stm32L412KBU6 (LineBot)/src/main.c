@@ -86,7 +86,11 @@ int main(void)
   HAL_Delay(1000);
   HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
 
+  HAL_GPIO_WritePin(LB_GPIO_Port, LB_B_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(LB_GPIO_Port, LB_R_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(LB_GPIO_Port, LB_F_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(LB_GPIO_Port, LB_L_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(LB_GPIO_Port, LB_S_Pin, GPIO_PIN_SET);
 
   /* Check if the system was resumed from StandBy mode */
   if (__HAL_PWR_GET_FLAG(PWR_FLAG_SB) != RESET)
@@ -105,39 +109,44 @@ int main(void)
 
   // Communication example with LineBot
   char Buffer[20] = {0};
-  // while (1) {
-  //   // Backwards
-  //   HAL_GPIO_WritePin(LB_GPIO_Port, LB_Back_Pin, GPIO_PIN_SET);
-  //   sprintf(Buffer, "LineBot Backwards\r\n");
-  //   HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
-  //   HAL_Delay(1000);
+  while (1) {
+    // Backwards
+    HAL_GPIO_WritePin(LB_GPIO_Port, LB_B_Pin, GPIO_PIN_RESET);
+    sprintf(Buffer, "LineBot Backwards\r\n");
+    HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
+    HAL_Delay(1000);
+    HAL_GPIO_WritePin(LB_GPIO_Port, LB_B_Pin, GPIO_PIN_SET);
     
-  //   // Left
-  //   HAL_GPIO_WritePin(LB_GPIO_Port, LB_Left_Pin, GPIO_PIN_SET);
-  //   sprintf(Buffer, "LineBot Left     \r\n");
-  //   HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
-  //   HAL_Delay(1000);
+    // Left
+    HAL_GPIO_WritePin(LB_GPIO_Port, LB_L_Pin, GPIO_PIN_RESET);
+    sprintf(Buffer, "LineBot Left     \r\n");
+    HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
+    HAL_Delay(1000);
+    HAL_GPIO_WritePin(LB_GPIO_Port, LB_L_Pin, GPIO_PIN_SET);
     
-  //   // Forward
-  //   HAL_GPIO_WritePin(LB_GPIO_Port, LB_Forth_Pin, GPIO_PIN_SET);
-  //   sprintf(Buffer, "LineBot Forward  \r\n");
-  //   HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
-  //   HAL_Delay(1000);
+    // Forward
+    HAL_GPIO_WritePin(LB_GPIO_Port, LB_F_Pin, GPIO_PIN_RESET);
+    sprintf(Buffer, "LineBot Forward  \r\n");
+    HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
+    HAL_Delay(1000);
+    HAL_GPIO_WritePin(LB_GPIO_Port, LB_F_Pin, GPIO_PIN_SET);
     
-  //   // Right
-  //   HAL_GPIO_WritePin(LB_GPIO_Port, LB_Right_Pin, GPIO_PIN_SET);
-  //   sprintf(Buffer, "LineBot Right    \r\n");
-  //   HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
-  //   HAL_Delay(1000);
+    // Right
+    HAL_GPIO_WritePin(LB_GPIO_Port, LB_R_Pin, GPIO_PIN_RESET);
+    sprintf(Buffer, "LineBot Right    \r\n");
+    HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
+    HAL_Delay(1000);
+    HAL_GPIO_WritePin(LB_GPIO_Port, LB_R_Pin, GPIO_PIN_SET);
     
-  //   // Stop
-  //   HAL_GPIO_WritePin(LB_GPIO_Port, LB_Stop_Pin, GPIO_PIN_SET);
-  //   sprintf(Buffer, "LineBot Stop     \r\n");
-  //   HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
-  //   HAL_Delay(1000);
+    // Stop
+    HAL_GPIO_WritePin(LB_GPIO_Port, LB_S_Pin, GPIO_PIN_RESET);
+    sprintf(Buffer, "LineBot Stop     \r\n");
+    HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
+    HAL_Delay(1000);
+    HAL_GPIO_WritePin(LB_GPIO_Port, LB_S_Pin, GPIO_PIN_SET);
 
-  //   HAL_Delay(500); // Delay for the next measurement
-  // }
+    HAL_Delay(500); // Delay for the next measurement
+  }
 }
 
 /**
