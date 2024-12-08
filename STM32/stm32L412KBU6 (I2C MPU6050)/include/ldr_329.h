@@ -3,8 +3,8 @@
 
 #include "main.h"
 
-#define LTR329_I2C_ADDR (0x29 << 1) // I2C address shifted for HAL //slave adress
-// register set 
+#define LTR329_I2C_ADDR (0x29 << 1) // I2C address shifted for HAL
+
 #define LTR329_ALS_CONTR 0x80      // ALS control register
 #define LTR329_ALS_MEAS_RATE 0x85  // ALS measurement rate register
 #define LTR329_ALS_DATA_CH1_0 0x88 // ALS Channel 1 low byte

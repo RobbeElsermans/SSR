@@ -5,7 +5,9 @@ sudo chmod 755 jre/bin/*
 ```
 VSCode upload SMT32 code
 ```bash
-sudo usermod -a -g plugdev
+sudo wget https://raw.githubusercontent.com/raspberrypi/openocd/rp2040/contrib/60-openocd.rules
+sudo usermod -a -G plugdev {user}
+reboot
 ```
 ```bash
 curl -fsSL https://raw.githubusercontent.com/platformio/platformio-core/develop/platformio/assets/system/99-platformio-udev.rules | sudo tee /etc/udev/rules.d/99-platformio-udev.rules

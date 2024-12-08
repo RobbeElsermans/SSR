@@ -43,11 +43,14 @@ The *ble_scan_result_t* gives a more detailed result of the found beacon in the 
 struct ble_scan_result_t
 {
 uint8_t ssr_id; // The ID of the source
-int16_t temperature; // temperature
-uint8_t humidity; // humidity
-uint16_t lux; // lux (light)
-uint16_t voltage; // voltage
+int16_t temperature; // Range from -327.68 to 327.67 °C (val/100=°C)
+uint8_t humidity; // Range from -0-100%
+uint16_t lux; // Range from 0 to 1000
+uint16_t voltage; // Range from 0-6.5535V (val/10000=V) (val/10=mV)
 int8_t rssi; //rssi
+int8_t gyro_x; // Range from -60 to 60 (val*3=°)
+int8_t gyro_y; // Range from -60 to 60 (val*3=°)
+int8_t gyro_z; // Range from -60 to 60 (val*3=°)
 };
 ```
 For now, only 1 beacon gets saved and returned to the STM32L4 on request.
@@ -60,7 +63,7 @@ To know on the STM32L4 side that the received data is valid, their is a small "c
 
 In order to not let the BLE-Module wait infinite on the request of the STM32L4, there is a timeout implemented that after 2 seconds, will trigger after the BLE-module has completed its task. This to prevent power consumption if the SMT32L4 missed something or that something went wrong. When the receive window ends, the data will be lost.
 
-![BLE scan response with emulated STM32L4](BLE_Scan_Response.png)
+![BLE scan response with emulated STM32L4](../../Images/BLE_Scan_Response.png)
 **ttyUSB0** (left) represents the emulated STM32 which triggers the BLE-module in mode 1 and waits for its response.
 **ttyACM2** (middle) represents the BLE-module in scanning mode (mode 1) and will scan the medium until a beacon is discovered as shown.
 **ttyACM3** (right) represents the beacon BLE-module and is connected to the STM32L4.
@@ -78,9 +81,9 @@ Mode 0 or beacon mode will transmit a beacon. This beacon will be in air for *ai
 [4] ->  Lux LSB(yte)
 [5] ->  Device Supercap Voltage MSB(yte)
 [6] ->  Device Supercap Voltage LSB(yte)
-[7] ->  /0xFF
-[8] ->  /0xFF
-[9] ->  /0xFF
+[7] ->  gyro-x
+[8] ->  gyro-y
+[9] ->  gyro-z
 [10] -> /0xFF
 [11] -> /0xFF
 [12] -> /0xFF
@@ -94,7 +97,10 @@ The minor and major will have a certain purpose as well.
   A total of *256* devices can exist at the same time for the same purpose.
 - The lower byte of the major is the ID of the SSR-rover itself. This ID is defined in *ble_module_data_t* as *ssr_id*.
 **Minor**
-- The minor is not touched at the moment and is set to $0x00000$.
+- The minor is not touched at the moment and is set to $0x0000$.
+```
+beacon.setMajorMinor((BEACON_SSR_ID << 8 |i2c_data.ssr_id), 0x0000);
+```
 
 When a scanner ACKs a beacon, the beacon gets halted for a moment. The beacon will count the amount of ACKs received. The amount of received ACKs will determine the amount of devices in present surrounding.
 
@@ -109,13 +115,13 @@ All this data is encapsulated in the advertisement data packet. This consists of
 - Protocol Data Unit (2-39-bytes)
 - CRC (3-bytes)
 
-![PDU Packet](BLE_LE_Packet.png)
+![PDU Packet](../../Images/BLE_LE_Packet.png)
 
 Our wanted data will be situated in the Protocol Data Unit or PDU packet. Here we have the following structure:
 - Header (2-bytes)
 - Payload (0-37-bytes)
 
-![PDU Packet](PDU_Packet.png)
+![PDU Packet](../../Images/PDU_Packet.png)
 
 And the header can be subdivided into:
 - PDU types (4-bits)
@@ -124,8 +130,6 @@ And the header can be subdivided into:
 - TxAdd (1-bit)
 - RxAdd (1-bit)
 - Length (8-bit)
-
-![Header Packet](../../Images/Header_Packet.png)
 
 [reference for images of packet structures](https://academy.nordicsemi.com/courses/bluetooth-low-energy-fundamentals/lessons/lesson-2-bluetooth-le-advertising/topic/advertisement-packet/)
 

@@ -1,3 +1,20 @@
+/**
+  ******************************************************************************
+  * @file    uart.c
+  * @brief   This file provides code for the configuration
+  *          of the UART instances.
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2024 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "usart.h"
@@ -23,3 +40,60 @@ void MX_UART2_UART_Init(void)
     Error_Handler();
   }
 }
+
+// void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
+// {
+
+//   GPIO_InitTypeDef GPIO_InitStruct = {0};
+//   RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+//   if(uartHandle->Instance==USART2)
+//   {
+
+//   /** Initializes the peripherals clock
+//   */
+//     PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2;
+//     PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
+//     if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+//     {
+//       Error_Handler();
+//     }
+
+//     /* USART2 clock enable */
+//     __HAL_RCC_USART2_CLK_ENABLE();
+
+//     __HAL_RCC_GPIOA_CLK_ENABLE();
+//     /**USART2 GPIO Configuration
+//     PA2     ------> USART2_TX
+//     PA15 (JTDI)     ------> USART2_RX
+//     */
+//     GPIO_InitStruct.Pin = VCP_TX_Pin;
+//     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+//     GPIO_InitStruct.Pull = GPIO_NOPULL;
+//     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+//     GPIO_InitStruct.Alternate = GPIO_AF7_USART2;
+//     HAL_GPIO_Init(VCP_TX_GPIO_Port, &GPIO_InitStruct);
+
+//     GPIO_InitStruct.Pin = VCP_RX_Pin;
+//     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+//     GPIO_InitStruct.Pull = GPIO_NOPULL;
+//     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+//     GPIO_InitStruct.Alternate = GPIO_AF3_USART2;
+//     HAL_GPIO_Init(VCP_RX_GPIO_Port, &GPIO_InitStruct);
+//   }
+// }
+
+// void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
+// {
+
+//   if(uartHandle->Instance==USART2)
+//   {
+//     /* Peripheral clock disable */
+//     __HAL_RCC_USART2_CLK_DISABLE();
+
+//     /**USART2 GPIO Configuration
+//     PA2     ------> USART2_TX
+//     PA15 (JTDI)     ------> USART2_RX
+//     */
+//     HAL_GPIO_DeInit(GPIOA, VCP_TX_Pin|VCP_RX_Pin);
+//   }
+// }
