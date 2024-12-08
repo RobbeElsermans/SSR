@@ -1,5 +1,5 @@
 ## BLE and STM32 I2C communication
-![BLE code flow](../../Images/BLE_Code_flow.png)
+![BLE code flow](BLE_Code_flow.png)
 
 To enable the BLE inter-communication, we use I2C as device connection to the STM32L4. 
 Here, the BLE module shall have the address $0x12$ and the following struct will be send over.
@@ -63,7 +63,7 @@ To know on the STM32L4 side that the received data is valid, their is a small "c
 
 In order to not let the BLE-Module wait infinite on the request of the STM32L4, there is a timeout implemented that after 2 seconds, will trigger after the BLE-module has completed its task. This to prevent power consumption if the SMT32L4 missed something or that something went wrong. When the receive window ends, the data will be lost.
 
-![BLE scan response with emulated STM32L4](../../Images/BLE_Scan_Response.png)
+![BLE scan response with emulated STM32L4](BLE_Scan_Response.png)
 **ttyUSB0** (left) represents the emulated STM32 which triggers the BLE-module in mode 1 and waits for its response.
 **ttyACM2** (middle) represents the BLE-module in scanning mode (mode 1) and will scan the medium until a beacon is discovered as shown.
 **ttyACM3** (right) represents the beacon BLE-module and is connected to the STM32L4.
@@ -115,13 +115,13 @@ All this data is encapsulated in the advertisement data packet. This consists of
 - Protocol Data Unit (2-39-bytes)
 - CRC (3-bytes)
 
-![PDU Packet](../../Images/BLE_LE_Packet.png)
+![PDU Packet](BLE_LE_Packet.png)
 
 Our wanted data will be situated in the Protocol Data Unit or PDU packet. Here we have the following structure:
 - Header (2-bytes)
 - Payload (0-37-bytes)
 
-![PDU Packet](../../Images/PDU_Packet.png)
+![PDU Packet](PDU_Packet.png)
 
 And the header can be subdivided into:
 - PDU types (4-bits)
