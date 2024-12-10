@@ -371,7 +371,7 @@ void taskBeacon()
 
   ble_data.mode = 0;
   ble_data.ssr_id = SSR_ID;
-  ble_data.air_time = air_time;
+  ble_data.air_time = air_time/100;
 
   ble_data.env_temperature = ssr_data.env_temperature;  // Range from -327.68 to 327.67 °C (val/100=°C)
   ble_data.env_humidity = ssr_data.env_humidity;        // Range from -0-100%
@@ -381,19 +381,16 @@ void taskBeacon()
   ble_data.dev_gyro_y = ssr_data.gyro_y;                    // Range from -60 to 60 (val*3=°)
   ble_data.dev_gyro_z = ssr_data.gyro_z;                    // Range from -60 to 60 (val*3=°)
 
+  uint8_t Buffer[60] = {0};
+  sprintf((char *)Buffer, "taskBeacon - start beacon %d \r\n", ble_data.air_time);
+  HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
+
   ble_beacon_result = beacon(&hi2c1, &ble_data);
 
   /* Display onto serial monitor */
 
-  int *debug_uart_buffer;
-  uint8_t size_buffer = 60;
-  debug_uart_buffer = (int *)malloc(size_buffer * sizeof(char));
-
-  for (uint8_t i = 0; i < size_buffer; i++) debug_uart_buffer[i] = 32; // space character
-  sprintf((char *)debug_uart_buffer, "taskBeacon - amount of ACK: %d \r\n",ble_beacon_result.amount_of_ack);
-  HAL_UART_Transmit(&huart2, (uint8_t *)debug_uart_buffer, sizeof(debug_uart_buffer), 1);
-
-  free(debug_uart_buffer);
+  sprintf((char *)Buffer, "taskBeacon - amount of ACK: %d \r\n",ble_beacon_result.amount_of_ack);
+  HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
 }
 
 void taskDrive()
@@ -410,7 +407,7 @@ void taskDeepSleep()
 
 void taskLightSleep()
 {
-  half_sleep(&hrtc, 20000); //20 seconds half sleep  
+  half_sleep(&hrtc, 5000); //20 seconds half sleep  
 }
 
 void wakeBleModule()

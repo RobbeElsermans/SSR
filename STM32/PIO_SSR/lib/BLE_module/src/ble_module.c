@@ -1,4 +1,5 @@
 #include "ble_module.h"
+#include "usart.h"
 
 delay_callback_t _delay_callback;
 
@@ -88,23 +89,42 @@ ble_beacon_result_t beacon(I2C_HandleTypeDef *hi2c1, ble_module_data_t* ble_data
   // Send out a value
   send_ble_data(hi2c1, ble_data);
 
+
+  uint8_t Buffer[60] = {0};
+  sprintf((char *)Buffer, "beacon - before %d \r\n", ble_data->air_time * 100+1000);
+  HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
+
   //Sleep for air_time
   //half_sleep(ble_data.air_time * 100);
-  _delay_callback(ble_data->air_time * 100);
+  _delay_callback(ble_data->air_time * 100+1000);
 
+  sprintf((char *)Buffer, "beacon - after \r\n");
+  HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
+
+
+  uint8_t i = 0;
   //read scan data
   uint8_t received_data[2] = {0};
   do
   {
     //half_sleep(100);
-    _delay_callback(100);
+    _delay_callback(1000);
     receive_ble_data(hi2c1, received_data, 2);
+
+    sprintf((char *)Buffer, "beacon - scanning %d \r\n", i);
+    HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
+
+    i++;
   }
-  while((received_data[0] + received_data[1]) != 255);
+  while((received_data[0] + received_data[1]) != 255 && i < 10);
   //Make sure the received value is correct based on the second value
 
   //Set the value in our own data struct
-  beacon_result.amount_of_ack = received_data[0];
+
+  if(i<10)
+    beacon_result.amount_of_ack = received_data[0];
+  else 
+    beacon_result.amount_of_ack = 0;
   // uint8_t Buffer[10] = {0};
   // sprintf(Buffer, "%d\r\n", received_data[0]);
   // HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
