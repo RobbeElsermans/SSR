@@ -113,23 +113,9 @@ Measuring capacitor:
 - Connect one terminal of the capacitor to the ADC pin (PA2).
 - The other terminal should be connected to ground (GND).
 - Ensure the voltage across the capacitor does not exceed the reference voltage of the ADC (typically 3.3V). If needed, use a voltage divider.
-![[Pasted image 20241204111530.png]]
-since we are programing the board (using UBS power source +5V) but we also want to match the ADCs Voltage raw data rating with the Voltage measured... Following will be used and might be changed later when we power the board with the 3.3V power source.
 
-Voltage devider power source:
 
-V_ref = ( 3.3 / +5 ) V 
-
-V_cap = (ADC_raw * V_ref) / 4095
-
-R2 / (R2 + R1) * V_ref = 3.3V
--> 2.5 R2 = 3.3 R1
-
-I chose 39Kohm and 30Kohm ... 
-but now i noticed that the ratio is correct to the source ... meaning 6V is about 4025 raw ADC data value
-
-and in devision 39Kohm -> 1883
- WE WANR A HUGE RESISTOR ! FOR LESS CONSUMPTION 
+ WE WANT A HUGE RESISTOR ! FOR LESS CONSUMPTION 
  AND WE WANT TO READ ONLY ONE WHEN NEEDED
 
 
