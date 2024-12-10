@@ -139,8 +139,8 @@ uint8_t checkBool(uint8_t *bool_carrier, uint8_t bool_place);
 #define LB_R_GPIO_Port GPIOA
 #define LB_L_Pin GPIO_PIN_5
 #define LB_L_GPIO_Port GPIOA
-#define LB_Rev_Pin GPIO_PIN_6
-#define LB_Rev_GPIO_Port GPIOA
+#define LB_B_Pin GPIO_PIN_6
+#define LB_B_GPIO_Port GPIOA
 #define LB_S_Pin GPIO_PIN_7
 #define LB_S_GPIO_Port GPIOA
 #define Gyro_EN_Pin GPIO_PIN_0

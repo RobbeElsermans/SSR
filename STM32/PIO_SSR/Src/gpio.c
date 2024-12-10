@@ -53,7 +53,7 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOH_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, LB_F_Pin|LB_R_Pin|LB_L_Pin|LB_Rev_Pin
+  HAL_GPIO_WritePin(GPIOA, LB_F_Pin|LB_R_Pin|LB_L_Pin|LB_B_Pin
                           |LB_S_Pin|LoRa_EN_Pin|SHT40_EN_Pin|LTR329_EN_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
@@ -61,10 +61,10 @@ void MX_GPIO_Init(void)
 
   /*Configure GPIO pins : PAPin PAPin PAPin PAPin
                            PAPin */
-  GPIO_InitStruct.Pin = LB_F_Pin|LB_R_Pin|LB_L_Pin|LB_Rev_Pin
+  GPIO_InitStruct.Pin = LB_F_Pin|LB_R_Pin|LB_L_Pin|LB_B_Pin
                           |LB_S_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
