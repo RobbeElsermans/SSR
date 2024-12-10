@@ -62,18 +62,20 @@ HAL_StatusTypeDef ltr329ReadALS(I2C_HandleTypeDef* i2c_obj, uint8_t channel, uin
   HAL_StatusTypeDef ret;
   ret = HAL_I2C_Master_Transmit(i2c_obj, LTR329_I2C_ADDR, &regAddr, 1, HAL_MAX_DELAY);
   if(ret != HAL_OK) return ret;
-  //HAL_Delay(10);
+
   if (_delay_callback) _delay_callback(10);
+
   HAL_I2C_Master_Receive(i2c_obj, LTR329_I2C_ADDR, &rawData[0], 1, HAL_MAX_DELAY);
   if(ret != HAL_OK) return ret;
-  //HAL_Delay(10);
+
   if (_delay_callback) _delay_callback(10);
 
   regAddr++;
   HAL_I2C_Master_Transmit(i2c_obj, LTR329_I2C_ADDR, &regAddr, 1, HAL_MAX_DELAY);
   if(ret != HAL_OK) return ret;
-  //HAL_Delay(10);
+
   if (_delay_callback) _delay_callback(10);
+
   HAL_I2C_Master_Receive(i2c_obj, LTR329_I2C_ADDR, &rawData[1], 1, HAL_MAX_DELAY);
   if(ret != HAL_OK) return ret;
 

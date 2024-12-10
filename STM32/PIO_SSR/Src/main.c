@@ -127,10 +127,35 @@ int main(void)
   const uint8_t size_buffer = 60;
   uint8_t debug_uart_buffer[size_buffer];
   
-  for (uint8_t i = 0; i < size_buffer; i++)
-    debug_uart_buffer[i] = 32; // space character
-  printf(debug_uart_buffer, "taskSens - lux: %d, t: %d, h: %d \r\n");
-  HAL_UART_Transmit(&huart2, debug_uart_buffer, size_buffer, 1);
+HAL_Delay(2000);
+
+  uint8_t Buffer[25] = {0};
+  uint8_t Space[] = " - ";
+  uint8_t StartMSG[] = "Starting I2C Scanning: \r\n";
+  uint8_t EndMSG[] = "Done! \r\n\r\n";
+
+  uint8_t i = 0, ret;
+  HAL_UART_Transmit(&huart2, StartMSG, sizeof(StartMSG), 10000);
+  for (i = 0; i < 128; i++)
+  {
+    ret = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i << 1), 3, 5);
+    if (ret != HAL_OK) /* No ACK Received At That Address */
+    {
+      HAL_UART_Transmit(&huart2, Space, sizeof(Space), 10000);
+    }
+    else if (ret == HAL_OK)
+    {
+      sprintf(Buffer, "0x%X", i);
+      HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 10000);
+    }
+  }
+  HAL_UART_Transmit(&huart2, EndMSG, sizeof(EndMSG), 10000);
+
+  //while(1);
+
+ // uint8_t Buffer[10] = {0};
+  sprintf(Buffer, "Her Am I\r\n");
+  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
 
   /* USER CODE END 2 */
 
@@ -280,6 +305,11 @@ void taskSens()
   ltr329GetLuxAll(&hi2c1, &lux);
   sht40ReadTempAndHumidity(&hi2c1, &temperature, &humidity, SHT40_HIGH_PRECISION); // highest precision.
 
+  uint8_t Buffer[60] = {0};
+  sprintf(Buffer, "taskSens - lux: %d, t: %d, h: %d \r\n", humidity, temperature, lux);
+  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
+
+
   /* put to sleep/ halt */
   ltr329Sleep(&hi2c1);
   sht40Sleep(&hi2c1);
@@ -290,17 +320,9 @@ void taskSens()
   ssr_data.env_lux = (uint16_t)(lux);
 
   /* Display onto serial monitor */
-
-  int *debug_uart_buffer;
-  uint8_t size_buffer = 60;
-  debug_uart_buffer = (int *)malloc(size_buffer * sizeof(char));
-
-  for (uint8_t i = 0; i < size_buffer; i++)
-    debug_uart_buffer[i] = 32; // space character
-  sprintf((char *)debug_uart_buffer, "taskSens - lux: %d, t: %d, h: %d \r\n", ssr_data.env_lux, ssr_data.env_temperature, ssr_data.env_lux);
-  HAL_UART_Transmit(&huart2, (uint8_t *)debug_uart_buffer, sizeof(debug_uart_buffer), 1);
-
-  free(debug_uart_buffer);
+  //uint8_t Buffer[60] = {0};
+  sprintf(Buffer, "taskSens - lux: %d, t: %d, h: %d \r\n", ssr_data.env_lux, ssr_data.env_temperature, ssr_data.env_lux);
+  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
 }
 
 void taskStore()
