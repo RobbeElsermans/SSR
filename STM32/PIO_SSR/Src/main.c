@@ -305,10 +305,6 @@ void taskSens()
   lux = GetLuxAll(&hi2c1);
   SHT40_ReadSensor(&temperature, &humidity);
 
-  uint8_t Buffer[60] = {0};
-  sprintf(Buffer, "taskSens - lux: %d, t: %f, h: %f \r\n", lux, temperature, humidity);
-  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
-
   /* put to sleep/ halt */
   LTR329_Sleep(&hi2c1);
   SHT40_Sleep();
@@ -320,6 +316,7 @@ void taskSens()
 
   /* Display onto serial monitor */
   //uint8_t Buffer[60] = {0};
+  uint8_t Buffer[60] = {0};
   sprintf(Buffer, "taskSens - lux: %d, t: %d, h: %d \r\n", ssr_data.env_lux, ssr_data.env_temperature, ssr_data.env_humidity);
   HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
 }
