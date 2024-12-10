@@ -286,7 +286,7 @@ void taskDetermineTasks()
 
   // Here, the boolean buffer **bool_buffer** is used with the defines of TASK described in main.h.
   //bool_buffer = 0b010000011; // Set DEEP_SLEEP, STORE, SENS,
-  bool_buffer = 0b10000001; // Set SLEEP, SENS
+  bool_buffer = 0b10010001; // Set SLEEP, BEACON, SENS
 }
 
 void taskSens()
