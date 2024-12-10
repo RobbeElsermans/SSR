@@ -30,14 +30,11 @@
 #define FLASH_USER_START_ADDR ADDR_FLASH_PAGE_60                     /* Start @ of user Flash area */
 #define FLASH_USER_END_ADDR ADDR_FLASH_PAGE_63 + FLASH_PAGE_SIZE - 1 /* End @ of user Flash area */
 
-
-
-#define START_COUNTER_REG 0x08000000
-#define END_COUNTER_REG 0x080001FF
-#define START_EEPROM_REG 0x08000200
-#define STEP_EEPROM_REG 0x0800000F
-
-
+#define START_COUNTER_REG (FLASH_USER_START_ADDR + 0x00000000)
+// #define END_COUNTER_REG 0x080001FF
+#define END_COUNTER_REG (FLASH_USER_START_ADDR + 0x00000001) // 1 -> 64bit -> high number
+#define START_EEPROM_REG (FLASH_USER_START_ADDR + 0x00000002)
+#define STEP_EEPROM_REG 0x1 // 64 byte space between.
 
 #define DATA_64 ((uint64_t)0x0000000000000000)
 #define DATA_32 ((uint32_t)0x00000000)
@@ -55,14 +52,6 @@ static uint32_t GetBank(uint32_t Address);
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-struct ble_module_data_t ble_data;
-
-uint8_t boolean_holder_1;
-#define BOOL_SEND 0
-#define BOOL_BEACON 1
-#define BOOL_SCAN 2
-#define BOOL_TRANSMIT 3
-#define BOOL_SENS 4
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -77,83 +66,104 @@ void Error_Handler(void);
  */
 int main(void)
 {
-  MCU_Init();
+  HAL_Init();
+  SystemClock_Config();
+  MX_GPIO_Init();
 
   // Debug UART
   MX_UART2_UART_Init();
 
-  // If we came out a deep sleep state
-  if (__HAL_PWR_GET_FLAG(PWR_FLAG_SB) != RESET)
+  // Check the value of the first 9 bit value. Therefore, read out a full 32-bytes object and check this
+  uint16_t counter = 0;
+  Address = START_COUNTER_REG;
+  data32 = *(__IO uint32_t *)Address;
+  // In the first 2 bytes, the counter is present
+  counter = (uint16_t)(data32 & 0xFFFF);
+
+  counter++;
+
+// See below for further development
+// https://hackaday.io/project/177197-the-slowest-video-player-with-7-colors/log/196302-stm32-standby-mode-flash-vs-backup-sram
+// https://github.com/ts-manuel/VideoFrame/blob/master/stm32/Core/Src/hardware/flash.c
+  // Save to flash
+
+  HAL_FLASH_Unlock();
+  Address = START_COUNTER_REG;
+
+  if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, Address, (uint64_t)counter) == HAL_OK)
   {
-    __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
+    Address = Address + 8;
   }
-  // An initial startup from boot?
   else
   {
-    
-  }
-
-  /* Unlock the Flash to enable the flash control register access *************/
-  HAL_FLASH_Unlock();
-  FirstPage = GetPage(FLASH_USER_START_ADDR);
-  NbOfPages = GetPage(FLASH_USER_END_ADDR) - FirstPage + 1;
-  BankNumber = GetBank(FLASH_USER_START_ADDR);
-
-  /* Fill EraseInit structure*/
-  EraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
-  EraseInitStruct.Banks = BankNumber;
-  EraseInitStruct.Page = FirstPage;
-  EraseInitStruct.NbPages = NbOfPages;
-
-  if (HAL_FLASHEx_Erase(&EraseInitStruct, &PAGEError) != HAL_OK) while (1) Error_Handler();
-
-  /* Program the user Flash area word by word
-  (area defined by FLASH_USER_START_ADDR and FLASH_USER_END_ADDR) ***********/
-
-  Address = FLASH_USER_START_ADDR;
-  while (Address < FLASH_USER_END_ADDR)
-  {
-    if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, Address, DATA_64) == HAL_OK)
-    {
-      Address = Address + 8;
-    }
-    else
-    {
-      while (1)
-        Error_Handler();
-    }
+    while (1)
+      Error_Handler();
   }
 
   HAL_FLASH_Lock();
 
+  /* Unlock the Flash to enable the flash control register access *************/
+  // HAL_FLASH_Unlock();
+  // FirstPage = GetPage(FLASH_USER_START_ADDR);
+  // NbOfPages = GetPage(FLASH_USER_END_ADDR) - FirstPage + 1;
+  // BankNumber = GetBank(FLASH_USER_START_ADDR);
+
+  // /* Fill EraseInit structure*/
+  // EraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
+  // EraseInitStruct.Banks = BankNumber;
+  // EraseInitStruct.Page = FirstPage;
+  // EraseInitStruct.NbPages = NbOfPages;
+
+  // if (HAL_FLASHEx_Erase(&EraseInitStruct, &PAGEError) != HAL_OK) while (1) Error_Handler();
+
+  // /* Program the user Flash area word by word
+  // (area defined by FLASH_USER_START_ADDR and FLASH_USER_END_ADDR) ***********/
+
+  // Address = FLASH_USER_START_ADDR;
+  // while (Address < FLASH_USER_END_ADDR)
+  // {
+  //   if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, Address, DATA_64) == HAL_OK)
+  //   {
+  //     Address = Address + 8;
+  //   }
+  //   else
+  //   {
+  //     while (1)
+  //       Error_Handler();
+  //   }
+  // }
+
+  // HAL_FLASH_Lock();
+
   /* Check if the programmed data is OK
       MemoryProgramStatus = 0: data programmed correctly
       MemoryProgramStatus != 0: number of words not programmed correctly ******/
-  Address = FLASH_USER_START_ADDR;
-  MemoryProgramStatus = 0x0;
+  // Address = FLASH_USER_START_ADDR;
+  // MemoryProgramStatus = 0x0;
 
-  while (Address < FLASH_USER_END_ADDR)
-  {
-    data32 = *(__IO uint32_t *)Address;
+  // while (Address < FLASH_USER_END_ADDR)
+  // {
+  //   data32 = *(__IO uint32_t *)Address;
 
-    if (data32 != DATA_32)
-    {
-      MemoryProgramStatus++;
-    }
-    Address = Address + 4;
-  }
+  //   if (data32 != DATA_32)
+  //   {
+  //     MemoryProgramStatus++;
+  //   }
+  //   Address = Address + 4; //Shift 4 bytes
+  // }
 
-  /*Check if there is an issue to program data*/
-  if (MemoryProgramStatus == 0) blink_led_times(1000, 2);
-  else while (1) Error_Handler();
+  // /*Check if there is an issue to program data*/
+  // if (MemoryProgramStatus == 0) blink_led_times(1000, 2);
+  // else while (1) Error_Handler();
 
   /* Configure RTC */
-  if (RTC_Config()) Error_Handler();
+  if (RTC_Config())
+    Error_Handler();
 
   // Blinky blinky
   blink_led(1000);
 
-  //deep_sleep(8000);
+  // deep_sleep(8000);
 
   while (1)
   {
@@ -194,152 +204,6 @@ static uint32_t GetBank(uint32_t Addr)
   return FLASH_BANK_1;
 }
 
-void beacon()
-{
-  BLE_Init();
-
-  HAL_GPIO_WritePin(BLE_nSLEEP_GPIO_Port, BLE_nSLEEP_Pin, GPIO_PIN_SET);
-  HAL_Delay(10);
-  HAL_GPIO_WritePin(BLE_nSLEEP_GPIO_Port, BLE_nSLEEP_Pin, GPIO_PIN_RESET);
-
-  // wait until device is available
-  while (ble_device_ready(&hi2c1))
-  {
-    // To test in power profiling
-    // half_sleep(100);
-  }
-
-  // Add measurement to data struct
-  ble_data.mode = 0;
-  ble_data.air_time = 100; // 50*100 = 5000ms 5 second
-  // ble_data.env_temperature++;
-  // ble_data.env_humidity++;
-  // ble_data.dev_voltage++;
-
-  // Send out a value
-  send_ble_data(&hi2c1, &ble_data);
-
-  // Sleep for air_time
-  // half_sleep(ble_data.air_time * 100);
-  HAL_Delay(ble_data.air_time * 100);
-
-  // read scan data
-  uint8_t received_data[2] = {0};
-  do
-  {
-    // half_sleep(100);
-    HAL_Delay(100);
-    receive_ble_data(&hi2c1, received_data, 2);
-  } while ((received_data[0] + received_data[1]) != 255);
-  // Make sure the received value is correct based on the second value
-
-  // Set the value in our own data struct
-  ble_beacon_data.amount_of_ack = received_data[0];
-  // uint8_t Buffer[10] = {0};
-  // sprintf(Buffer, "%d\r\n", received_data[0]);
-  // HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
-}
-
-void scan()
-{
-  BLE_Init();
-
-  HAL_GPIO_WritePin(BLE_nSLEEP_GPIO_Port, BLE_nSLEEP_Pin, GPIO_PIN_SET);
-  HAL_Delay(10);
-  HAL_GPIO_WritePin(BLE_nSLEEP_GPIO_Port, BLE_nSLEEP_Pin, GPIO_PIN_RESET);
-
-  // wait until device is available
-  while (ble_device_ready(&hi2c1))
-  {
-    // To test in power profiling
-    // half_sleep(100);
-  }
-
-  // Add measurement to data struct
-  ble_data.mode = 1;
-  ble_data.air_time = 80; // 50*100 = 5000ms 5 second
-  ble_data.env_temperature++;
-  ble_data.env_humidity++;
-  ble_data.dev_voltage++;
-
-  // Send out the BLE data value
-  send_ble_data(&hi2c1, &ble_data);
-
-  // Sleep for air_time
-  // half_sleep(ble_data.air_time * 100);
-  HAL_Delay(ble_data.air_time * 100);
-
-  // read scan data
-  uint8_t received_data[9 + 1] = {0};
-  do
-  {
-    // half_sleep(100);
-    HAL_delay(100);
-    receive_ble_data(&hi2c1, received_data, 9 + 1);
-  } while (received_data[0] + received_data[9] == 255);
-
-  // If all are 0 except for received_data[9], then no beacon found
-
-  ble_scan_data.ssr_id = received_data[0];
-  ble_scan_data.temperature = received_data[1] >> 8 | received_data[2];
-  ble_scan_data.humidity = received_data[3];
-  ble_scan_data.lux = received_data[4] >> 8 | received_data[5];
-  ble_scan_data.voltage = received_data[6] >> 8 | received_data[7];
-  ble_scan_data.rssi = received_data[8];
-
-  uint8_t Buffer[10] = {0};
-  sprintf(Buffer, "%d\r\n", ble_scan_data.rssi);
-  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
-}
-void sens()
-{
-  // TODO
-}
-void transmit()
-{
-  // TODO
-}
-
-void half_sleep(uint16_t time)
-{
-  uint16_t counter_value = 0x2806; // 5 seconds
-  // Calculate the time
-  if (time > 31981)
-    counter_value = 0xFFFF; // Set maximum available time
-  else
-    counter_value = (uint16_t)((time / 1000.0) / 0.000488);
-
-  // uint8_t Buffer[10] = {0};
-  // sprintf(Buffer, "%02X", counter_value);
-  // HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
-
-  // The stop 2 mode
-  MX_RTC_Init();
-  HAL_SuspendTick();
-  HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, counter_value, RTC_WAKEUPCLOCK_RTCCLK_DIV16, 0);
-  // check_reg = seconds / 0.000488;
-
-  /* Enter STOP 2 mode */
-  HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
-  HAL_RTCEx_DeactivateWakeUpTimer(&hrtc);
-  SystemClock_Config();
-  HAL_ResumeTick();
-}
-
-void deep_sleep(uint16_t time)
-{
-  /* Enter the Standby mode */
-  if (lowPower_init(time))
-  {
-    Error_Handler();
-  }
-  else
-  {
-    HAL_PWR_EnterSTANDBYMode();
-  }
-  // Will not reach this code
-}
-
 void blink_led(uint16_t time)
 {
   blink_led_times(time, (uint8_t)1);
@@ -358,23 +222,6 @@ void blink_led_times(uint16_t time, uint8_t times)
 
 // Mandatory to operate MCU in the first place
 void MCU_Init()
-{
-  HAL_Init();
-  SystemClock_Config();
-  MX_GPIO_Init();
-}
-
-void sensor_Init()
-{
-  LTR329_Init(&hi2c1);
-  // SHT40_Init(&hi2c1);
-}
-
-void BLE_Init()
-{
-  MX_I2C1_Init();
-}
-void LoRa_Init()
 {
 }
 
