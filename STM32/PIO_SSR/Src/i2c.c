@@ -25,6 +25,7 @@
 /* USER CODE END 0 */
 
 I2C_HandleTypeDef hi2c1;
+HAL_StatusTypeDef ret;
 
 /* I2C1 init function */
 void MX_I2C1_Init(void)
@@ -157,6 +158,39 @@ void I2C_Scan() {
     }
   }
   HAL_UART_Transmit(&huart2, EndMSG, sizeof(EndMSG), 10000);
+}
+
+void i2c_write(uint8_t address, uint8_t* data_tx, uint8_t tx_size) {
+  ret = HAL_I2C_Master_Transmit(&hi2c1, address << 1, data_tx, tx_size, 1000);
+  if (ret != HAL_OK) {
+    char Buffer[8] = {"Error\r\n"};
+    HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
+    HAL_Delay(1000);
+  }
+}
+
+void i2c_write_read(uint8_t address, uint8_t* data_tx, uint8_t tx_size, uint8_t* data_rx, uint8_t rx_size) {
+  ret = HAL_I2C_Master_Transmit(&hi2c1, address << 1, data_tx, tx_size, 1000);
+  if (ret != HAL_OK) {
+    char Buffer[8] = {"Error\r\n"};
+    HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
+    HAL_Delay(1000);
+  } else {
+    // read bytes
+    //HAL_Delay(1000);
+    ret = HAL_I2C_Master_Receive(&hi2c1, address << 1, data_rx, rx_size, 1000);
+    if (ret != HAL_OK) {
+      char Buffer[8] = {"Error\r\n"};
+      HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
+      HAL_Delay(1000);
+    } else {
+      // for (int i = 0; i < rx_size; i++) {
+      //   char Buffer[16] = {0};
+      //   sprintf(Buffer, "data_rx[%i] = %02X\n", i, data_rx[i]);
+      //   HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
+      // }
+    }
+  }
 }
 
 /* USER CODE BEGIN 1 */
