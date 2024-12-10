@@ -97,7 +97,7 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* i2cHandle)
     */
     GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF4_I2C1;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
@@ -133,6 +133,30 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)
 
   /* USER CODE END I2C1_MspDeInit 1 */
   }
+}
+
+void I2C_Scan() {
+  uint8_t Buffer[25] = {0};
+  uint8_t Space[] = " - ";
+  uint8_t StartMSG[] = "Starting I2C Scanning: \r\n";
+  uint8_t EndMSG[] = "Done! \r\n\r\n";
+
+  uint8_t i = 0, ret;
+  HAL_UART_Transmit(&huart2, StartMSG, sizeof(StartMSG), 10000);
+  for (i = 0; i < 128; i++)
+  {
+    ret = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i << 1), 3, 5);
+    if (ret != HAL_OK) /* No ACK Received At That Address */
+    {
+      HAL_UART_Transmit(&huart2, Space, sizeof(Space), 10000);
+    }
+    else if (ret == HAL_OK)
+    {
+      sprintf(Buffer, "0x%X", i);
+      HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 10000);
+    }
+  }
+  HAL_UART_Transmit(&huart2, EndMSG, sizeof(EndMSG), 10000);
 }
 
 /* USER CODE BEGIN 1 */

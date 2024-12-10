@@ -87,19 +87,21 @@ int main(void)
   HAL_Delay(1000);
   //HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_RESET);
 
-while (1) {
-  char Buffer[20] = {0};
-  sprintf(Buffer, "LineBot Backwards\r\n");
-  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
-  HAL_Delay(1000);
-  HAL_GPIO_WritePin(LB_B_GPIO_Port, LB_B_Pin, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(LB_R_GPIO_Port, LB_R_Pin, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(LB_F_GPIO_Port, LB_F_Pin, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(LB_L_GPIO_Port, LB_L_Pin, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(LB_S_GPIO_Port, LB_S_Pin, GPIO_PIN_SET);
-}
+  while (1) {
+    char Buffer[20] = {0};
+    sprintf(Buffer, "LineBot Backwards\r\n");
+    HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
 
-  //driveLineBot(FORWARD);
+    HAL_GPIO_WritePin(LB_B_GPIO_Port, LB_B_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(LB_R_GPIO_Port, LB_R_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(LB_L_GPIO_Port, LB_L_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(LB_S_GPIO_Port, LB_S_Pin, GPIO_PIN_SET);
+    
+    HAL_Delay(1000);
+  }
+
+  driveLineBot(FORWARD);
 
   //while (1);
   

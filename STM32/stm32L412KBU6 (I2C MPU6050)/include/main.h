@@ -26,6 +26,7 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx_hal.h"
+#include "gyro.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
@@ -59,12 +60,12 @@ void sensor_Init();
 void BLE_Init();
 void LoRa_Init();
 
-// I2C
-void i2c_write(uint8_t address, uint8_t* data_tx, uint8_t tx_size);
-void i2c_write_read(uint8_t address, uint8_t* data_tx, uint8_t tx_size, uint8_t* data_rx, uint8_t rx_size);
+// // I2C
+// void i2c_write(uint8_t address, uint8_t* data_tx, uint8_t tx_size);
+// void i2c_write_read(uint8_t address, uint8_t* data_tx, uint8_t tx_size, uint8_t* data_rx, uint8_t rx_size);
 
-// MPU6050
-void setMPU6050();
+// // MPU6050
+// void setMPU6050();
 
 //tasks
 void beacon();
