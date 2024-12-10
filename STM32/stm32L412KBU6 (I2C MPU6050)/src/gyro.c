@@ -28,21 +28,24 @@ void i2c_write_read(uint8_t address, uint8_t* data_tx, uint8_t tx_size, uint8_t*
       HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
       HAL_Delay(1000);
     } else {
-      for (int i = 0; i < rx_size; i++) {
-        char Buffer[16] = {0};
-        sprintf(Buffer, "data_rx[%i] = %02X\n", i, data_rx[i]);
-        HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
-      }
+      // for (int i = 0; i < rx_size; i++) {
+      //   char Buffer[16] = {0};
+      //   sprintf(Buffer, "data_rx[%i] = %02X\n", i, data_rx[i]);
+      //   HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
+      // }
     }
   }
 }
 
 void testMPU6050() {
   uint8_t data_tx[1] = { MPU6050_WHO_AM_I };
-  uint8_t data_rx[6];
+  uint8_t data_rx[1];
 
   // Who Am I test
   i2c_write_read(MPU6050_DEV_ADDR, data_tx, 1, data_rx, 1);
+  char Buffer[17] = {0};
+  sprintf(Buffer, "Gyro Address: %02X\n", data_rx[0]);
+  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
 }
 
 void setMPU6050() {
@@ -101,25 +104,21 @@ void setMPU6050() {
   i2c_write(MPU6050_DEV_ADDR, data_tx, 2);
 }
 
-void readGyroscope(uint8_t* data_rx) {
+void readGyroscope(uint16_t* gyro_data) {
     uint8_t data_tx[1] = { MPU6050_GYRO_OUT };
     uint8_t data_rx[6];
-    int8_t gyro_x, gyro_y, gyro_z;
 
-    HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_SET);
-    HAL_Delay(1000);
-    HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_RESET);
-
-    setMPU6050();
     i2c_write_read(MPU6050_DEV_ADDR, data_tx, 1, data_rx, 6);
 
-    gyro_x = ((data_rx[0] << 8) | data_rx[1])/131;
-    gyro_y = ((data_rx[2] << 8) | data_rx[3])/131;
-    gyro_z = ((data_rx[4] << 8) | data_rx[5])/131;
+    gyro_data[0] = ((data_rx[0] << 8) | data_rx[1])/131; // gyro_x
+    gyro_data[1] = ((data_rx[2] << 8) | data_rx[3])/131; // gyro_y
+    gyro_data[2] = ((data_rx[4] << 8) | data_rx[5])/131; // gyro_z
 
-    char Buffer[48] = {0};
-    sprintf(Buffer, "Gyro X: %d | Gyro Y: %d | Gyro Z: %d\n", gyro_x, gyro_y, gyro_z);
-    HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
+    // Devide by 2 to send only 3 bytes instead of 6 (int16_t --> int8_t)
+    // Highest value goes from 500 --> 250
+    gyro_data[0] = (gyro_data[0] >> 1);
+    gyro_data[1] = (gyro_data[1] >> 1);
+    gyro_data[2] = (gyro_data[2] >> 1);
 
     HAL_Delay(1000); // Delay for the next measurement
 }
@@ -130,4 +129,3 @@ void setGyroSleep(bool sleep) {
     data_tx[1] = 0b01001011 & (sleep << 6);
     i2c_write(MPU6050_DEV_ADDR, data_tx, 2);
 }
-

@@ -9,6 +9,7 @@ extern "C" {
 #include "stm32l4xx_hal.h"
 #include <stdbool.h>
 #include "usart.h"
+#include "i2c.h"
 
 // MPU605 address
 #define MPU6050_DEV_ADDR          0x68 // I2C address of the MPU6050
@@ -37,7 +38,7 @@ void i2c_write_read(uint8_t address, uint8_t* data_tx, uint8_t tx_size, uint8_t*
 // MPU6050 methods
 void testMPU6050();
 void setMPU6050();
-void readGyroscope(uint8_t* data_rx);
+void readGyroscope(uint16_t* gyro_data);
 void setGyroSleep(bool sleep);
 
 #ifdef __cplusplus
