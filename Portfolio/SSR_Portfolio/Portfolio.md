@@ -52,24 +52,6 @@ The MVP (Minimal Vital Product) contains the following items:
 
 ## I2C communication of LTR-329
 [LTR-329](Pages/Sensor/LTR-329.md)
->>>>>>> 880ef34d66397736c50f0bb7b2a132d3fa3406d6
-![[SHT4x Datasheet.pdf]]
-Some conclusions: 
-- address can range from 0x44 to 0x46.
-- Idle current = $0.08\mu A$
-- Power up current = $50\mu A$
-- Measurement $320\mu A$
-- 3 repeatability modes to receive the mean values. Each their own current consumption.
-- Read (high prec.) 0xFD -> [2 * 8-bit T-data; 8-bit CRC; 2 * 8-bit RH-data; 8-bit CRC]
-- Read (med prec.) 0xF6 -> [2 * 8-bit T-data; 8-bit CRC; 2 * 8-bit RH-data; 8-bit CRC]
-- Read (low prec.) 0xE0 -> [2 * 8-bit T-data; 8-bit CRC; 2 * 8-bit RH-data; 8-bit CRC]
-$RH = ( -6 + 125 \cdot \frac{S_{RH}}{2^{16} -1}) (\%RH)$
-$T = ( -45 + 175 \cdot \frac{S_{T}}{2^{16} -1}) (^\circ C)$
-
-## I2C communication of LTR-329
-![[LTR-329ALS Datasheet.pdf]]
-==For Adam==
->>>>>>> 19efb96 (I2C register sketch)
 
 
 Sleepmode: 
@@ -124,7 +106,37 @@ Hardware Setup:
 https://www.youtube.com/watch?v=EsZLgqhqfO0
 ADC1_IN8 PA3 A2 - reading pin 
 ![[Pasted image 20241203172736.png]]
-We have been succesfull in reading voltage on a potenciometer 
+We have been succesfull in reading voltage on a potenciometer
+Measuring capacitor: 
+**Hardware Setup**:
+
+- Connect one terminal of the capacitor to the ADC pin (PA2).
+- The other terminal should be connected to ground (GND).
+- Ensure the voltage across the capacitor does not exceed the reference voltage of the ADC (typically 3.3V). If needed, use a voltage divider.
+![[Pasted image 20241204111530.png]]
+since we are programing the board (using UBS power source +5V) but we also want to match the ADCs Voltage raw data rating with the Voltage measured... Following will be used and might be changed later when we power the board with the 3.3V power source.
+
+Voltage devider power source:
+
+V_ref = ( 3.3 / +5 ) V 
+
+V_cap = (ADC_raw * V_ref) / 4095
+
+R2 / (R2 + R1) * V_ref = 3.3V
+-> 2.5 R2 = 3.3 R1
+
+I chose 39Kohm and 30Kohm ... 
+but now i noticed that the ratio is correct to the source ... meaning 6V is about 4025 raw ADC data value
+
+and in devision 39Kohm -> 1883
+ WE WANR A HUGE RESISTOR ! FOR LESS CONSUMPTION 
+ AND WE WANT TO READ ONLY ONE WHEN NEEDED
+
+
+
+New plan : Use status 1,2,3 pins to see if we are running out of power
+![[Pasted image 20241204133049.png]] 
+
 ### Decision making
 ## UART Communication with LoRa-Module
 For the LoRa-Module, we utilize the Wio-e5 mini board.
@@ -144,9 +156,7 @@ If we follow these pages we should get a connection as follows:
 ![[Wio-E5 Datasheet.pdf]]
 
 ==Tom==
-put the at commands in arduino code
 
 ## I2C Communication with Rover Bot
-![[MPU-6050 Datasheet.pdf]]
 ==Tom==
 
