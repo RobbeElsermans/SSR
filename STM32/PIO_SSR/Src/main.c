@@ -26,8 +26,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "ltr_329.h"
 #include "ble_module.h"
+#include "ltr_329.h"
+#include "linebot.h"
 #include "sht4x.h"
 
 //#include "lp.h"
@@ -95,6 +96,8 @@ int main(void)
   bleReceiveCallback(HAL_I2C_Master_Receive);
   bleAvailableCallback(HAL_I2C_IsDeviceReady);
   bleWakeCallback(wakeBleModule);
+  
+  lineBotDelayCallback(HAL_Delay);
 
   /* ltr-386 lib function calls */
   //ltrDelayCallback(HAL_Delay);
@@ -127,33 +130,15 @@ int main(void)
   
   HAL_Delay(2000);
 
-  uint8_t Buffer[25] = {0};
-  uint8_t Space[] = " - ";
-  uint8_t StartMSG[] = "Starting I2C Scanning: \r\n";
-  uint8_t EndMSG[] = "Done! \r\n\r\n";
+  I2C_Scan();
 
-  uint8_t i = 0, ret;
-  HAL_UART_Transmit(&huart2, StartMSG, sizeof(StartMSG), 10000);
-  for (i = 0; i < 128; i++)
-  {
-    ret = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i << 1), 3, 5);
-    if (ret != HAL_OK) /* No ACK Received At That Address */
-    {
-      HAL_UART_Transmit(&huart2, Space, sizeof(Space), 10000);
-    }
-    else if (ret == HAL_OK)
-    {
-      sprintf(Buffer, "0x%X", i);
-      HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 10000);
-    }
-  }
-  HAL_UART_Transmit(&huart2, EndMSG, sizeof(EndMSG), 10000);
-
-  //while(1);
-
- // uint8_t Buffer[10] = {0};
+  uint8_t Buffer[10] = {0};
   sprintf(Buffer, "Her Am I\r\n");
   HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
+  
+  while(1) {
+    test_code();
+  }
 
   /* USER CODE END 2 */
 
@@ -222,6 +207,14 @@ int main(void)
     HAL_Delay(2000);
   }
   /* USER CODE END 3 */
+}
+
+void test_code() {
+  uint8_t Buffer[16] = {0};
+  sprintf(Buffer, "Test code\r\n");
+  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
+
+  
 }
 
 /**

@@ -26,7 +26,7 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
+#include "usart.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -39,6 +39,7 @@ extern I2C_HandleTypeDef hi2c1;
 /* USER CODE END Private defines */
 
 void MX_I2C1_Init(void);
+void I2C_Scan();
 
 /* USER CODE BEGIN Prototypes */
 
