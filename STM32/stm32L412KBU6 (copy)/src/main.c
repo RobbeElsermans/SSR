@@ -74,7 +74,7 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_UART2_UART_Init();
-  LTR329_Init(&hi2c1); // Initialize LTR-329 sensor
+  //LTR329_Init(&hi2c1); // Initialize LTR-329 sensor
 
   /* Configure RTC */
   if (RTC_Config())
@@ -83,74 +83,52 @@ int main(void)
   }
 
   HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
-  HAL_Delay(1000);
+  HAL_Delay(3000);
   HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
 
-  /* Check if the system was resumed from StandBy mode */
-  if (__HAL_PWR_GET_FLAG(PWR_FLAG_SB) != RESET)
-  {
-    /* Clear Standby flag */
-    __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
-  }
-
-  /* Insert 5 seconds delay */
-  HAL_Delay(5000);
-
-  /* Enter the Standby mode */
-  // if (lowPower_init())
-  // {
-  //   Error_Handler();
-  // }
-  // else
-  // {
-  //   HAL_PWR_EnterSTANDBYMode();
-  // }
-
-  /* Program should never reach this point (program restart when exiting from standby mode) */
-  // Error_Handler();
 
   /* Use to find I2C addresses on the bus */
-  // uint8_t Buffer[25] = {0};
-  // uint8_t Space[] = " - ";
-  // uint8_t StartMSG[] = "Starting I2C Scanning: \r\n";
-  // uint8_t EndMSG[] = "Done! \r\n\r\n";
+  uint8_t Buffer[25] = {0};
+  uint8_t Space[] = " - ";
+  uint8_t StartMSG[] = "Starting I2C Scanning: \r\n";
+  uint8_t EndMSG[] = "Done! \r\n\r\n";
 
-  // uint8_t i = 0, ret;
-  // HAL_UART_Transmit(&huart2, StartMSG, sizeof(StartMSG), 10000);
-  // for (i = 0; i < 128; i++)
-  // {
-  //   ret = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i << 1), 3, 5);
-  //   if (ret != HAL_OK) /* No ACK Received At That Address */
-  //   {
-  //     HAL_UART_Transmit(&huart2, Space, sizeof(Space), 10000);
-  //   }
-  //   else if (ret == HAL_OK)
-  //   {
-  //     sprintf(Buffer, "0x%X", i);
-  //     HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 10000);
-  //   }
-  // }
-  // HAL_UART_Transmit(&huart2, EndMSG, sizeof(EndMSG), 10000);
+  uint8_t i = 0, ret;
+  HAL_UART_Transmit(&huart2, StartMSG, sizeof(StartMSG), 10000);
+  for (i = 0; i < 128; i++)
+  {
+    ret = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i << 1), 3, 5);
+    if (ret != HAL_OK) /* No ACK Received At That Address */
+    {
+      HAL_UART_Transmit(&huart2, Space, sizeof(Space), 10000);
+    }
+    else if (ret == HAL_OK)
+    {
+      sprintf(Buffer, "0x%X", i);
+      HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 10000);
+    }
+  }
+  HAL_UART_Transmit(&huart2, EndMSG, sizeof(EndMSG), 10000);
 
-  // while(1);
+  while(1);
   /* Use to find I2C addresses on the bus */
 
 
   // Communication example with LTR-329
   // Datasheet https://www.mouser.com/ds/2/239/Lite-On_LTR-329ALS-01%20DS_ver1.1-348647.pdf?srsltid=AfmBOoobAK_ALvR5tFcoa4jTsWqJiDY3eis2wNgfagfst2LBPezI4wsr
-  while (1)
-  {
-    HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
-    HAL_Delay(1000);
-    HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
+  // while (1)
+  // {
+  //   HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
+  //   HAL_Delay(1000);
+  //   HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
 
 
-    char Buffer[25] = {0};
-    sprintf(Buffer, "Lux: ! %d\r\n", GetLuxAll(&hi2c1));
-    HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
+  //   char Buffer[25] = {0};
+  //   sprintf(Buffer, "Lux: ! %d\r\n", GetLuxAll(&hi2c1));
+  //   HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
 
-    HAL_Delay(500); // Delay for the next measurement
-  }
+  //   HAL_Delay(500); // Delay for the next measurement
+  // }
 }
 
 /**

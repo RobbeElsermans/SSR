@@ -29,7 +29,7 @@ struct ble_beacon_result_t
 
 extern struct ble_beacon_result_t ble_beacon_data;
 
-struct ble_scan_data_t
+struct ble_scan_result_t
 {
     uint8_t ssr_id;       // The ID of the source
     uint16_t temperature; // temperature
@@ -39,7 +39,7 @@ struct ble_scan_data_t
     int8_t rssi;           //rssi
 };
 
-extern struct ble_scan_data_t ble_scan_data;
+extern struct ble_scan_result_t ble_scan_data;
 
 uint8_t send_ble_data(I2C_HandleTypeDef *hi2c1, struct ble_module_data_t *data);
 uint8_t receive_ble_data(I2C_HandleTypeDef *hi2c1);

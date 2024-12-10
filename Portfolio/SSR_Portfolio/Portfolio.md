@@ -53,6 +53,28 @@ The MVP (Minimal Vital Product) contains the following items:
 ## I2C communication of LTR-329
 [LTR-329](Pages/Sensor/LTR-329.md)
 
+
+Sleepmode: 
+### . **How It Works**
+
+1. **Active State**:
+    
+    - The sensor reads ambient light data and transmits it via UART.
+    - The LED (`LD3_Pin`) is turned on to indicate the active state.
+2. **Sleep State**:
+    
+    - The `LTR329_Sleep` function puts the sensor into standby mode.
+    - The LED is turned off to indicate the sleep state.
+    - The system waits for 5 seconds (or your preferred duration).
+3. **Wake-Up State**:
+    
+    - The `LTR329_WakeUp` function sets the sensor back to active mode.
+    - A delay is added after wake-up to allow the sensor to stabilize before the next reading.
+![[Pasted image 20241203122154.png]] 
+according to datasheet: 
+standby current: 5 $micro$A
+initial startup: 100 ms
+waking up: 10 ms 
 ## Energy Harvesting
 [Enegry Harvesting Module AEM1094](AEM10941.md)
 The goal is to pover as many peripherals as possible... SHT40, LTR-329, STM32, BLE ?
@@ -70,7 +92,38 @@ according to datasheet
 It takes about 1h 35m to charge the Cap. to 2,3V WITH additional artiffical lights
 ![[Pasted image 20241129210421.png]]
 
+### Voltage measurement of the energy harvesting module
+Hardware Setup: 
+- Use the **ADC (Analog-to-Digital Converter)** on the STM32 to measure the voltage of the energy storage device.
+- Connect the energy storage's (SUPERCAP) positive terminal to a voltage divider to scale it down if it exceeds the ADC input range of the STM32.
+- Connect the output of the voltage divider to an ADC pin.
+**Supercapacitor:**
 
+- For supercapacitors, the energy is directly proportional to the square of the voltage:
+ E = 1/2 C V^2
+    - Measuring voltage allows you to calculate energy, provided you know the capacitance.
+
+https://www.youtube.com/watch?v=EsZLgqhqfO0
+ADC1_IN8 PA3 A2 - reading pin 
+![[Pasted image 20241203172736.png]]
+We have been succesfull in reading voltage on a potenciometer
+Measuring capacitor: 
+**Hardware Setup**:
+
+- Connect one terminal of the capacitor to the ADC pin (PA2).
+- The other terminal should be connected to ground (GND).
+- Ensure the voltage across the capacitor does not exceed the reference voltage of the ADC (typically 3.3V). If needed, use a voltage divider.
+
+
+ WE WANT A HUGE RESISTOR ! FOR LESS CONSUMPTION 
+ AND WE WANT TO READ ONLY ONE WHEN NEEDED
+
+
+
+New plan : Use status 1,2,3 pins to see if we are running out of power
+![[Pasted image 20241204133049.png]] 
+
+### Decision making
 ## UART Communication with LoRa-Module
 For the LoRa-Module, we utilize the Wio-e5 mini board.
 ![[lora_e5_mini_pinout.jpg]]

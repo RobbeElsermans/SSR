@@ -196,17 +196,87 @@ void beacon()
 
   // Add measurement to data struct
   ble_data.mode = 0;
-  ble_data.air_time = 50; // 50*100 = 5000ms 5 second
+  ble_data.air_time = 100; // 50*100 = 5000ms 5 second
+  // ble_data.env_temperature++;
+  // ble_data.env_humidity++;
+  // ble_data.dev_voltage++;
+
+  // Send out a value
+  send_ble_data(&hi2c1, &ble_data);
+
+  //Sleep for air_time
+  //half_sleep(ble_data.air_time * 100);
+  HAL_Delay(ble_data.air_time * 100);
+
+  //read scan data
+  uint8_t received_data[2] = {0};
+  do
+  {
+    //half_sleep(100);
+    HAL_Delay(100);
+    receive_ble_data(&hi2c1, received_data, 2);
+  }
+  while((received_data[0] + received_data[1]) != 255);
+  //Make sure the received value is correct based on the second value
+
+  //Set the value in our own data struct
+  ble_beacon_data.amount_of_ack = received_data[0];
+  // uint8_t Buffer[10] = {0};
+  // sprintf(Buffer, "%d\r\n", received_data[0]);
+  // HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
+}
+
+void scan()
+{
+  BLE_Init();
+
+  HAL_GPIO_WritePin(BLE_nSLEEP_GPIO_Port, BLE_nSLEEP_Pin, GPIO_PIN_SET);
+  HAL_Delay(10);
+  HAL_GPIO_WritePin(BLE_nSLEEP_GPIO_Port, BLE_nSLEEP_Pin, GPIO_PIN_RESET);
+
+  // wait until device is available
+  while (ble_device_ready(&hi2c1))
+  {
+    // To test in power profiling
+    // half_sleep(100);
+  }
+
+  // Add measurement to data struct
+  ble_data.mode = 1;
+  ble_data.air_time = 80; // 50*100 = 5000ms 5 second
   ble_data.env_temperature++;
   ble_data.env_humidity++;
   ble_data.dev_voltage++;
 
-  // Send out a value
+  // Send out the BLE data value
   send_ble_data(&hi2c1, &ble_data);
-}
-void scan()
-{
-  // TODO
+
+  //Sleep for air_time
+  //half_sleep(ble_data.air_time * 100);
+  HAL_Delay(ble_data.air_time * 100);
+
+  //read scan data
+  uint8_t received_data[9+1] = {0};
+  do
+  {
+    //half_sleep(100);
+    HAL_delay(100);
+    receive_ble_data(&hi2c1, received_data, 9+1);
+  }
+  while(received_data[0] + received_data[9] == 255);
+
+  //If all are 0 except for received_data[9], then no beacon found
+
+  ble_scan_data.ssr_id = received_data[0];
+  ble_scan_data.temperature = received_data[1]>>8 | received_data[2];
+  ble_scan_data.humidity = received_data[3];
+  ble_scan_data.lux = received_data[4]>>8 | received_data[5];
+  ble_scan_data.voltage = received_data[6]>>8 | received_data[7];
+  ble_scan_data.rssi = received_data[8];
+
+  uint8_t Buffer[10] = {0};
+  sprintf(Buffer, "%d\r\n", ble_scan_data.rssi);
+  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
 }
 void sens()
 {
