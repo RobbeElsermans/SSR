@@ -124,6 +124,14 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
+  const uint8_t size_buffer = 60;
+  uint8_t debug_uart_buffer[size_buffer];
+  
+  for (uint8_t i = 0; i < size_buffer; i++)
+    debug_uart_buffer[i] = 32; // space character
+  printf(debug_uart_buffer, "taskSens - lux: %d, t: %d, h: %d \r\n");
+  HAL_UART_Transmit(&huart2, debug_uart_buffer, size_buffer, 1);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -254,7 +262,8 @@ void taskDetermineTasks()
 
 
   // Here, the boolean buffer **bool_buffer** is used with the defines of TASK described in main.h.
-  bool_buffer = 0b010000011; // Set SLEEP,
+  bool_buffer = 0b010000011; // Set DEEP_SLEEP, STORE, SENS,
+  bool_buffer = 0b100000001; // Set SLEEP, SENS
 }
 
 void taskSens()
