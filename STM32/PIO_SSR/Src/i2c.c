@@ -136,6 +136,8 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)
   }
 }
 
+/* USER CODE BEGIN 1 */
+
 void I2C_Scan() {
   uint8_t Buffer[25] = {0};
   uint8_t Space[] = " - ";
@@ -143,28 +145,24 @@ void I2C_Scan() {
   uint8_t EndMSG[] = "Done! \r\n\r\n";
 
   uint8_t i = 0, ret;
-  HAL_UART_Transmit(&huart2, StartMSG, sizeof(StartMSG), 10000);
-  for (i = 0; i < 128; i++)
-  {
+  serial_print(&StartMSG, sizeof(StartMSG));
+  for (i = 0; i < 128; i++) {
     ret = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i << 1), 3, 5);
-    if (ret != HAL_OK) /* No ACK Received At That Address */
-    {
-      HAL_UART_Transmit(&huart2, Space, sizeof(Space), 10000);
-    }
-    else if (ret == HAL_OK)
-    {
+    if (ret != HAL_OK) { /* No ACK Received At That Address */
+      serial_print(&Space, sizeof(Space));
+    } else if (ret == HAL_OK) {
       sprintf(Buffer, "0x%X", i);
-      HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 10000);
+      serial_print(&Buffer, sizeof(Buffer));
     }
   }
-  HAL_UART_Transmit(&huart2, EndMSG, sizeof(EndMSG), 10000);
+  serial_print(&EndMSG, sizeof(EndMSG));
 }
 
 void i2c_write(uint8_t address, uint8_t* data_tx, uint8_t tx_size) {
   ret = HAL_I2C_Master_Transmit(&hi2c1, address << 1, data_tx, tx_size, 1000);
   if (ret != HAL_OK) {
     char Buffer[8] = {"Error\r\n"};
-    HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
+    serial_print(&Buffer, sizeof(Buffer));
     HAL_Delay(1000);
   }
 }
@@ -173,7 +171,7 @@ void i2c_write_read(uint8_t address, uint8_t* data_tx, uint8_t tx_size, uint8_t*
   ret = HAL_I2C_Master_Transmit(&hi2c1, address << 1, data_tx, tx_size, 1000);
   if (ret != HAL_OK) {
     char Buffer[8] = {"Error\r\n"};
-    HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
+    serial_print(&Buffer, sizeof(Buffer));
     HAL_Delay(1000);
   } else {
     // read bytes
@@ -181,18 +179,16 @@ void i2c_write_read(uint8_t address, uint8_t* data_tx, uint8_t tx_size, uint8_t*
     ret = HAL_I2C_Master_Receive(&hi2c1, address << 1, data_rx, rx_size, 1000);
     if (ret != HAL_OK) {
       char Buffer[8] = {"Error\r\n"};
-      HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
+      serial_print(&Buffer, sizeof(Buffer));
       HAL_Delay(1000);
     } else {
       // for (int i = 0; i < rx_size; i++) {
       //   char Buffer[16] = {0};
       //   sprintf(Buffer, "data_rx[%i] = %02X\n", i, data_rx[i]);
-      //   HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
+      //   serial_print(&Buffer, sizeof(Buffer));
       // }
     }
   }
 }
-
-/* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */

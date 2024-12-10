@@ -139,7 +139,7 @@ int main(void)
 
   char Buffer[10] = {0};
   sprintf(Buffer, "Her Am I\r\n");
-  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
+  serial_print(&Buffer, sizeof(Buffer));
   
   while(1) {
     test_code();
@@ -214,15 +214,6 @@ int main(void)
   /* USER CODE END 3 */
 }
 
-void test_code() {
-  char Buffer[16] = {0};
-  sprintf(Buffer, "Test code\r\n");
-  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
-  HAL_Delay(100);
-
-  
-}
-
 /**
   * @brief System Clock Configuration
   * @retval None
@@ -268,6 +259,30 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+void test_code() {
+  char Buffer[16] = {0};
+  sprintf(Buffer, "Test code\r\n");
+  serial_print(&Buffer, sizeof(Buffer));
+  HAL_Delay(100);
+
+  uint8_t who_am_i;
+  testMPU6050(&who_am_i);
+  char Buffer2[17] = {0};
+  sprintf(Buffer2, "Gyro Address: %02X\n", who_am_i);
+  serial_print(&Buffer, sizeof(Buffer));
+  HAL_Delay(100);
+
+  setMPU6050();
+  HAL_Delay(100);
+
+  uint16_t gryo_x, gryo_y, gryo_z;
+  readGyroscope(&gryo_x, &gryo_y, &gryo_z);
+  char Buffer3[64] = {0};
+  sprintf(Buffer3, "Gyro X: %d | Gyro Y: %d | Gyro Z: %d\n", gryo_x, gryo_y, gryo_z);
+  serial_print(&Buffer, sizeof(Buffer));
+  HAL_Delay(1000); // Delay for the next measurement
+}
 
 void taskReadBattery()
 {
@@ -317,7 +332,7 @@ void taskSens()
   //uint8_t Buffer[60] = {0};
   uint8_t Buffer[60] = {0};
   sprintf(Buffer, "taskSens - lux: %d, t: %d, h: %d \r\n", ssr_data.env_lux, ssr_data.env_temperature, ssr_data.env_humidity);
-  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
+  serial_print(&Buffer, sizeof(Buffer));
 }
 
 void taskStore()
