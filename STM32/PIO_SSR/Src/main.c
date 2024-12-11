@@ -342,7 +342,7 @@ void taskSens()
   /* Display onto serial monitor */
   clearBuf();
   sprintf(Buffer, "taskSens - lux: %d, t: %d, h: %d \r\n", ssr_data.env_lux, ssr_data.env_temperature, ssr_data.env_humidity);
-  serial_print(&Buffer);
+  serial_print(Buffer);
 }
 
 void taskStore()
