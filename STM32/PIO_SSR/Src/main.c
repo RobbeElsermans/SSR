@@ -29,6 +29,7 @@
 #include "ble_module.h"
 #include "ltr_329.h"
 #include "linebot.h"
+#include "gyro.h"
 #include "sht4x.h"
 
 //#include "lp.h"
@@ -132,9 +133,9 @@ int main(void)
 
   I2C_Scan();
 
-  uint8_t Buffer[10] = {0};
+  char Buffer[11] = {0};
   sprintf(Buffer, "Her Am I\r\n");
-  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
+  serial_print(Buffer, sizeof(Buffer), 1000);
   
   while(1) {
     test_code();
@@ -210,9 +211,9 @@ int main(void)
 }
 
 void test_code() {
-  uint8_t Buffer[16] = {0};
+  char Buffer[16] = {0};
   sprintf(Buffer, "Test code\r\n");
-  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
+  serial_print(Buffer, sizeof(Buffer), 1000);
 
   
 }
@@ -346,7 +347,7 @@ void taskScan()
 
   int *debug_uart_buffer;
   uint8_t size_buffer = 120;
-  debug_uart_buffer = (int *)malloc(size_buffer * sizeof(char));
+  debug_uart_buffer = (int *) (size_buffer * sizeof(char));
 
   for (uint8_t i = 0; i < size_buffer; i++)
     debug_uart_buffer[i] = 32; // space character
@@ -354,8 +355,6 @@ void taskScan()
   "taskScan - \r\n ssr_id: %d\r\n temp: %d\r\n h: %d\r\n l: %d\r\n x: %d\r\n y: %d\r\n z: %d\r\n vcc: %d\r\n rssi: %d\r\n",
   ble_scan_result.ssr_id, ble_scan_result.env_temperature, ble_scan_result.env_humidity, ble_scan_result.env_lux, ble_scan_result.dev_voltage, ble_scan_result.dev_gyro_x, ble_scan_result.dev_gyro_y, ble_scan_result.dev_gyro_z, ble_scan_result.rssi);
   HAL_UART_Transmit(&huart2, (uint8_t *)debug_uart_buffer, sizeof(debug_uart_buffer), 1);
-
-  free(debug_uart_buffer);
 }
 
 void taskBeacon()
@@ -380,13 +379,11 @@ void taskBeacon()
 
   int *debug_uart_buffer;
   uint8_t size_buffer = 60;
-  debug_uart_buffer = (int *)malloc(size_buffer * sizeof(char));
+  debug_uart_buffer = (int *) (size_buffer * sizeof(char));
 
   for (uint8_t i = 0; i < size_buffer; i++) debug_uart_buffer[i] = 32; // space character
   sprintf((char *)debug_uart_buffer, "taskBeacon - amount of ACK: %d \r\n",ble_beacon_result.amount_of_ack);
   HAL_UART_Transmit(&huart2, (uint8_t *)debug_uart_buffer, sizeof(debug_uart_buffer), 1);
-
-  free(debug_uart_buffer);
 }
 
 void taskDrive()

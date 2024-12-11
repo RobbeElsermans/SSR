@@ -44,6 +44,7 @@ void MX_USART1_UART_Init(void);
 void MX_USART2_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
+void serial_print(char* buffer, uint8_t buf_size, uint32_t delay);
 
 /* USER CODE END Prototypes */
 
