@@ -7,11 +7,11 @@ void gyroDelayCallback(delay_callback_t dc_fp) {
 }
 
 void testMPU6050() {
-  uint8_t who_am_i;
-  testMPU6050(&who_am_i);
-  // char Buffer2[17] = {0};
+  uint8_t who_am_i = 0;
+  whoAmI(&who_am_i);
+  // char Buffer2[18] = {0};
   // sprintf(Buffer2, "Gyro Address: %02X\n", who_am_i);
-  // HAL_UART_Transmit(&huart2, Buffer2, sizeof(Buffer2), HAL_MAX_DELAY);
+  // serial_print(Buffer2, sizeof(Buffer2), HAL_MAX_DELAY);
   HAL_Delay(100);
 
   setMPU6050();
@@ -21,7 +21,7 @@ void testMPU6050() {
   readGyroscope(&gryo_x, &gryo_y, &gryo_z);
   // char Buffer3[64] = {0};
   // sprintf(Buffer3, "Gyro X: %d | Gyro Y: %d | Gyro Z: %d\n", gryo_x, gryo_y, gryo_z);
-  // HAL_UART_Transmit(&huart2, Buffer3, sizeof(Buffer3), HAL_MAX_DELAY);
+  // serial_print(Buffer3, sizeof(Buffer3), HAL_MAX_DELAY);
   HAL_Delay(1000); // Delay for the next measurement
 }
 
