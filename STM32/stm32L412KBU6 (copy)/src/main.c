@@ -74,7 +74,7 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   MX_UART2_UART_Init();
-  LTR329_Init(&hi2c1); // Initialize LTR-329 sensor
+  //LTR329_Init(&hi2c1); // Initialize LTR-329 sensor
 
   /* Configure RTC */
   if (RTC_Config())
@@ -83,31 +83,9 @@ int main(void)
   }
 
   HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET);
-  HAL_Delay(1000);
+  HAL_Delay(3000);
   HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
 
-  /* Check if the system was resumed from StandBy mode */
-  if (__HAL_PWR_GET_FLAG(PWR_FLAG_SB) != RESET)
-  {
-    /* Clear Standby flag */
-    __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
-  }
-
-  /* Insert 5 seconds delay */
-  HAL_Delay(5000);
-
-  /* Enter the Standby mode */
-  // if (lowPower_init())
-  // {
-  //   Error_Handler();
-  // }
-  // else
-  // {
-  //   HAL_PWR_EnterSTANDBYMode();
-  // }
-
-  /* Program should never reach this point (program restart when exiting from standby mode) */
-  // Error_Handler();
 
   /* Use to find I2C addresses on the bus */
   uint8_t Buffer[25] = {0};

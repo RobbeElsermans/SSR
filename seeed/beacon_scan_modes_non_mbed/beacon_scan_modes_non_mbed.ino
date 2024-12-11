@@ -129,10 +129,10 @@ void setup()
   Wire.onRequest(request_event);
 
   // Uncomment to blocking wait for Serial connection
-  //while ( !Serial ) delay(10);
+  while ( !Serial ) delay(10);
 
   Serial.println("Wait for data");
-  //while(!received_data); //Wait for I2C transfer
+  while(!received_data); //Wait for I2C transfer
   Serial.println("data received! ");
   received_data = false;
   uint16_t time_left = 0;
@@ -552,7 +552,7 @@ void receive_event(int howMany)
 
 void deep_sleep()
 {
-  BLE.end(); //Didn't tested yet
+  //Bluefruit.end(); //Didn't tested yet
   
   Serial.println("Go to deep sleep");
   delay(1000);

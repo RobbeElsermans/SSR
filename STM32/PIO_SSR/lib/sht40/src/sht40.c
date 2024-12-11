@@ -1,4 +1,5 @@
 #include "sht40.h"
+#include "usart.h"
 
 delay_callback_t _delay_callback;
 void sht40DelayCallback(delay_callback_t dc_fp)
@@ -41,21 +42,24 @@ HAL_StatusTypeDef sht40ReadTempAndHumidity(I2C_HandleTypeDef *hi2c, float *tempe
 
   _delay_callback(wait_duration);
 
-  int *buffer = (int *)calloc(6, sizeof(uint8_t));
-  ret = HAL_I2C_Master_Receive(hi2c, SHT40_I2C_ADDR, (uint8_t *)buffer, 6, 1000);
+  uint8_t buffer[6];
+  ret = HAL_I2C_Master_Receive(hi2c, SHT40_I2C_ADDR, (uint8_t *)buffer, 6, 10);
 
   if (ret != HAL_OK)
   {
-    if (buffer != NULL)
-      free(buffer);
     return ret;
   }
+
+  uint8_t Buffer[60] = {0};
+  sprintf(Buffer, "taskSens - hum: %d\r\n",  -45 + 175 * (buffer[0] * 256 + buffer[1])/ 65535);
+  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
 
   float t_ticks = buffer[0] * 256 + buffer[1];
   float rh_ticks = buffer[3] * 256 + buffer[4];
 
-  if (buffer != NULL)
-    free(buffer);
+  uint8_t bufuffer[60] = {0};
+  sprintf(bufuffer, "taskSens - hum: %d\r\n", -45 + 175 * t_ticks / 65535);
+  HAL_UART_Transmit(&huart2, bufuffer, sizeof(bufuffer), 1000);
 
   *temperature = -45 + 175 * t_ticks / 65535;
   *humidity = -6 + (125.0 * rh_ticks) / 65535.0;

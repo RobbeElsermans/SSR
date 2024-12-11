@@ -90,6 +90,8 @@ extern uint8_t bool_buffer;
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
+void test_code();
+
 void taskReadBattery();
 void taskDetermineTasks();
 void taskSens();
@@ -110,8 +112,21 @@ uint16_t counter_value(uint16_t time_millis);
 void half_sleep(RTC_HandleTypeDef* hrtc, uint16_t time);
 void deep_sleep(RTC_HandleTypeDef* hrtc, uint16_t time);
 
+/**
+ * @brief set a bit inside a byte
+ */
 void setBool(uint8_t *bool_carrier, uint8_t bool_place);
+
+/**
+ * @brief clear a bit inside a byte
+ */
 void clearBool(uint8_t *bool_carrier, uint8_t bool_place);
+
+/**
+ * @brief check a bit inside a byte
+ * 
+ * @return true if bit is set, else false
+ */
 uint8_t checkBool(uint8_t *bool_carrier, uint8_t bool_place);
 /* USER CODE END EFP */
 
@@ -122,14 +137,16 @@ uint8_t checkBool(uint8_t *bool_carrier, uint8_t bool_place);
 #define VCP_TX_GPIO_Port GPIOA
 #define VBAT_Pin GPIO_PIN_3
 #define VBAT_GPIO_Port GPIOA
-#define LB_R_Pin GPIO_PIN_4
-#define LB_R_GPIO_Port GPIOA
+#define LB_B_Pin GPIO_PIN_4
+#define LB_B_GPIO_Port GPIOA
 #define LB_L_Pin GPIO_PIN_5
 #define LB_L_GPIO_Port GPIOA
-#define LB_RA6_Pin GPIO_PIN_6
-#define LB_RA6_GPIO_Port GPIOA
+#define LB_R_Pin GPIO_PIN_6
+#define LB_R_GPIO_Port GPIOA
 #define LB_S_Pin GPIO_PIN_7
 #define LB_S_GPIO_Port GPIOA
+#define Gyro_EN_Pin GPIO_PIN_0
+#define Gyro_EN_GPIO_Port GPIOB
 #define LoRa_EN_Pin GPIO_PIN_8
 #define LoRa_EN_GPIO_Port GPIOA
 #define LoRa_TX_Pin GPIO_PIN_9
