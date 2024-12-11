@@ -8,7 +8,7 @@ void gyroDelayCallback(delay_callback_t dc_fp) {
 
 void testMPU6050() {
   uint8_t who_am_i = 0;
-  whoAmI(&who_am_i);
+  whoAmI(&who_am_i); //optional
   // char Buffer2[18] = {0};
   // sprintf(Buffer2, "Gyro Address: %02X\n", who_am_i);
   // serial_print(Buffer2, sizeof(Buffer2), HAL_MAX_DELAY);

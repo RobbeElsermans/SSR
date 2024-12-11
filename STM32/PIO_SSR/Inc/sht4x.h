@@ -11,7 +11,7 @@
 #define SHT4X_RESET                   0x94
 
 // Function Prototypes
-HAL_StatusTypeDef SHT4x_Init(I2C_HandleTypeDef *hi2c);
+// HAL_StatusTypeDef SHT4x_Init(I2C_HandleTypeDef *hi2c);
 HAL_StatusTypeDef SHT4x_ReadTempAndHumidity(I2C_HandleTypeDef *hi2c, float *temperature, float *humidity);
 void SHT40_Sleep(void);
 void SHT40_ReadSensor(float* temp, float* hum);

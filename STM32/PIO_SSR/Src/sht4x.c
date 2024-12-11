@@ -8,11 +8,10 @@
 // Function to initialize the sensor (soft reset)
 void SHT40_Sleep(void)
 {
-  HAL_StatusTypeDef ret;
   uint8_t sleep_cmd = SHT40_SLEEP_CMD;
 
   // Transmit the sleep command
-  ret = HAL_I2C_Master_Transmit(&hi2c1, SHT40_I2C_ADDR, &sleep_cmd, 1, 1000);
+  HAL_I2C_Master_Transmit(&hi2c1, SHT40_I2C_ADDR, &sleep_cmd, 1, 1000);
 }
 
 void SHT40_ReadSensor(float* temp, float* hum)
