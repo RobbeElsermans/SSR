@@ -160,8 +160,8 @@ float readVoltage(ADC_HandleTypeDef* adcHandle)
 
   #ifdef DEBUG
   uint8_t Buffer[80] = {0};
-  sprintf((char *)Buffer, "readVoltage - raw:%ld \r\n", raw_adc_val);
-  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
+  sprintf((char *)Buffer, "readVoltage - raw:%d \r\n", raw_adc_val);
+  serial_print(Buffer);
   #endif
 
   return voltage;

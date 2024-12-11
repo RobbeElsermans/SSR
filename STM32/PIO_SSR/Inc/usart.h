@@ -29,6 +29,7 @@ extern "C" {
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
+#include "string.h"
 
 /* USER CODE END Includes */
 
@@ -44,7 +45,7 @@ void MX_USART1_UART_Init(void);
 void MX_USART2_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-void serial_print(char* buffer, uint8_t buf_size, uint32_t delay);
+void serial_print(char* buffer);
 
 /* USER CODE END Prototypes */
 

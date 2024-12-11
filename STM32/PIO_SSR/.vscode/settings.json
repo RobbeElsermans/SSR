@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "linebot.h": "c"
+        "linebot.h": "c",
+        "typeinfo": "c",
+        "wio5e.h": "c",
+        "gyro.h": "c"
     }
 }

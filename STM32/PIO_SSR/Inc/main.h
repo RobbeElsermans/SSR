@@ -39,14 +39,14 @@ extern "C" {
 /* USER CODE BEGIN ET */
 struct ssr_data
 {
-  uint16_t seq_number;      // Range from 0 to 511 (8 bits total usage)
-  int16_t env_temperature;  // Range from -327.68 to 327.67 °C (val/100=°C)
-  uint8_t env_humidity;     // Range from -0-100%
-  uint16_t env_lux;         // Range from 0 to 1000
-  uint16_t dev_voltage;     // Range from 0-6.5535V (val/10000=V) (val/10=mV)
-  int8_t dev_gyro_x;            // Range from -60 to 60 (val*3=°)
-  int8_t dev_gyro_y;            // Range from -60 to 60 (val*3=°)
-  int8_t dev_gyro_z;            // Range from -60 to 60 (val*3=°)
+  uint16_t  seq_number;      // Range from 0 to 511 (8 bits total usage)
+  int16_t   env_temperature; // Range from -327.68 to 327.67 °C (val/100=°C)
+  uint8_t   env_humidity;    // Range from -0-100%
+  uint16_t  env_lux;         // Range from 0 to 1000
+  uint16_t  dev_voltage;     // Range from 0-6.5535V (val/10000=V) (val/10=mV)
+  int8_t    dev_gyro_x;      // Range from -125 to 125 (val*2=°)
+  int8_t    dev_gyro_y;      // Range from -125 to 125 (val*2=°)
+  int8_t    dev_gyro_z;      // Range from -125 to 125 (val*2=°)
 };
 typedef struct ssr_data ssr_data_t;
 extern ssr_data_t ssr_data;
