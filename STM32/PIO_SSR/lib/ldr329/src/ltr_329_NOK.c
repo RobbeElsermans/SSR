@@ -93,7 +93,7 @@ HAL_StatusTypeDef ltr329ReadALS(I2C_HandleTypeDef* i2c_obj, uint8_t channel, uin
 
   uint8_t Buffer[80] = {0};
   sprintf(Buffer, "taskSens - lux: %d\r\n", data);
-  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
+  serial_print(Buffer);
   //_delay_callback(8000);
   return ret;
 }

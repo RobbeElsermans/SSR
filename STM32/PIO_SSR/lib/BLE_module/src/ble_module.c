@@ -92,14 +92,14 @@ ble_beacon_result_t beacon(I2C_HandleTypeDef *hi2c1, ble_module_data_t* ble_data
 
   uint8_t Buffer[60] = {0};
   sprintf((char *)Buffer, "beacon - before %d \r\n", ble_data->air_time * 100+1000);
-  HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
+  serial_print(Buffer);
 
   //Sleep for air_time
   //half_sleep(ble_data.air_time * 100);
   _delay_callback(ble_data->air_time * 100+1000);
 
   sprintf((char *)Buffer, "beacon - after \r\n");
-  HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
+  serial_print(Buffer);
 
   uint8_t i = 0;
   //read scan data
@@ -111,7 +111,7 @@ ble_beacon_result_t beacon(I2C_HandleTypeDef *hi2c1, ble_module_data_t* ble_data
     receive_ble_data(hi2c1, received_data, 2);
 
     sprintf((char *)Buffer, "beacon - scanning %d \r\n", i);
-    HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
+    serial_print(Buffer);
 
     i++;
   }
@@ -120,7 +120,7 @@ ble_beacon_result_t beacon(I2C_HandleTypeDef *hi2c1, ble_module_data_t* ble_data
 
   //Set the value in our own data struct
   sprintf((char *)Buffer, "beacon - End scanning %d \r\n", received_data[0]);
-  HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
+  serial_print(Buffer);
 
   if(i<10)
     beacon_result.amount_of_ack = received_data[0];
@@ -129,7 +129,7 @@ ble_beacon_result_t beacon(I2C_HandleTypeDef *hi2c1, ble_module_data_t* ble_data
 
   // uint8_t Buffer[10] = {0};
   // sprintf(Buffer, "%d\r\n", received_data[0]);
-  // HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
+  // serial_print(Buffer); 
 
   return beacon_result;
 }

@@ -52,14 +52,14 @@ HAL_StatusTypeDef sht40ReadTempAndHumidity(I2C_HandleTypeDef *hi2c, float *tempe
 
   uint8_t Buffer[60] = {0};
   sprintf(Buffer, "taskSens - hum: %d\r\n",  -45 + 175 * (buffer[0] * 256 + buffer[1])/ 65535);
-  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
+  serial_print(Buffer);
 
   float t_ticks = buffer[0] * 256 + buffer[1];
   float rh_ticks = buffer[3] * 256 + buffer[4];
 
   uint8_t bufuffer[60] = {0};
   sprintf(bufuffer, "taskSens - hum: %d\r\n", -45 + 175 * t_ticks / 65535);
-  HAL_UART_Transmit(&huart2, bufuffer, sizeof(bufuffer), 1000);
+  serial_print(bufuffer);
 
   *temperature = -45 + 175 * t_ticks / 65535;
   *humidity = -6 + (125.0 * rh_ticks) / 65535.0;

@@ -143,7 +143,7 @@ int main(void){
 
   char Buffer[11] = {0};
   sprintf(Buffer, "Her Am I\r\n");
-  serial_print(Buffer, 1000);
+  serial_print(Buffer);
   
   while(1) {
     test_code();
@@ -265,10 +265,21 @@ void SystemClock_Config(void)
 void test_code() {
   char Buffer[16] = {0};
   sprintf(Buffer, "Test code\r\n");
-  serial_print(Buffer, 1000);
+  serial_print(Buffer);
 
   setupLoRa();
-  //write_read_command("");
+  ssr_data_t data;
+
+  data.seq_number = 100;      // Range from 0 to 511 (8 bits total usage)
+  data.env_temperature = 300; // Range from -327.68 to 327.67 °C (val/100=°C)
+  data.env_humidity = 37;    // Range from -0-100%
+  data.env_lux = 448;         // Range from 0 to 1000
+  data.dev_voltage = 6245;     // Range from 0-6.5535V (val/10000=V) (val/10=mV)
+  data.gyro_x = 21;          // Range from -250 to 250 (val*2=°)
+  data.gyro_y = 21;          // Range from -250 to 250 (val*2=°)
+  data.gyro_z = 21;          // Range from -250 to 250 (val*2=°)
+
+  send_data_over_lora(data);
 }
 
 void taskReadBattery()
@@ -277,7 +288,7 @@ void taskReadBattery()
 
   clearBuf();
   sprintf((char *)Buffer, "taskReadBattery - mV: %d \r\n", ssr_data.dev_voltage);
-  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
+  serial_print(Buffer);
 }
 
 void taskDetermineTasks()
@@ -299,7 +310,7 @@ void taskDetermineTasks()
 
   // Here, the boolean buffer **bool_buffer** is used with the defines of TASK described in main.h.
   // bool_buffer = 0b010000011; // Set DEEP_SLEEP, STORE, SENS,
-  //  bool_buffer = 0b10010001; // Set SLEEP, BEACON, SENS
+  // bool_buffer = 0b10010001; // Set SLEEP, BEACON, SENS
   bool_buffer = 0b00000000; // Set SLEEP, SCAN, SENS
 }
 
@@ -331,7 +342,7 @@ void taskSens()
   /* Display onto serial monitor */
   clearBuf();
   sprintf(Buffer, "taskSens - lux: %d, t: %d, h: %d \r\n", ssr_data.env_lux, ssr_data.env_temperature, ssr_data.env_humidity);
-  serial_print(&Buffer, HAL_MAX_DELAY);
+  serial_print(&Buffer);
 }
 
 void taskStore()
@@ -362,7 +373,7 @@ void taskScan()
 
   clearBuf();
   sprintf((char *)Buffer, "taskScan - start scan %d \r\n", ble_data.air_time);
-  HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
+  serial_print(Buffer);
 
   ble_scan_result = scan(&hi2c1, &ble_data);
 
@@ -371,7 +382,7 @@ void taskScan()
   sprintf((char *)Buffer,
           "taskScan - \r\n ssr_id: %d\r\n temp: %d\r\n h: %d\r\n l: %d\r\n x: %d\r\n y: %d\r\n z: %d\r\n vcc: %d\r\n rssi: %d\r\n",
           ble_scan_result.ssr_id, ble_scan_result.env_temperature, ble_scan_result.env_humidity, ble_scan_result.env_lux, ble_scan_result.dev_voltage, ble_scan_result.dev_gyro_x, ble_scan_result.dev_gyro_y, ble_scan_result.dev_gyro_z, ble_scan_result.rssi);
-  HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
+  serial_print(Buffer);
 }
 
 void taskBeacon()
@@ -392,7 +403,7 @@ void taskBeacon()
 
   clearBuf();
   sprintf((char *)Buffer, "taskBeacon - start beacon %d \r\n", ble_data.air_time);
-  HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
+  serial_print(Buffer);
 
   ble_beacon_result = beacon(&hi2c1, &ble_data);
 
@@ -400,7 +411,7 @@ void taskBeacon()
 
   clearBuf();
   sprintf((char *)Buffer, "taskBeacon - amount of ACK: %d \r\n", ble_beacon_result.amount_of_ack);
-  HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
+  serial_print(Buffer);
 }
 
 void taskDrive()

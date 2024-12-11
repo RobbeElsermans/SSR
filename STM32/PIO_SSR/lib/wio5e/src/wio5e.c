@@ -47,25 +47,32 @@ void setupLoRa() {
     write_read_command("AT+CH=0\r\n", "0,868100000");
 }
 
+void send_data_over_lora(ssr_data_t data) {
+    sprintf(command, "AT+MSGHEX=\"%04X%04X%02X%04X%04X%02X%02X%02X\"\r\n", 
+        data.seq_number, data.env_temperature, data.env_humidity, data.env_lux,
+        data.dev_voltage, data.gyro_x, data.gyro_y, data.gyro_z);
+    // serial_print(command);
+    write_read_command(command, devEui);
+    memset(command,0,strlen(command));
+    
+}
+
 void write_read_command(char* command, char* check) {
     // Transmit
-    HAL_UART_Transmit(&huart1, command, strlen(command), 100);
+    HAL_UART_Transmit(&huart1, (uint8_t*) command, strlen(command), 100);
 
     // Receive
-    char r_buf[127] = {0};
-    HAL_UART_Receive(&huart1, r_buf, sizeof(r_buf), 1000);
+    char r_buf[100] = {0};
+    HAL_UART_Receive(&huart1, (uint8_t*) r_buf, sizeof(r_buf), 1000);
 
     // Check reception
     if (strstr(r_buf, check) != NULL) {
-        serial_print(r_buf, 1000);
+        serial_print(r_buf);
     } else {
         // Error:
-        serial_print("Error:\r\n", 1000);
-        serial_print("\tCommand:\t", 1000);
-        serial_print(command, 1000);
-        serial_print("\tCheck:\t\t", 1000);
-        serial_print(check, 1000); serial_print("\r\n", 1000);
-        serial_print("\tOutput:\t\t", 1000);
-        serial_print(r_buf, 1000); serial_print("\r\n", 1000);
+        serial_print("Error:\r\n");
+        serial_print("\tCommand:\t");   serial_print(command);
+        serial_print("\tCheck:\t\t");   serial_print(check);    serial_print("\r\n");
+        serial_print("\tOutput:\t\t");  serial_print(r_buf);    serial_print("\r\n");
     }
 }

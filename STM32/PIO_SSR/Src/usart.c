@@ -215,8 +215,8 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 
 /* USER CODE BEGIN 1 */
 
-void serial_print(char* buffer, uint32_t delay) {
-  HAL_UART_Transmit(&huart2, buffer, strlen(buffer), delay);
+void serial_print(char* buffer) {
+  HAL_UART_Transmit(&huart2, (uint8_t*)buffer, strlen(buffer), 1000);
 }
 
 /* USER CODE END 1 */

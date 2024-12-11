@@ -146,24 +146,24 @@ void I2C_Scan() {
   char EndMSG[] = "Done! \r\n\r\n";
 
   uint8_t i = 0, ret;
-  serial_print(StartMSG, 10000);
+  serial_print(StartMSG);
   for (i = 0; i < 128; i++) {
     ret = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i << 1), 3, 5);
     if (ret != HAL_OK) { /* No ACK Received At That Address */
-      serial_print(Space, 10000);
+      serial_print(Space);
     } else if (ret == HAL_OK) {
       sprintf(Buffer, "0x%X", i);
-      serial_print(Buffer, 10000);
+      serial_print(Buffer);
     }
   }
-  serial_print(EndMSG, 10000);
+  serial_print(EndMSG);
 }
 
 void i2c_write(uint8_t address, uint8_t* data_tx, uint8_t tx_size) {
   ret = HAL_I2C_Master_Transmit(&hi2c1, address << 1, data_tx, tx_size, 1000);
   if (ret != HAL_OK) {
     char Buffer[8] = {"Error\r\n"};
-    serial_print(Buffer, 10000);
+    serial_print(Buffer);
     HAL_Delay(1000);
   }
 }
@@ -172,7 +172,7 @@ void i2c_write_read(uint8_t address, uint8_t* data_tx, uint8_t tx_size, uint8_t*
   ret = HAL_I2C_Master_Transmit(&hi2c1, address << 1, data_tx, tx_size, 1000);
   if (ret != HAL_OK) {
     char Buffer[8] = {"Error\r\n"};
-    serial_print(Buffer, 10000);
+    serial_print(Buffer);
     HAL_Delay(1000);
   } else {
     // read bytes
@@ -180,13 +180,13 @@ void i2c_write_read(uint8_t address, uint8_t* data_tx, uint8_t tx_size, uint8_t*
     ret = HAL_I2C_Master_Receive(&hi2c1, address << 1, data_rx, rx_size, 1000);
     if (ret != HAL_OK) {
       char Buffer[8] = {"Error\r\n"};
-      serial_print(Buffer, 10000);
+      serial_print(Buffer);
       HAL_Delay(1000);
     } else {
       // for (int i = 0; i < rx_size; i++) {
       //   char Buffer[16] = {0};
       //   sprintf(Buffer, "data_rx[%i] = %02X\n", i, data_rx[i]);
-      //   serial_print(&Buffer, 10000);
+      //   serial_print(&Buffer);
       // }
     }
   }

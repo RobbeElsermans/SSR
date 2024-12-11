@@ -15,6 +15,9 @@ void loraDelayCallback(delay_callback_t dc_fp);
 extern delay_callback_t _delay_callback;
 
 // Methods
+void testLoRa();
+void setupLoRa();
+void send_data_over_lora(ssr_data_t data);
 void write_read_command(char* command, char* check);
 
 #ifdef __cplusplus
