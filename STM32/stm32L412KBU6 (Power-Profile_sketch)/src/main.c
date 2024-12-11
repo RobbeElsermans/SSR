@@ -23,7 +23,7 @@
 #include "usart.h"
 #include "gpio.h"
 #include "lp.h"
-#include "ble.h"
+//#include "ble.h"
 #include "rtc.h"
 
 /* Private typedef -----------------------------------------------------------*/
@@ -31,7 +31,7 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-struct ble_module_data_t ble_data;
+//struct ble_module_data_t ble_data;
 
 uint8_t boolean_holder_1;
 #define BOOL_SEND 0
@@ -54,7 +54,7 @@ void Error_Handler(void);
 int main(void)
 {
   // Set ID of the SSR
-  ble_data.ssr_id = SSR_ID;
+  //ble_data.ssr_id = SSR_ID;
 
   MCU_Init();
 

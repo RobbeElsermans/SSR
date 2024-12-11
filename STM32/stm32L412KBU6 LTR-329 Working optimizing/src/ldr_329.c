@@ -78,6 +78,7 @@ void LTR329_Sleep(I2C_HandleTypeDef* hi2c1) {
     data[0] = LTR329_ALS_CONTR;
     data[1] = 0x00; // Standby mode
     HAL_I2C_Master_Transmit(hi2c1, LTR329_I2C_ADDR, data, 2, HAL_MAX_DELAY);
+    HAL_Delay(10);
 }
 
 void LTR329_WakeUp(I2C_HandleTypeDef* hi2c1) {

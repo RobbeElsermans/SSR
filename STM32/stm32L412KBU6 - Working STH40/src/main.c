@@ -182,7 +182,7 @@ int main(void)
                     
                     sprintf(Buffer, "temp: %d, hum :  %d\r\n", temp, hum);
                     HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
-                    HAL_Delay(2000);
+                    HAL_Delay(1000);
                 }
             }
              // FINALY ... a correct code... 

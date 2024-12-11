@@ -22,7 +22,9 @@
 		{"id":"3a9b68359d631370","type":"text","text":"Measuring Voltage of the capacitor","x":762,"y":-480,"width":250,"height":99},
 		{"id":"11931e3e373e5d75","type":"text","text":"LTR-329 is sleeping\n","x":761,"y":-579,"width":250,"height":99,"color":"3"},
 		{"id":"aca8913f5cb312ff","type":"text","text":"Sending STM32to sleep and power it by solar","x":221,"y":-579,"width":250,"height":60,"color":"3"},
-		{"id":"148702c002315018","type":"text","text":"PowerProfiling LTR","x":220,"y":-647,"width":250,"height":60,"color":"3"}
+		{"id":"a6bc8f5d396f9761","type":"text","text":"charging solars","x":220,"y":-510,"width":250,"height":60,"color":"3"},
+		{"id":"a72273aa34832b6b","type":"text","text":"see if 3V output possible","x":221,"y":-442,"width":250,"height":60,"color":"3"},
+		{"id":"148702c002315018","type":"text","text":"PowerProfiling LTR","x":760,"y":-283,"width":250,"height":60,"color":"3"}
 	],
 	"edges":[]
 }

@@ -70,6 +70,15 @@ while(1)
 
 ##### standby mode
 ![STM32 stop 2 mode profile](../../Images/Power_profiling/STM32_Standby_mode.png)
+#### better sandby mode (Without load of peripherals)
+![[Pasted image 20241211160438.png]]
+Lowest point = 300nA
+Peak = 11mA
+SemiPeak =8.8mA
+
+
+
+
 There can be seen that the STM32 needs to reinitialise in full. This can be seen by the short duration before the led goes on. This phenomena doesn't occur in the other graphs.
 ##### Conclusion
 It can be concluded that we need to replace any delay in our code by the stop 2 mode. This to ensure best power reduction while maintaining the RAM so our code can continue its work when we wake it up to continue.
@@ -221,11 +230,23 @@ Another advantage in using just a delay of 1 second is the wake-up duration. In 
 Joule scope is used as amp meter (by using only the red wires).
 
 ![ltr_329_consumption](../../Images/Power_Profiling/ltr_329_consumption.png)
+
+Sandby mode
+![[Pasted image 20241210174523.png]]
+
+For reasons unknown Standby mode draws 96 microAmpers insted od promised 5microAmpers
+Maesuring peak: 300microAmpers
+SemiPeak : 157microAmpers
 #todo
-### SHT40 Light Sensor
+### SHT40 Light Sen
+
+sor
 Joule scope is used as amp meter (by using only the red wires).
 
 ![sht40_consumption](../../Images/Power_Profiling/sht40_consumption.png)
 #todo 
+![[Pasted image 20241211092950.png]]
+Between the two peaks of 447 microAmps
+nonpeak - 114 microAmps
 ### LoRa Module
 #todo

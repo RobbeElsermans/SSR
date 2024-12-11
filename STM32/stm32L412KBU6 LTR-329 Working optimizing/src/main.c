@@ -155,7 +155,7 @@ int main(void)
     HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET); // LED off (indicate sleep)
     LTR329_Sleep(&hi2c1);
 
-
+    LTR329_Sleep(&hi2c1);
 
      // Delay to keep the sensor in sleep mode
     HAL_Delay(5000); // Sleep for 5 seconds
