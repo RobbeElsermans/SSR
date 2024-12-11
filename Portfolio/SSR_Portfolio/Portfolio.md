@@ -75,6 +75,11 @@ according to datasheet:
 standby current: 5 $micro$A
 initial startup: 100 ms
 waking up: 10 ms 
+
+![[Pasted image 20241210174523.png]]
+For reasons unknown Standby mode draws 96 microAmpers insted od promised 5microAmpers
+Maesuring peak: 300microAmpers
+SemiPeak : 157microAmpers
 ## Energy Harvesting
 [Enegry Harvesting Module AEM1094](AEM10941.md)
 The goal is to pover as many peripherals as possible... SHT40, LTR-329, STM32, BLE ?
