@@ -30,7 +30,7 @@
 #include "ble_module.h"
 #include "sht4x.h"
 
-//#include "lp.h"
+// #include "lp.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,6 +58,9 @@ ssr_data_t ssr_data;
 
 uint8_t bool_buffer = 0;
 
+/* UART BUFFER */
+uint8_t Buffer[140] = {0};
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -72,9 +75,9 @@ void SystemClock_Config(void);
 /* USER CODE END 0 */
 
 /**
-  * @brief  The application entry point.
-  * @retval int
-  */
+ * @brief  The application entry point.
+ * @retval int
+ */
 int main(void)
 {
 
@@ -97,12 +100,12 @@ int main(void)
   bleWakeCallback(wakeBleModule);
 
   /* ltr-386 lib function calls */
-  //ltrDelayCallback(HAL_Delay);
-  // ltrWakeCallback(wakeltrModule);
-  // ltrSleepCallback(sleepltrModule);
+  // ltrDelayCallback(HAL_Delay);
+  //  ltrWakeCallback(wakeltrModule);
+  //  ltrSleepCallback(sleepltrModule);
 
   /* sht40 lob function calls */
-  //sht40DelayCallback(HAL_Delay);
+  // sht40DelayCallback(HAL_Delay);
 
   /* USER CODE END Init */
 
@@ -112,7 +115,7 @@ int main(void)
   /* USER CODE BEGIN SysInit */
 
   /* low power clock configuration */
-  //lpClockConfigCallback(SystemClock_Config);
+  // lpClockConfigCallback(SystemClock_Config);
 
   /* USER CODE END SysInit */
 
@@ -124,10 +127,9 @@ int main(void)
   MX_ADC1_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  
+
   HAL_Delay(2000);
 
-  uint8_t Buffer[25] = {0};
   uint8_t Space[] = " - ";
   uint8_t StartMSG[] = "Starting I2C Scanning: \r\n";
   uint8_t EndMSG[] = "Done! \r\n\r\n";
@@ -143,16 +145,15 @@ int main(void)
     }
     else if (ret == HAL_OK)
     {
-      sprintf(Buffer, "0x%X", i);
+      sprintf((char *)Buffer, "0x%X", i);
       HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 10000);
     }
   }
   HAL_UART_Transmit(&huart2, EndMSG, sizeof(EndMSG), 10000);
 
-  //while(1);
+  // while(1);
 
- // uint8_t Buffer[10] = {0};
-  sprintf(Buffer, "Her Am I\r\n");
+  sprintf((char *)Buffer, "Her Am I\r\n");
   HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
 
   /* USER CODE END 2 */
@@ -162,7 +163,7 @@ int main(void)
 
   while (1)
   {
-    void taskReadBattery();               // Read the ADC voltage
+    void taskReadBattery(); // Read the ADC voltage
 
     // Determine path of execution based on voltage (energy) available
     taskDetermineTasks();
@@ -205,13 +206,13 @@ int main(void)
 
     if (checkBool(&bool_buffer, TASK_DEEP_SLEEP))
     {
-      taskDeepSleep();                              // Do the task
+      taskDeepSleep();                          // Do the task
       clearBool(&bool_buffer, TASK_DEEP_SLEEP); // Clear the bit in bool_buffer
     }
 
     if (checkBool(&bool_buffer, TASK_LIGHT_SLEEP))
     {
-      taskLightSleep();                           // Do the task
+      taskLightSleep();                          // Do the task
       clearBool(&bool_buffer, TASK_LIGHT_SLEEP); // Clear the bit in bool_buffer
     }
 
@@ -225,25 +226,25 @@ int main(void)
 }
 
 /**
-  * @brief System Clock Configuration
-  * @retval None
-  */
+ * @brief System Clock Configuration
+ * @retval None
+ */
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
   /** Configure the main internal regulator output voltage
-  */
+   */
   if (HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1) != HAL_OK)
   {
     Error_Handler();
   }
 
   /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSI;
+   * in the RCC_OscInitTypeDef structure.
+   */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI | RCC_OSCILLATORTYPE_LSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.LSIState = RCC_LSI_ON;
@@ -254,9 +255,8 @@ void SystemClock_Config(void)
   }
 
   /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+   */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV2;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
@@ -272,21 +272,21 @@ void SystemClock_Config(void)
 
 void taskReadBattery()
 {
-  //TODO
-  
-  //do something
-  
-  //ssr_data.dev_voltage = something
+  // TODO
+
+  // do something
+
+  // ssr_data.dev_voltage = something
 }
 
 void taskDetermineTasks()
 {
-  //Do this based on the voltage value.
-
+  // Do this based on the voltage value.
 
   // Here, the boolean buffer **bool_buffer** is used with the defines of TASK described in main.h.
-  //bool_buffer = 0b010000011; // Set DEEP_SLEEP, STORE, SENS,
-  bool_buffer = 0b10010001; // Set SLEEP, BEACON, SENS
+  // bool_buffer = 0b010000011; // Set DEEP_SLEEP, STORE, SENS,
+  //  bool_buffer = 0b10010001; // Set SLEEP, BEACON, SENS
+  bool_buffer = 0b10001001; // Set SLEEP, SCAN, SENS
 }
 
 void taskSens()
@@ -298,8 +298,8 @@ void taskSens()
   /* Initialize sensors */
   HAL_Delay(1000);
   LTR329_Init(&hi2c1);
-  //sht40Init(&hi2c1);
-  
+  // sht40Init(&hi2c1);
+
   HAL_Delay(1000);
   /* Read out the sens values */
   lux = GetLuxAll(&hi2c1);
@@ -315,9 +315,7 @@ void taskSens()
   ssr_data.env_lux = (uint16_t)(lux);
 
   /* Display onto serial monitor */
-  //uint8_t Buffer[60] = {0};
-  uint8_t Buffer[60] = {0};
-  sprintf(Buffer, "taskSens - lux: %d, t: %d, h: %d \r\n", ssr_data.env_lux, ssr_data.env_temperature, ssr_data.env_humidity);
+  sprintf((char *)Buffer, "taskSens - lux: %d, t: %d, h: %d \r\n", ssr_data.env_lux, ssr_data.env_temperature, ssr_data.env_humidity);
   HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
 }
 
@@ -337,32 +335,26 @@ void taskScan()
 
   ble_data.mode = 1;
   ble_data.ssr_id = SSR_ID;
-  ble_data.air_time = air_time;
+  ble_data.air_time = air_time/100;
 
-  ble_data.env_temperature = ssr_data.env_temperature;  // Range from -327.68 to 327.67 °C (val/100=°C)
-  ble_data.env_humidity = ssr_data.env_humidity;        // Range from -0-100%
-  ble_data.env_lux = ssr_data.env_lux;                  // Range from 0 to 1000
-  ble_data.dev_voltage = ssr_data.dev_voltage;          // Range from 0-6.5535V (val/10000=V) (val/10=mV)
-  ble_data.dev_gyro_x = ssr_data.gyro_x;                    // Range from -60 to 60 (val*3=°)
-  ble_data.dev_gyro_y = ssr_data.gyro_y;                    // Range from -60 to 60 (val*3=°)
-  ble_data.dev_gyro_z = ssr_data.gyro_z;                    // Range from -60 to 60 (val*3=°)
+  ble_data.env_temperature = ssr_data.env_temperature; // Range from -327.68 to 327.67 °C (val/100=°C)
+  ble_data.env_humidity = ssr_data.env_humidity;       // Range from -0-100%
+  ble_data.env_lux = ssr_data.env_lux;                 // Range from 0 to 1000
+  ble_data.dev_voltage = ssr_data.dev_voltage;         // Range from 0-6.5535V (val/10000=V) (val/10=mV)
+  ble_data.dev_gyro_x = ssr_data.gyro_x;               // Range from -60 to 60 (val*3=°)
+  ble_data.dev_gyro_y = ssr_data.gyro_y;               // Range from -60 to 60 (val*3=°)
+  ble_data.dev_gyro_z = ssr_data.gyro_z;               // Range from -60 to 60 (val*3=°)
+
+  sprintf((char *)Buffer, "taskBeacon - start scan %d \r\n", ble_data.air_time);
+  HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
 
   ble_scan_result = scan(&hi2c1, &ble_data);
 
   /* Display onto serial monitor */
-
-  int *debug_uart_buffer;
-  uint8_t size_buffer = 120;
-  debug_uart_buffer = (int *)malloc(size_buffer * sizeof(char));
-
-  for (uint8_t i = 0; i < size_buffer; i++)
-    debug_uart_buffer[i] = 32; // space character
-  sprintf((char *)debug_uart_buffer, 
-  "taskScan - \r\n ssr_id: %d\r\n temp: %d\r\n h: %d\r\n l: %d\r\n x: %d\r\n y: %d\r\n z: %d\r\n vcc: %d\r\n rssi: %d\r\n",
-  ble_scan_result.ssr_id, ble_scan_result.env_temperature, ble_scan_result.env_humidity, ble_scan_result.env_lux, ble_scan_result.dev_voltage, ble_scan_result.dev_gyro_x, ble_scan_result.dev_gyro_y, ble_scan_result.dev_gyro_z, ble_scan_result.rssi);
-  HAL_UART_Transmit(&huart2, (uint8_t *)debug_uart_buffer, sizeof(debug_uart_buffer), 1);
-
-  free(debug_uart_buffer);
+  sprintf((char *)Buffer,
+          "taskScan - \r\n ssr_id: %d\r\n temp: %d\r\n h: %d\r\n l: %d\r\n x: %d\r\n y: %d\r\n z: %d\r\n vcc: %d\r\n rssi: %d\r\n",
+          ble_scan_result.ssr_id, ble_scan_result.env_temperature, ble_scan_result.env_humidity, ble_scan_result.env_lux, ble_scan_result.dev_voltage, ble_scan_result.dev_gyro_x, ble_scan_result.dev_gyro_y, ble_scan_result.dev_gyro_z, ble_scan_result.rssi);
+  HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1);
 }
 
 void taskBeacon()
@@ -371,46 +363,42 @@ void taskBeacon()
 
   ble_data.mode = 0;
   ble_data.ssr_id = SSR_ID;
-  ble_data.air_time = air_time;
+  ble_data.air_time = air_time / 100;
 
-  ble_data.env_temperature = ssr_data.env_temperature;  // Range from -327.68 to 327.67 °C (val/100=°C)
-  ble_data.env_humidity = ssr_data.env_humidity;        // Range from -0-100%
-  ble_data.env_lux = ssr_data.env_lux;                  // Range from 0 to 1000
-  ble_data.dev_voltage = ssr_data.dev_voltage;          // Range from 0-6.5535V (val/10000=V) (val/10=mV)
-  ble_data.dev_gyro_x = ssr_data.gyro_x;                    // Range from -60 to 60 (val*3=°)
-  ble_data.dev_gyro_y = ssr_data.gyro_y;                    // Range from -60 to 60 (val*3=°)
-  ble_data.dev_gyro_z = ssr_data.gyro_z;                    // Range from -60 to 60 (val*3=°)
+  ble_data.env_temperature = ssr_data.env_temperature; // Range from -327.68 to 327.67 °C (val/100=°C)
+  ble_data.env_humidity = ssr_data.env_humidity;       // Range from -0-100%
+  ble_data.env_lux = ssr_data.env_lux;                 // Range from 0 to 1000
+  ble_data.dev_voltage = ssr_data.dev_voltage;         // Range from 0-6.5535V (val/10000=V) (val/10=mV)
+  ble_data.dev_gyro_x = ssr_data.gyro_x;               // Range from -60 to 60 (val*3=°)
+  ble_data.dev_gyro_y = ssr_data.gyro_y;               // Range from -60 to 60 (val*3=°)
+  ble_data.dev_gyro_z = ssr_data.gyro_z;               // Range from -60 to 60 (val*3=°)
+
+  sprintf((char *)Buffer, "taskBeacon - start beacon %d \r\n", ble_data.air_time);
+  HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
 
   ble_beacon_result = beacon(&hi2c1, &ble_data);
 
   /* Display onto serial monitor */
 
-  int *debug_uart_buffer;
-  uint8_t size_buffer = 60;
-  debug_uart_buffer = (int *)malloc(size_buffer * sizeof(char));
-
-  for (uint8_t i = 0; i < size_buffer; i++) debug_uart_buffer[i] = 32; // space character
-  sprintf((char *)debug_uart_buffer, "taskBeacon - amount of ACK: %d \r\n",ble_beacon_result.amount_of_ack);
-  HAL_UART_Transmit(&huart2, (uint8_t *)debug_uart_buffer, sizeof(debug_uart_buffer), 1);
-
-  free(debug_uart_buffer);
+  sprintf((char *)Buffer, "taskBeacon - amount of ACK: %d \r\n", ble_beacon_result.amount_of_ack);
+  HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
 }
 
 void taskDrive()
 {
-  //Do something with the struct *ble_scan_result* and gyro measurements + RSSI?
-  //Do something with the struct *ble_beacon_result*?
-  // TODO
+  // Do something with the struct *ble_scan_result* and gyro measurements + RSSI?
+  // Do something with the struct *ble_beacon_result*?
+  //  TODO
 }
 
 void taskDeepSleep()
 {
-  deep_sleep(&hrtc, 20000); //20 seconds deep sleep  
+  deep_sleep(&hrtc, 20000); // 20 seconds deep sleep
 }
 
 void taskLightSleep()
 {
-  half_sleep(&hrtc, 20000); //20 seconds half sleep  
+  half_sleep(&hrtc, 10000); // 20 seconds half sleep
 }
 
 void wakeBleModule()
@@ -432,23 +420,23 @@ uint16_t counter_value(uint16_t time_millis)
 {
   uint16_t counter_value = 0xFFFF; //= 0x2806; // 5 seconds
   // Calculate the time
-  if (time_millis > 31981) //Maximum available wait time
+  if (time_millis > 31981)  // Maximum available wait time
     counter_value = 0xFFFF; // Set maximum available time
   else
     counter_value = (uint16_t)((time_millis / 1000.0) / 0.000488);
 
   if (counter_value <= 0x1)
   {
-    counter_value = 0x2; //Correspondent to 0.976 ms
+    counter_value = 0x2; // Correspondent to 0.976 ms
   }
 
   return counter_value;
 }
 
-void half_sleep(RTC_HandleTypeDef* hrtc, uint16_t time)
+void half_sleep(RTC_HandleTypeDef *hrtc, uint16_t time)
 {
-  //Setup RTC and setup interupt
-  // MX_RTC_Init(); //DOne in main.c
+  // Setup RTC and setup interupt
+  //  MX_RTC_Init(); //DOne in main.c
   HAL_SuspendTick();
   HAL_RTCEx_SetWakeUpTimer_IT(hrtc, counter_value(time), RTC_WAKEUPCLOCK_RTCCLK_DIV16, 0);
 
@@ -459,14 +447,14 @@ void half_sleep(RTC_HandleTypeDef* hrtc, uint16_t time)
   HAL_ResumeTick();
 }
 
-void deep_sleep(RTC_HandleTypeDef* hrtc, uint16_t time)
+void deep_sleep(RTC_HandleTypeDef *hrtc, uint16_t time)
 {
   GPIO_Disable();
   HAL_PWREx_EnableSRAM2ContentRetention();
   HAL_PWREx_EnableBORPVD_ULP();
   HAL_RTCEx_DeactivateWakeUpTimer(hrtc);
   HAL_RTCEx_SetWakeUpTimer_IT(hrtc, counter_value(time), RTC_WAKEUPCLOCK_RTCCLK_DIV16, 0);
-  HAL_PWR_EnterSTANDBYMode();  
+  HAL_PWR_EnterSTANDBYMode();
 }
 
 void GPIO_Disable(void)
@@ -524,9 +512,9 @@ uint8_t checkBool(uint8_t *bool_carrier, uint8_t bool_place)
 /* USER CODE END 4 */
 
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
+ * @brief  This function is executed in case of error occurrence.
+ * @retval None
+ */
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
@@ -538,14 +526,14 @@ void Error_Handler(void)
   /* USER CODE END Error_Handler_Debug */
 }
 
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
+ * @brief  Reports the name of the source file and the source line number
+ *         where the assert_param error has occurred.
+ * @param  file: pointer to the source file name
+ * @param  line: assert_param error line source number
+ * @retval None
+ */
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
