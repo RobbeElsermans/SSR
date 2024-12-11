@@ -108,6 +108,8 @@ We will use a Configuration of Dual-cell supercapacitor (Using the two supercaps
 Module should be powering at 3.92V  (HighOut = 3.3V) (LowOut = 1.8V)
 If the SuperCaps would reach max threshold Module will regulate the Voltage until 3.6V re reached
 
+After reaching 3.92V on the Dual-cell Capacitor  HighOUT had 3.3V => Success
+
 
 ### Voltage measurement of the energy harvesting module
 Hardware Setup: 
