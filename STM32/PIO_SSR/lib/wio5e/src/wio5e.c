@@ -50,7 +50,7 @@ void setupLoRa() {
 void send_data_over_lora(ssr_data_t data) {
     sprintf(command, "AT+MSGHEX=\"%04X%04X%02X%04X%04X%02X%02X%02X\"\r\n", 
         data.seq_number, data.env_temperature, data.env_humidity, data.env_lux,
-        data.dev_voltage, data.gyro_x, data.gyro_y, data.gyro_z);
+        data.dev_voltage, data.dev_gyro_x, data.dev_gyro_y, data.dev_gyro_z);
     // serial_print(command);
     write_read_command(command, devEui);
     memset(command,0,strlen(command));
