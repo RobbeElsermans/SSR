@@ -46,8 +46,6 @@ void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN Prototypes */
 void serial_print(char* buffer, uint8_t buf_size, uint32_t delay);
 
-void serial_print(char* buffer, uint8_t buf_size);
-
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
@@ -55,4 +53,3 @@ void serial_print(char* buffer, uint8_t buf_size);
 #endif
 
 #endif /* __USART_H__ */
-

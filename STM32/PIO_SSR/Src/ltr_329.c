@@ -63,7 +63,6 @@ uint16_t GetLuxAll(I2C_HandleTypeDef* hi2c1)
 {
     //Accordingly to datasheet, read them both.
     uint16_t ch1 = LTR329_ReadALS(hi2c1, 1); // Read channel 1 data
-    uint16_t ch0 = LTR329_ReadALS(hi2c1, 0); // Read channel 0 data
 
     return ch1;
 }
@@ -71,7 +70,6 @@ uint16_t GetLuxAll(I2C_HandleTypeDef* hi2c1)
 uint16_t GetLuxIR(I2C_HandleTypeDef* hi2c1)
 {
     //Accordingly to datasheet, read them both.
-    uint16_t ch1 = LTR329_ReadALS(hi2c1, 1); // Read channel 1 data
     uint16_t ch0 = LTR329_ReadALS(hi2c1, 0); // Read channel 0 data
 
     return ch0;
