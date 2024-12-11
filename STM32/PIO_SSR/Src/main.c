@@ -26,8 +26,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "ltr_329.h"
 #include "ble_module.h"
+#include "ltr_329.h"
+#include "linebot.h"
+#include "gyro.h"
 #include "sht4x.h"
 
 // #include "lp.h"
@@ -100,11 +102,18 @@ int main(void){
 
   /* ltr-386 lib function calls */
   // ltrDelayCallback(HAL_Delay);
-  //  ltrWakeCallback(wakeltrModule);
-  //  ltrSleepCallback(sleepltrModule);
+  
+  // ltrWakeCallback(wakeltrModule);
+  // ltrSleepCallback(sleepltrModule);
 
   /* sht40 lob function calls */
   // sht40DelayCallback(HAL_Delay);
+
+  /* LineBot lob function calls */
+  // lineBotDelayCallback(HAL_Delay);
+  
+  /* mpu6050 lob function calls */
+  gyroDelayCallback(HAL_Delay);
 
   /* USER CODE END Init */
 
@@ -129,31 +138,15 @@ int main(void){
 
   HAL_Delay(2000);
 
-  uint8_t Space[] = " - ";
-  uint8_t StartMSG[] = "Starting I2C Scanning: \r\n";
-  uint8_t EndMSG[] = "Done! \r\n\r\n";
+  I2C_Scan();
 
-  uint8_t i = 0, ret;
-  HAL_UART_Transmit(&huart2, StartMSG, sizeof(StartMSG), 10000);
-  for (i = 0; i < 128; i++)
-  {
-    ret = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i << 1), 3, 5);
-    if (ret != HAL_OK) /* No ACK Received At That Address */
-    {
-      HAL_UART_Transmit(&huart2, Space, sizeof(Space), 10000);
-    }
-    else if (ret == HAL_OK)
-    {
-      sprintf((char *)Buffer, "0x%X", i);
-      HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 10000);
-    }
+  char Buffer[11] = {0};
+  sprintf(Buffer, "Her Am I\r\n");
+  serial_print(Buffer, sizeof(Buffer), 1000);
+  
+  while(1) {
+    test_code();
   }
-  HAL_UART_Transmit(&huart2, EndMSG, sizeof(EndMSG), 10000);
-
-  // while(1);
-  clearBuf();
-  sprintf((char *)Buffer, "Her Am I\r\n");
-  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
 
   /* USER CODE END 2 */
 
@@ -224,6 +217,13 @@ int main(void){
   /* USER CODE END 3 */
 }
 
+void test_code() {
+  char Buffer[16] = {0};
+  sprintf(Buffer, "Test code\r\n");
+  serial_print(Buffer, sizeof(Buffer), 1000);
+
+  
+}
 /**
  * @brief System Clock Configuration
  * @retval None
@@ -268,6 +268,30 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+void test_code() {
+  char Buffer[16] = {0};
+  sprintf(Buffer, "Test code\r\n");
+  serial_print(&Buffer, sizeof(Buffer));
+  HAL_Delay(100);
+
+  uint8_t who_am_i;
+  testMPU6050(&who_am_i);
+  char Buffer2[17] = {0};
+  sprintf(Buffer2, "Gyro Address: %02X\n", who_am_i);
+  serial_print(&Buffer, sizeof(Buffer));
+  HAL_Delay(100);
+
+  setMPU6050();
+  HAL_Delay(100);
+
+  uint16_t gryo_x, gryo_y, gryo_z;
+  readGyroscope(&gryo_x, &gryo_y, &gryo_z);
+  char Buffer3[64] = {0};
+  sprintf(Buffer3, "Gyro X: %d | Gyro Y: %d | Gyro Z: %d\n", gryo_x, gryo_y, gryo_z);
+  serial_print(&Buffer, sizeof(Buffer));
+  HAL_Delay(1000); // Delay for the next measurement
+}
 
 void taskReadBattery()
 {
@@ -328,8 +352,8 @@ void taskSens()
 
   /* Display onto serial monitor */
   clearBuf();
-  sprintf((char *)Buffer, "taskSens - lux: %d, t: %d, h: %d \r\n", ssr_data.env_lux, ssr_data.env_temperature, ssr_data.env_humidity);
-  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
+  sprintf(Buffer, "taskSens - lux: %d, t: %d, h: %d \r\n", ssr_data.env_lux, ssr_data.env_temperature, ssr_data.env_humidity);
+  serial_print(&Buffer, sizeof(Buffer), HAL_MAX_DELAY);
 }
 
 void taskStore()

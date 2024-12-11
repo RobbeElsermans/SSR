@@ -21,10 +21,12 @@
 #include "i2c.h"
 
 /* USER CODE BEGIN 0 */
+HAL_StatusTypeDef ret;
 
 /* USER CODE END 0 */
 
 I2C_HandleTypeDef hi2c1;
+HAL_StatusTypeDef ret;
 
 /* I2C1 init function */
 void MX_I2C1_Init(void)
@@ -136,5 +138,58 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)
 }
 
 /* USER CODE BEGIN 1 */
+
+void I2C_Scan() {
+  uint8_t Buffer[25] = {0};
+  uint8_t Space[] = " - ";
+  uint8_t StartMSG[] = "Starting I2C Scanning: \r\n";
+  uint8_t EndMSG[] = "Done! \r\n\r\n";
+
+  uint8_t i = 0, ret;
+  serial_print(&StartMSG, sizeof(StartMSG), 10000);
+  for (i = 0; i < 128; i++) {
+    ret = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i << 1), 3, 5);
+    if (ret != HAL_OK) { /* No ACK Received At That Address */
+      serial_print(&Space, sizeof(Space), 10000);
+    } else if (ret == HAL_OK) {
+      sprintf(Buffer, "0x%X", i);
+      serial_print(&Buffer, sizeof(Buffer), 10000);
+    }
+  }
+  serial_print(&EndMSG, sizeof(EndMSG), 10000);
+}
+
+void i2c_write(uint8_t address, uint8_t* data_tx, uint8_t tx_size) {
+  ret = HAL_I2C_Master_Transmit(&hi2c1, address << 1, data_tx, tx_size, 1000);
+  if (ret != HAL_OK) {
+    char Buffer[8] = {"Error\r\n"};
+    serial_print(&Buffer, sizeof(Buffer), 10000);
+    HAL_Delay(1000);
+  }
+}
+
+void i2c_write_read(uint8_t address, uint8_t* data_tx, uint8_t tx_size, uint8_t* data_rx, uint8_t rx_size) {
+  ret = HAL_I2C_Master_Transmit(&hi2c1, address << 1, data_tx, tx_size, 1000);
+  if (ret != HAL_OK) {
+    char Buffer[8] = {"Error\r\n"};
+    serial_print(&Buffer, sizeof(Buffer), 10000);
+    HAL_Delay(1000);
+  } else {
+    // read bytes
+    //HAL_Delay(1000);
+    ret = HAL_I2C_Master_Receive(&hi2c1, address << 1, data_rx, rx_size, 1000);
+    if (ret != HAL_OK) {
+      char Buffer[8] = {"Error\r\n"};
+      serial_print(&Buffer, sizeof(Buffer), 10000);
+      HAL_Delay(1000);
+    } else {
+      // for (int i = 0; i < rx_size; i++) {
+      //   char Buffer[16] = {0};
+      //   sprintf(Buffer, "data_rx[%i] = %02X\n", i, data_rx[i]);
+      //   serial_print(&Buffer, sizeof(Buffer));
+      // }
+    }
+  }
+}
 
 /* USER CODE END 1 */

@@ -12,12 +12,12 @@ const String NWKSKEY = "28D5A8BCD4F80E9DFE8640F5B7072C49";
 const String DevEui  = "70B3D57ED006C5CD";
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   while (!Serial) { } // wait for serial port to connect. Needed for native USB port only
   SUART.begin(BAUD, SERIAL_8N1, RX, TX);
 
-  //sendSettings();
-  sendCommand("AT+msg=\"Tom\""); receiveFeedBack();
+  sendSettings();
+  //sendCommand("AT+msg=\"Tom\""); receiveFeedBack();
   delayMicroseconds(100);
   //sendCommand("AT+MSGHEX=\"0F 1E 2D 3C 4B 5A 96 87\""); receiveFeedBack();
   delayMicroseconds(100);

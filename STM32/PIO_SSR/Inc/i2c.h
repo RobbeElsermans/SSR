@@ -29,6 +29,9 @@ extern "C" {
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
+#include "usart.h"
+
+#include "usart.h"
 
 /* USER CODE END Includes */
 
@@ -36,11 +39,19 @@ extern I2C_HandleTypeDef hi2c1;
 
 /* USER CODE BEGIN Private defines */
 
+void I2C_Scan();
+void i2c_write(uint8_t address, uint8_t* data_tx, uint8_t tx_size);
+void i2c_write_read(uint8_t address, uint8_t* data_tx, uint8_t tx_size, uint8_t* data_rx, uint8_t rx_size);
+
 /* USER CODE END Private defines */
 
 void MX_I2C1_Init(void);
 
 /* USER CODE BEGIN Prototypes */
+
+void I2C_Scan();
+void i2c_write(uint8_t address, uint8_t* data_tx, uint8_t tx_size);
+void i2c_write_read(uint8_t address, uint8_t* data_tx, uint8_t tx_size, uint8_t* data_rx, uint8_t rx_size);
 
 /* USER CODE END Prototypes */
 
