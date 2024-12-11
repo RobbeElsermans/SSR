@@ -66,7 +66,7 @@ uint8_t Buffer[140] = {0};
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+void clearBuf();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -78,8 +78,7 @@ void SystemClock_Config(void);
  * @brief  The application entry point.
  * @retval int
  */
-int main(void)
-{
+int main(void){
 
   /* USER CODE BEGIN 1 */
 
@@ -152,7 +151,7 @@ int main(void)
   HAL_UART_Transmit(&huart2, EndMSG, sizeof(EndMSG), 10000);
 
   // while(1);
-
+  clearBuf();
   sprintf((char *)Buffer, "Her Am I\r\n");
   HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
 
@@ -163,7 +162,7 @@ int main(void)
 
   while (1)
   {
-    void taskReadBattery(); // Read the ADC voltage
+    taskReadBattery(); // Read the ADC voltage
 
     // Determine path of execution based on voltage (energy) available
     taskDetermineTasks();
@@ -272,21 +271,34 @@ void SystemClock_Config(void)
 
 void taskReadBattery()
 {
-  // TODO
+  ssr_data.dev_voltage = (readVoltage(&hadc1))*1000.0; //COnvert to mV and save only int
 
-  // do something
-
-  // ssr_data.dev_voltage = something
+  clearBuf();
+  sprintf((char *)Buffer, "taskReadBattery - mV: %d \r\n", ssr_data.dev_voltage);
+  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
 }
 
 void taskDetermineTasks()
 {
   // Do this based on the voltage value.
 
+  if (ssr_data.dev_voltage >= 2.6) //Fully charged
+  {
+    bool_buffer = 0b10111111; //Do all tasks
+  }
+  else if (ssr_data.dev_voltage < 2.6 && ssr_data.dev_voltage >= 2.4)
+  {
+    bool_buffer = 0b10011111; //Do all tasks
+  }
+  else if (ssr_data.dev_voltage < 2.4 && ssr_data.dev_voltage >= 2.3)
+  {
+    
+  }
+
   // Here, the boolean buffer **bool_buffer** is used with the defines of TASK described in main.h.
   // bool_buffer = 0b010000011; // Set DEEP_SLEEP, STORE, SENS,
   //  bool_buffer = 0b10010001; // Set SLEEP, BEACON, SENS
-  bool_buffer = 0b10001001; // Set SLEEP, SCAN, SENS
+  bool_buffer = 0b00000000; // Set SLEEP, SCAN, SENS
 }
 
 void taskSens()
@@ -315,8 +327,9 @@ void taskSens()
   ssr_data.env_lux = (uint16_t)(lux);
 
   /* Display onto serial monitor */
+  clearBuf();
   sprintf((char *)Buffer, "taskSens - lux: %d, t: %d, h: %d \r\n", ssr_data.env_lux, ssr_data.env_temperature, ssr_data.env_humidity);
-  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
+  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
 }
 
 void taskStore()
@@ -345,16 +358,18 @@ void taskScan()
   ble_data.dev_gyro_y = ssr_data.gyro_y;               // Range from -60 to 60 (val*3=°)
   ble_data.dev_gyro_z = ssr_data.gyro_z;               // Range from -60 to 60 (val*3=°)
 
-  sprintf((char *)Buffer, "taskBeacon - start scan %d \r\n", ble_data.air_time);
+  clearBuf();
+  sprintf((char *)Buffer, "taskScan - start scan %d \r\n", ble_data.air_time);
   HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
 
   ble_scan_result = scan(&hi2c1, &ble_data);
 
   /* Display onto serial monitor */
+  clearBuf();
   sprintf((char *)Buffer,
           "taskScan - \r\n ssr_id: %d\r\n temp: %d\r\n h: %d\r\n l: %d\r\n x: %d\r\n y: %d\r\n z: %d\r\n vcc: %d\r\n rssi: %d\r\n",
           ble_scan_result.ssr_id, ble_scan_result.env_temperature, ble_scan_result.env_humidity, ble_scan_result.env_lux, ble_scan_result.dev_voltage, ble_scan_result.dev_gyro_x, ble_scan_result.dev_gyro_y, ble_scan_result.dev_gyro_z, ble_scan_result.rssi);
-  HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1);
+  HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
 }
 
 void taskBeacon()
@@ -373,6 +388,7 @@ void taskBeacon()
   ble_data.dev_gyro_y = ssr_data.gyro_y;               // Range from -60 to 60 (val*3=°)
   ble_data.dev_gyro_z = ssr_data.gyro_z;               // Range from -60 to 60 (val*3=°)
 
+  clearBuf();
   sprintf((char *)Buffer, "taskBeacon - start beacon %d \r\n", ble_data.air_time);
   HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
 
@@ -380,6 +396,7 @@ void taskBeacon()
 
   /* Display onto serial monitor */
 
+  clearBuf();
   sprintf((char *)Buffer, "taskBeacon - amount of ACK: %d \r\n", ble_beacon_result.amount_of_ack);
   HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
 }
@@ -508,6 +525,14 @@ void clearBool(uint8_t *bool_carrier, uint8_t bool_place)
 uint8_t checkBool(uint8_t *bool_carrier, uint8_t bool_place)
 {
   return *bool_carrier & (0b1 << bool_place);
+}
+
+void clearBuf()
+{
+  for(uint8_t i = 0; i < sizeof(Buffer); i++)
+  {
+    Buffer[i] = 0;
+  }
 }
 /* USER CODE END 4 */
 

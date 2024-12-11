@@ -57,7 +57,7 @@ uint8_t send_ble_data(I2C_HandleTypeDef *hi2c1, ble_module_data_t *data)
   buf[11] = data->dev_gyro_y;
   buf[12] = data->dev_gyro_z;
 
-  ret = _ble_send(hi2c1, BLE_ADDRESS, buf, sizeof(buf), 10);
+  ret = _ble_send(hi2c1, BLE_ADDRESS, buf, sizeof(buf), 1000);
 
   if (ret == HAL_OK)
     return 1; // Good
@@ -66,12 +66,12 @@ uint8_t send_ble_data(I2C_HandleTypeDef *hi2c1, ble_module_data_t *data)
 }
 void receive_ble_data(I2C_HandleTypeDef *hi2c1, uint8_t* buffer, uint8_t size)
 {
-  _ble_receive(hi2c1, BLE_ADDRESS, buffer, size, 10);
+  _ble_receive(hi2c1, BLE_ADDRESS, buffer, size, 1000);
 }
 
 uint8_t ble_device_ready(I2C_HandleTypeDef *hi2c1)
 {
-  return _ble_slave_available(hi2c1, BLE_ADDRESS, 1, 1);
+  return _ble_slave_available(hi2c1, BLE_ADDRESS, 1, 1000);
 }
 
 ble_beacon_result_t beacon(I2C_HandleTypeDef *hi2c1, ble_module_data_t* ble_data)
@@ -155,7 +155,7 @@ ble_scan_result_t scan(I2C_HandleTypeDef *hi2c1, ble_module_data_t* ble_data)
   uint8_t received_data[12+1] = {0};
   do
   {
-    _delay_callback(1000);
+    _delay_callback(100);
     receive_ble_data(hi2c1, received_data, 12+1);
     i++;
   }
@@ -173,6 +173,6 @@ ble_scan_result_t scan(I2C_HandleTypeDef *hi2c1, ble_module_data_t* ble_data)
   ble_scan_data.dev_gyro_y = received_data[9];
   ble_scan_data.dev_gyro_z = received_data[10];
   ble_scan_data.rssi = received_data[11];
-  //TODO add gyroscope
+
   return ble_scan_data;
 }
