@@ -88,9 +88,10 @@ extern uint8_t bool_buffer;
 
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
-void test_code();
 
 /* USER CODE BEGIN EFP */
+void test_code();
+
 void taskReadBattery();
 void taskDetermineTasks();
 void taskSens();
