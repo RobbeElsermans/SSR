@@ -19,9 +19,11 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "adc.h"
+#include "usart.h"
 
 /* USER CODE BEGIN 0 */
-
+const float base = 0.000805664;
+const float division_factor = 1.198011114;//10000/(200000.0+10000.0);
 /* USER CODE END 0 */
 
 ADC_HandleTypeDef hadc1;
@@ -144,5 +146,23 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
 }
 
 /* USER CODE BEGIN 1 */
+
+float readVoltage(ADC_HandleTypeDef* adcHandle)
+{
+  HAL_ADC_Start(&hadc1);
+  HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+  uint32_t raw_adc_val = (HAL_ADC_GetValue(&hadc1));
+
+  //Convert
+  // reference / 2^12
+  // Voltage divider bridge
+  float voltage = (base * (float)raw_adc_val*(division_factor));
+
+  uint8_t Buffer[80] = {0};
+  sprintf((char *)Buffer, "readVoltage - raw:%d \r\n", raw_adc_val);
+  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
+
+  return voltage;
+}
 
 /* USER CODE END 1 */

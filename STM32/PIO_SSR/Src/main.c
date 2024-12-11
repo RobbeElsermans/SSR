@@ -26,8 +26,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "ltr_329.h"
 #include "ble_module.h"
+#include "ltr_329.h"
+#include "linebot.h"
+#include "gyro.h"
 #include "sht4x.h"
 
 // #include "lp.h"
@@ -66,7 +68,7 @@ uint8_t Buffer[140] = {0};
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+void clearBuf();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -78,8 +80,7 @@ void SystemClock_Config(void);
  * @brief  The application entry point.
  * @retval int
  */
-int main(void)
-{
+int main(void){
 
   /* USER CODE BEGIN 1 */
 
@@ -101,11 +102,18 @@ int main(void)
 
   /* ltr-386 lib function calls */
   // ltrDelayCallback(HAL_Delay);
-  //  ltrWakeCallback(wakeltrModule);
-  //  ltrSleepCallback(sleepltrModule);
+  
+  // ltrWakeCallback(wakeltrModule);
+  // ltrSleepCallback(sleepltrModule);
 
   /* sht40 lob function calls */
   // sht40DelayCallback(HAL_Delay);
+
+  /* LineBot lob function calls */
+  // lineBotDelayCallback(HAL_Delay);
+  
+  /* mpu6050 lob function calls */
+  gyroDelayCallback(HAL_Delay);
 
   /* USER CODE END Init */
 
@@ -130,31 +138,15 @@ int main(void)
 
   HAL_Delay(2000);
 
-  uint8_t Space[] = " - ";
-  uint8_t StartMSG[] = "Starting I2C Scanning: \r\n";
-  uint8_t EndMSG[] = "Done! \r\n\r\n";
+  I2C_Scan();
 
-  uint8_t i = 0, ret;
-  HAL_UART_Transmit(&huart2, StartMSG, sizeof(StartMSG), 10000);
-  for (i = 0; i < 128; i++)
-  {
-    ret = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i << 1), 3, 5);
-    if (ret != HAL_OK) /* No ACK Received At That Address */
-    {
-      HAL_UART_Transmit(&huart2, Space, sizeof(Space), 10000);
-    }
-    else if (ret == HAL_OK)
-    {
-      sprintf((char *)Buffer, "0x%X", i);
-      HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 10000);
-    }
+  char Buffer[11] = {0};
+  sprintf(Buffer, "Her Am I\r\n");
+  serial_print(Buffer, sizeof(Buffer), 1000);
+  
+  while(1) {
+    test_code();
   }
-  HAL_UART_Transmit(&huart2, EndMSG, sizeof(EndMSG), 10000);
-
-  // while(1);
-
-  sprintf((char *)Buffer, "Her Am I\r\n");
-  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
 
   /* USER CODE END 2 */
 
@@ -163,7 +155,7 @@ int main(void)
 
   while (1)
   {
-    void taskReadBattery(); // Read the ADC voltage
+    taskReadBattery(); // Read the ADC voltage
 
     // Determine path of execution based on voltage (energy) available
     taskDetermineTasks();
@@ -225,6 +217,13 @@ int main(void)
   /* USER CODE END 3 */
 }
 
+void test_code() {
+  char Buffer[16] = {0};
+  sprintf(Buffer, "Test code\r\n");
+  serial_print(Buffer, sizeof(Buffer), 1000);
+
+  
+}
 /**
  * @brief System Clock Configuration
  * @retval None
@@ -270,23 +269,60 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
+void test_code() {
+  char Buffer[16] = {0};
+  sprintf(Buffer, "Test code\r\n");
+  serial_print(&Buffer, sizeof(Buffer));
+  HAL_Delay(100);
+
+  uint8_t who_am_i;
+  testMPU6050(&who_am_i);
+  char Buffer2[17] = {0};
+  sprintf(Buffer2, "Gyro Address: %02X\n", who_am_i);
+  serial_print(&Buffer, sizeof(Buffer));
+  HAL_Delay(100);
+
+  setMPU6050();
+  HAL_Delay(100);
+
+  uint16_t gryo_x, gryo_y, gryo_z;
+  readGyroscope(&gryo_x, &gryo_y, &gryo_z);
+  char Buffer3[64] = {0};
+  sprintf(Buffer3, "Gyro X: %d | Gyro Y: %d | Gyro Z: %d\n", gryo_x, gryo_y, gryo_z);
+  serial_print(&Buffer, sizeof(Buffer));
+  HAL_Delay(1000); // Delay for the next measurement
+}
+
 void taskReadBattery()
 {
-  // TODO
+  ssr_data.dev_voltage = (readVoltage(&hadc1))*1000.0; //COnvert to mV and save only int
 
-  // do something
-
-  // ssr_data.dev_voltage = something
+  clearBuf();
+  sprintf((char *)Buffer, "taskReadBattery - mV: %d \r\n", ssr_data.dev_voltage);
+  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), HAL_MAX_DELAY);
 }
 
 void taskDetermineTasks()
 {
   // Do this based on the voltage value.
 
+  if (ssr_data.dev_voltage >= 2.6) //Fully charged
+  {
+    bool_buffer = 0b10111111; //Do all tasks
+  }
+  else if (ssr_data.dev_voltage < 2.6 && ssr_data.dev_voltage >= 2.4)
+  {
+    bool_buffer = 0b10011111; //Do all tasks
+  }
+  else if (ssr_data.dev_voltage < 2.4 && ssr_data.dev_voltage >= 2.3)
+  {
+    
+  }
+
   // Here, the boolean buffer **bool_buffer** is used with the defines of TASK described in main.h.
   // bool_buffer = 0b010000011; // Set DEEP_SLEEP, STORE, SENS,
   //  bool_buffer = 0b10010001; // Set SLEEP, BEACON, SENS
-  bool_buffer = 0b10001001; // Set SLEEP, SCAN, SENS
+  bool_buffer = 0b00000000; // Set SLEEP, SCAN, SENS
 }
 
 void taskSens()
@@ -315,8 +351,9 @@ void taskSens()
   ssr_data.env_lux = (uint16_t)(lux);
 
   /* Display onto serial monitor */
-  sprintf((char *)Buffer, "taskSens - lux: %d, t: %d, h: %d \r\n", ssr_data.env_lux, ssr_data.env_temperature, ssr_data.env_humidity);
-  HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
+  clearBuf();
+  sprintf(Buffer, "taskSens - lux: %d, t: %d, h: %d \r\n", ssr_data.env_lux, ssr_data.env_temperature, ssr_data.env_humidity);
+  serial_print(&Buffer, sizeof(Buffer), HAL_MAX_DELAY);
 }
 
 void taskStore()
@@ -345,16 +382,18 @@ void taskScan()
   ble_data.dev_gyro_y = ssr_data.gyro_y;               // Range from -60 to 60 (val*3=°)
   ble_data.dev_gyro_z = ssr_data.gyro_z;               // Range from -60 to 60 (val*3=°)
 
-  sprintf((char *)Buffer, "taskBeacon - start scan %d \r\n", ble_data.air_time);
+  clearBuf();
+  sprintf((char *)Buffer, "taskScan - start scan %d \r\n", ble_data.air_time);
   HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
 
   ble_scan_result = scan(&hi2c1, &ble_data);
 
   /* Display onto serial monitor */
+  clearBuf();
   sprintf((char *)Buffer,
           "taskScan - \r\n ssr_id: %d\r\n temp: %d\r\n h: %d\r\n l: %d\r\n x: %d\r\n y: %d\r\n z: %d\r\n vcc: %d\r\n rssi: %d\r\n",
           ble_scan_result.ssr_id, ble_scan_result.env_temperature, ble_scan_result.env_humidity, ble_scan_result.env_lux, ble_scan_result.dev_voltage, ble_scan_result.dev_gyro_x, ble_scan_result.dev_gyro_y, ble_scan_result.dev_gyro_z, ble_scan_result.rssi);
-  HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1);
+  HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
 }
 
 void taskBeacon()
@@ -373,6 +412,7 @@ void taskBeacon()
   ble_data.dev_gyro_y = ssr_data.gyro_y;               // Range from -60 to 60 (val*3=°)
   ble_data.dev_gyro_z = ssr_data.gyro_z;               // Range from -60 to 60 (val*3=°)
 
+  clearBuf();
   sprintf((char *)Buffer, "taskBeacon - start beacon %d \r\n", ble_data.air_time);
   HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
 
@@ -380,6 +420,7 @@ void taskBeacon()
 
   /* Display onto serial monitor */
 
+  clearBuf();
   sprintf((char *)Buffer, "taskBeacon - amount of ACK: %d \r\n", ble_beacon_result.amount_of_ack);
   HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
 }
@@ -508,6 +549,14 @@ void clearBool(uint8_t *bool_carrier, uint8_t bool_place)
 uint8_t checkBool(uint8_t *bool_carrier, uint8_t bool_place)
 {
   return *bool_carrier & (0b1 << bool_place);
+}
+
+void clearBuf()
+{
+  for(uint8_t i = 0; i < sizeof(Buffer); i++)
+  {
+    Buffer[i] = 0;
+  }
 }
 /* USER CODE END 4 */
 
