@@ -11,7 +11,7 @@ void testMPU6050() {
   whoAmI(&who_am_i);
   // char Buffer2[18] = {0};
   // sprintf(Buffer2, "Gyro Address: %02X\n", who_am_i);
-  // serial_print(Buffer2, sizeof(Buffer2), HAL_MAX_DELAY);
+  // serial_print(Buffer2, HAL_MAX_DELAY);
   HAL_Delay(100);
 
   setMPU6050();
@@ -21,7 +21,7 @@ void testMPU6050() {
   readGyroscope(&gryo_x, &gryo_y, &gryo_z);
   // char Buffer3[64] = {0};
   // sprintf(Buffer3, "Gyro X: %d | Gyro Y: %d | Gyro Z: %d\n", gryo_x, gryo_y, gryo_z);
-  // serial_print(Buffer3, sizeof(Buffer3), HAL_MAX_DELAY);
+  // serial_print(Buffer3, HAL_MAX_DELAY);
   HAL_Delay(1000); // Delay for the next measurement
 }
 
