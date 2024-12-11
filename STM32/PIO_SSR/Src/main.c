@@ -137,9 +137,9 @@ int main(void)
 
   I2C_Scan();
 
-  char Buffer[10] = {0};
+  char Buffer[11] = {0};
   sprintf(Buffer, "Her Am I\r\n");
-  serial_print(&Buffer, sizeof(Buffer));
+  serial_print(Buffer, sizeof(Buffer), 1000);
   
   while(1) {
     test_code();
@@ -214,6 +214,13 @@ int main(void)
   /* USER CODE END 3 */
 }
 
+void test_code() {
+  char Buffer[16] = {0};
+  sprintf(Buffer, "Test code\r\n");
+  serial_print(Buffer, sizeof(Buffer), 1000);
+
+  
+}
 /**
   * @brief System Clock Configuration
   * @retval None
