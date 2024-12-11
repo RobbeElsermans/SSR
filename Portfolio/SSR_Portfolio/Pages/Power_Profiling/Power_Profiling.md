@@ -70,6 +70,15 @@ while(1)
 
 ##### standby mode
 ![STM32 stop 2 mode profile](../../Images/Power_profiling/STM32_Standby_mode.png)
+#### better sandby mode (Without load of peripherals)
+![[Pasted image 20241211160438.png]]
+Lowest point = 300nA
+Peak = 11mA
+SemiPeak =8.8mA
+
+
+
+
 There can be seen that the STM32 needs to reinitialise in full. This can be seen by the short duration before the led goes on. This phenomena doesn't occur in the other graphs.
 ##### Conclusion
 It can be concluded that we need to replace any delay in our code by the stop 2 mode. This to ensure best power reduction while maintaining the RAM so our code can continue its work when we wake it up to continue.
