@@ -1,8 +1,11 @@
 # Prerequisites
 *.d
 
+Joule_Scope/*
+
 # obsidian
 .obsidian/*
+Portfolio/SSR_Portfolio/.obsidian
 
 # Object files
 *.o

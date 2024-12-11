@@ -33,8 +33,14 @@ consumption mode.
 A I2C scanner in STM32
 https://deepbluembedded.com/stm32-i2c-scanner-hal-code-example/
 
-Writing a value through BLE with a phone -> does not work. Need to install `Seeed nRF52 mbed-enabled Boards`.
+Writing a value through BLE with a phone -> does not work. Need to install `Seeed nRF52 mbed-enabled Boards` in order to make it work.
 https://how2electronics.com/send-receive-data-to-mobile-app-with-xiao-ble-nrf52840-sense/
 
-Tutorial of using the SDK from nordic
+Tutorial of using the SDK from nordic -> not needed
 https://mynerdyprojects.com/2021/01/03/nrf52840-examples-part-2-software-and-setup/
+
+STM32 IOC to PIO porter
+https://github.com/ussserrr/stm32pio
+
+FREERTOS STM32 example
+https://github.com/maxgerhardt/pio-stm32h7-stm32cube-freertos
