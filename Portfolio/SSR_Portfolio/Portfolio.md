@@ -122,7 +122,8 @@ Measuring capacitor:
 
 New plan : Use status 1,2,3 pins to see if we are running out of power
 ![[Pasted image 20241204133049.png]] 
-
+### Powering the STM32 Nucleo with the H.M.
+![[Pasted image 20241210160716.png]]
 ### Decision making
 ## UART Communication with LoRa-Module
 For the LoRa-Module, we utilize the Wio-e5 mini board.

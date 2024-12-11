@@ -1,4 +1,5 @@
 #include "ble_module.h"
+#include "usart.h"
 
 delay_callback_t _delay_callback;
 
@@ -56,7 +57,7 @@ uint8_t send_ble_data(I2C_HandleTypeDef *hi2c1, ble_module_data_t *data)
   buf[11] = data->dev_gyro_y;
   buf[12] = data->dev_gyro_z;
 
-  ret = _ble_send(hi2c1, BLE_ADDRESS, buf, sizeof(buf), 10);
+  ret = _ble_send(hi2c1, BLE_ADDRESS, buf, sizeof(buf), 1000);
 
   if (ret == HAL_OK)
     return 1; // Good
@@ -65,12 +66,12 @@ uint8_t send_ble_data(I2C_HandleTypeDef *hi2c1, ble_module_data_t *data)
 }
 void receive_ble_data(I2C_HandleTypeDef *hi2c1, uint8_t* buffer, uint8_t size)
 {
-  _ble_receive(hi2c1, BLE_ADDRESS, buffer, size, 10);
+  _ble_receive(hi2c1, BLE_ADDRESS, buffer, size, 1000);
 }
 
 uint8_t ble_device_ready(I2C_HandleTypeDef *hi2c1)
 {
-  return _ble_slave_available(hi2c1, BLE_ADDRESS, 1, 1);
+  return _ble_slave_available(hi2c1, BLE_ADDRESS, 1, 1000);
 }
 
 ble_beacon_result_t beacon(I2C_HandleTypeDef *hi2c1, ble_module_data_t* ble_data)
@@ -88,23 +89,44 @@ ble_beacon_result_t beacon(I2C_HandleTypeDef *hi2c1, ble_module_data_t* ble_data
   // Send out a value
   send_ble_data(hi2c1, ble_data);
 
+
+  uint8_t Buffer[60] = {0};
+  sprintf((char *)Buffer, "beacon - before %d \r\n", ble_data->air_time * 100+1000);
+  HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
+
   //Sleep for air_time
   //half_sleep(ble_data.air_time * 100);
-  _delay_callback(ble_data->air_time * 100);
+  _delay_callback(ble_data->air_time * 100+1000);
 
+  sprintf((char *)Buffer, "beacon - after \r\n");
+  HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
+
+  uint8_t i = 0;
   //read scan data
   uint8_t received_data[2] = {0};
   do
   {
     //half_sleep(100);
-    _delay_callback(100);
+    _delay_callback(1000);
     receive_ble_data(hi2c1, received_data, 2);
+
+    sprintf((char *)Buffer, "beacon - scanning %d \r\n", i);
+    HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
+
+    i++;
   }
-  while((received_data[0] + received_data[1]) != 255);
+  while((received_data[0] + received_data[1]) != 255 && i < 10);
   //Make sure the received value is correct based on the second value
 
   //Set the value in our own data struct
-  beacon_result.amount_of_ack = received_data[0];
+  sprintf((char *)Buffer, "beacon - End scanning %d \r\n", received_data[0]);
+  HAL_UART_Transmit(&huart2, (uint8_t *)Buffer, sizeof(Buffer), 1000);
+
+  if(i<10)
+    beacon_result.amount_of_ack = received_data[0];
+  else 
+    beacon_result.amount_of_ack = 0;
+
   // uint8_t Buffer[10] = {0};
   // sprintf(Buffer, "%d\r\n", received_data[0]);
   // HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
@@ -126,21 +148,22 @@ ble_scan_result_t scan(I2C_HandleTypeDef *hi2c1, ble_module_data_t* ble_data)
   // Send out the BLE data value
   send_ble_data(hi2c1, ble_data);
 
-  _delay_callback(ble_data->air_time * 100);
+  _delay_callback(ble_data->air_time * 100 + 1000);
 
   //read scan data
+  uint8_t i = 0;
   uint8_t received_data[12+1] = {0};
   do
   {
-    //half_sleep(100);
     _delay_callback(100);
     receive_ble_data(hi2c1, received_data, 12+1);
+    i++;
   }
-  while(received_data[0] + received_data[12] == 255);
+  while(received_data[0] + received_data[12] == 255 && i < 10);
   //TODO add gyroscope
 
   //If all are 0 except for received_data[12], then no beacon found
-
+  
   ble_scan_data.ssr_id = received_data[0];
   ble_scan_data.env_temperature = received_data[1]>>8 | received_data[2];
   ble_scan_data.env_humidity = received_data[3];
@@ -150,6 +173,6 @@ ble_scan_result_t scan(I2C_HandleTypeDef *hi2c1, ble_module_data_t* ble_data)
   ble_scan_data.dev_gyro_y = received_data[9];
   ble_scan_data.dev_gyro_z = received_data[10];
   ble_scan_data.rssi = received_data[11];
-  //TODO add gyroscope
+
   return ble_scan_data;
 }

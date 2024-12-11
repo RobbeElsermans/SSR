@@ -21,6 +21,9 @@ int8_t gyro_z; // Range from -60 to 60 (val*3=°)
 ```
 
 ## EEPROM (or flash)
+ >This was an attempt to use flash as EEPROM emulator. Fortunately, Flash has different needs then EEPROM and can not be used the same as ordinary EEPROM (due to banks etc.). Therefore, this approach is abandoned because time was short. 
+
+
 To enable a measurement and keep the value in our system when we enter a deep sleep mode, we need a certain storage for these values. This MCU has a flash region up to 128KB flash. 
 
 The default range of the flash in this MCU starts from $0x0800 0000$ and ends on $0x0802 0000$.
