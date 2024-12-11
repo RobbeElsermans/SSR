@@ -183,10 +183,13 @@ void setup()
       break;
     }
   }
-
+  
+  time_left = i2c_data.air_time*100 - (millis()-timer);
   //Wait for I2C read from master
   if (time_left > 0)
     time_left += TIMEOUT_RECEIVE_WINDOW; //Make sure the STM32 waits evenly
+
+  Serial.printf("time left 2: %d", time_left);
   //time_left = i2c_data.air_time*100 - (millis()-timer) + TIMEOUT_RECEIVE_WINDOW;
   device_is_done = true;
   timer = millis();
@@ -422,7 +425,7 @@ void request_event()
     {
       if(received_beacon_data[0].ssr_id != 0x00)
       {
-        //For now, we only transpit the first beacon found.
+        //For now, we only transmit the first beacon found.
         //Later optimize this so we can transmit multiple beacons that are found
         
         Wire.write(received_beacon_data[0].ssr_id);
@@ -436,17 +439,20 @@ void request_event()
         Wire.write(received_beacon_data[0].dev_gyro_x);
         Wire.write(received_beacon_data[0].dev_gyro_y);
         Wire.write(received_beacon_data[0].dev_gyro_z);
-        Wire.write(received_beacon_data[0].rssi - 255);
-        Wire.write(received_beacon_data[0].ssr_id - 255);
+        Wire.write(received_beacon_data[0].rssi);
+        
+        Wire.write(255-received_beacon_data[0].ssr_id);
         Serial.printf("write mode 1: %d\r\n", received_beacon_data[0].ssr_id);
+
+        //deep_sleep();
       }
       else
       {
-        for(uint8_t i = 0; i < 9; i++)
+        for(uint8_t i = 0; i < 12; i++)
         {
             Wire.write(0);
         }
-        Wire.write(255);
+        Wire.write(0);
       }
     }
     else // in beacon mode

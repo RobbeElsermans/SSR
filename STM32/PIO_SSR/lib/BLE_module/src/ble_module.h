@@ -4,6 +4,8 @@
 #include "stm32l4xx_hal.h"
 #include "stdint.h"
 
+#define DEBUG
+
 #define BLE_ADDRESS (0x12 << 1) //The devices' address shifted so that the R/W bit can be set.
 #define BLE_DATA_LENGTH 13 //Amount of bytes present in the struct
 

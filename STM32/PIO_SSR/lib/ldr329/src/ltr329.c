@@ -1,4 +1,4 @@
-#include "ltr_329_NOK.h"
+#include "ltr329.h"
 #include "usart.h"
 
 delay_callback_t _delay_callback;
@@ -36,7 +36,7 @@ void ltr329Init(I2C_HandleTypeDef* i2c_obj)
   data[1] = 0x13; // 200ms integration, 500ms measurement rate
   HAL_I2C_Master_Transmit(i2c_obj, LTR329_I2C_ADDR, data, 2, HAL_MAX_DELAY);
 
-  _delay_callback(100); // Initial startup time
+  _delay_callback(200); // Initial startup time
 }
 
 HAL_StatusTypeDef ltr329ReadALS(I2C_HandleTypeDef* i2c_obj, uint8_t channel, uint16_t* lux)
@@ -62,51 +62,48 @@ HAL_StatusTypeDef ltr329ReadALS(I2C_HandleTypeDef* i2c_obj, uint8_t channel, uin
     return 0; // Invalid channel
   }
 
-  if (_delay_callback) _delay_callback(4000);
+  // if (_delay_callback) _delay_callback(4000);
 
   // Read 2 bytes (low and high) from the sensor
   HAL_StatusTypeDef ret;
   ret = HAL_I2C_Master_Transmit(i2c_obj, LTR329_I2C_ADDR, &regAddr, 1, HAL_MAX_DELAY);
   if(ret != HAL_OK) return ret;
 
-  //if (_delay_callback) _delay_callback(10);
+  if (_delay_callback) _delay_callback(10);
   //if (_delay_callback) _delay_callback(4000);
 
   HAL_I2C_Master_Receive(i2c_obj, LTR329_I2C_ADDR, &rawData0, 1, HAL_MAX_DELAY);
   if(ret != HAL_OK) return ret;
 
-  //if (_delay_callback) _delay_callback(10);
+  if (_delay_callback) _delay_callback(10);
   //if (_delay_callback) _delay_callback(4000);
 
   regAddr++;
   HAL_I2C_Master_Transmit(i2c_obj, LTR329_I2C_ADDR, &regAddr, 1, HAL_MAX_DELAY);
   if(ret != HAL_OK) return ret;
 
-  //if (_delay_callback) _delay_callback(10);
+  if (_delay_callback) _delay_callback(10);
   //if (_delay_callback) _delay_callback(4000);
 
   HAL_I2C_Master_Receive(i2c_obj, LTR329_I2C_ADDR, &rawData1, 1, HAL_MAX_DELAY);
   if(ret != HAL_OK) return ret;
 
-  uint16_t data = (rawData1 << 8) | rawData0; // Combine low and high bytes
   *lux = (rawData1 << 8) | rawData0; // Combine low and high bytes
 
-  uint8_t Buffer[80] = {0};
-  sprintf(Buffer, "taskSens - lux: %d\r\n", data);
-  serial_print(Buffer);
-  //_delay_callback(8000);
   return ret;
 }
 
 HAL_StatusTypeDef ltr329GetLuxAll(I2C_HandleTypeDef* i2c_obj, uint16_t* lux)
 {
     //Accordingly to datasheet, read them both.
+    ltr329ReadALS(i2c_obj, 0, lux); // Read channel 0 data
     return ltr329ReadALS(i2c_obj, 1, lux); // Read channel 1 data
 }
 
 HAL_StatusTypeDef ltr329GetLuxIR(I2C_HandleTypeDef* i2c_obj, uint16_t* lux)
 {
     //Accordingly to datasheet, read them both.
+    ltr329ReadALS(i2c_obj, 1, lux);
     return ltr329ReadALS(i2c_obj, 0, lux); // Read channel 0 data
 }
 
@@ -121,7 +118,7 @@ HAL_StatusTypeDef ltr329Sleep(I2C_HandleTypeDef* hi2c1)
   return HAL_I2C_Master_Transmit(hi2c1, LTR329_I2C_ADDR, data, 2, HAL_MAX_DELAY);
 }
 
-HAL_StatusTypeDef ltr329WakeUp(I2C_HandleTypeDef* hi2c1)
+void ltr329WakeUp(I2C_HandleTypeDef* hi2c1)
 {
   uint8_t data[2];
 

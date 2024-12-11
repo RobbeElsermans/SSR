@@ -1,6 +1,7 @@
 #include "Wire.h"
 
 #define I2C_DEV_ADDR 0x12
+byte temp = 0;
 
 uint32_t i = 0;
 
@@ -16,15 +17,16 @@ void loop() {
   digitalWrite(13, HIGH);
   delay(100);
   digitalWrite(13, LOW);
-  delay(2000);
+  delay(250);
+  
 
   //Write message to the slave
   Wire.beginTransmission(I2C_DEV_ADDR);
   Wire.write(0);
   Wire.write(0x21);
-  Wire.write(100); //10 sec scan time
+  Wire.write(100); //10 sec beacon time
   Wire.write(0);
-  Wire.write(20);
+  Wire.write(temp++);
   Wire.write(0);
   Wire.write(0);
   Wire.write(21);
@@ -36,8 +38,7 @@ void loop() {
   uint8_t error = Wire.endTransmission(true);
   Serial.print("endTransmission");
 
-  delay(10000 + 200);
-
+  delay(10000 + 1000);
 
   //Read all scan bytes from the slave
   uint8_t bytesReceived = Wire.requestFrom(I2C_DEV_ADDR, 10);

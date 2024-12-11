@@ -44,9 +44,9 @@ struct ssr_data
   uint8_t   env_humidity;    // Range from -0-100%
   uint16_t  env_lux;         // Range from 0 to 1000
   uint16_t  dev_voltage;     // Range from 0-6.5535V (val/10000=V) (val/10=mV)
-  int8_t    gyro_x;          // Range from -125 to 125 (val*2=°)
-  int8_t    gyro_y;          // Range from -125 to 125 (val*2=°)
-  int8_t    gyro_z;          // Range from -125 to 125 (val*2=°)
+  int8_t    dev_gyro_x;      // Range from -125 to 125 (val*2=°)
+  int8_t    dev_gyro_y;      // Range from -125 to 125 (val*2=°)
+  int8_t    dev_gyro_z;      // Range from -125 to 125 (val*2=°)
 };
 typedef struct ssr_data ssr_data_t;
 extern ssr_data_t ssr_data;

@@ -1,5 +1,4 @@
 #include "ltr_329.h"
-#include "usart.h"
 
 void LTR329_Init(I2C_HandleTypeDef* hi2c1)
 {
@@ -16,7 +15,7 @@ void LTR329_Init(I2C_HandleTypeDef* hi2c1)
   data[0] = LTR329_ALS_MEAS_RATE;
   data[1] = 0x13; // 200ms integration, 500ms measurement rate
   HAL_I2C_Master_Transmit(hi2c1, LTR329_I2C_ADDR, data, 2, HAL_MAX_DELAY);
-  HAL_Delay(100); // Initial startup time
+  HAL_Delay(200); // Initial startup time
 }
 
 uint16_t LTR329_ReadALS(I2C_HandleTypeDef* hi2c1, uint8_t channel)
@@ -51,11 +50,6 @@ uint16_t LTR329_ReadALS(I2C_HandleTypeDef* hi2c1, uint8_t channel)
   HAL_I2C_Master_Receive(hi2c1, LTR329_I2C_ADDR, &rawData[1], 1, HAL_MAX_DELAY);
 
   data = (rawData[1] << 8) | rawData[0]; // Combine low and high bytes
-
-  // uint8_t Buffer[60] = {0};
-  // sprintf(Buffer, "taskSens - lux: %d\r\n", data);
-  // HAL_UART_Transmit(&huart2, Buffer, sizeof(Buffer), 1000);
-
   return data;
 }
 
@@ -63,7 +57,7 @@ uint16_t GetLuxAll(I2C_HandleTypeDef* hi2c1)
 {
     //Accordingly to datasheet, read them both.
     uint16_t ch1 = LTR329_ReadALS(hi2c1, 1); // Read channel 1 data
-    uint16_t ch0 = LTR329_ReadALS(hi2c1, 0); // Read channel 0 data
+    LTR329_ReadALS(hi2c1, 0); // Read channel 0 data
 
     return ch1;
 }
@@ -71,7 +65,7 @@ uint16_t GetLuxAll(I2C_HandleTypeDef* hi2c1)
 uint16_t GetLuxIR(I2C_HandleTypeDef* hi2c1)
 {
     //Accordingly to datasheet, read them both.
-    uint16_t ch1 = LTR329_ReadALS(hi2c1, 1); // Read channel 1 data
+    LTR329_ReadALS(hi2c1, 1); // Read channel 1 data
     uint16_t ch0 = LTR329_ReadALS(hi2c1, 0); // Read channel 0 data
 
     return ch0;

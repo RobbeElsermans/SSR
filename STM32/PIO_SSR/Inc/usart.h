@@ -54,4 +54,3 @@ void serial_print(char* buffer);
 #endif
 
 #endif /* __USART_H__ */
-

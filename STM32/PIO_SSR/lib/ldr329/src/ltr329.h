@@ -33,7 +33,7 @@ HAL_StatusTypeDef ltr329ReadALS(I2C_HandleTypeDef* i2c_obj, uint8_t channel, uin
 HAL_StatusTypeDef ltr329GetLuxAll(I2C_HandleTypeDef* i2c_obj, uint16_t* lux);
 HAL_StatusTypeDef ltr329GetLuxIR(I2C_HandleTypeDef* i2c_obj, uint16_t* lux);
 HAL_StatusTypeDef ltr329Sleep(I2C_HandleTypeDef* hi2c1);
-HAL_StatusTypeDef ltr329WakeUp(I2C_HandleTypeDef* hi2c1);
+void ltr329WakeUp(I2C_HandleTypeDef* hi2c1);
 // void ltrSleep();
 
 #endif
