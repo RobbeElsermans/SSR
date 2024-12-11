@@ -77,7 +77,7 @@ extern uint8_t bool_buffer;
 #define TASK_DEEP_SLEEP 6
 #define TASK_LIGHT_SLEEP 7
 
-#define SSR_ID 0x10
+#define SSR_ID 0x11
 
 /* USER CODE END EC */
 

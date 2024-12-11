@@ -34,7 +34,7 @@
 #define MINOR_LSB 28
 #define RSSI 30
 
-#define TIMEOUT_RECEIVE_WINDOW 2000
+#define TIMEOUT_RECEIVE_WINDOW 4000
 
 // "nRF Connect" app can be used to detect beacon
 uint8_t beaconUuid[16] =
@@ -129,8 +129,8 @@ void setup()
   Wire.onRequest(request_event);
 
   // Uncomment to blocking wait for Serial connection
-  while ( !Serial ) delay(10);
-
+  //while ( !Serial ) delay(10);
+  //delay(1000);
   Serial.println("Wait for data");
   while(!received_data); //Wait for I2C transfer
   Serial.println("data received! ");
