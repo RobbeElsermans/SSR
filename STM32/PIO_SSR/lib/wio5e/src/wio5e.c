@@ -1,19 +1,25 @@
 #include "wio5e.h"
 
-uint8_t delay_time_lora = 1;
-delay_callback_t _delay_callback;
-void loraDelayCallback(delay_callback_t dc_fp) {
-  _delay_callback = dc_fp;
-}
-
 char command[64] = {0};
 char devAddr[] = {"26:0B:2A:9A"};
 char appsKey[] = {"2E4BBC85B2AAB5B31FCC5BB0A16B07BC"};
 char nwksKey[] = {"28D5A8BCD4F80E9DFE8640F5B7072C49"};
 char devEui [] = {"70:B3:D5:7E:D0:06:C5:CD"};
 
-void testLoRa() { 
+void testLoRa() {
+  setupLoRa();
+  ssr_data_t data;
 
+  data.seq_number = 100;      // Range from 0 to 511 (8 bits total usage)
+  data.env_temperature = 300; // Range from -327.68 to 327.67 °C (val/100=°C)
+  data.env_humidity = 37;    // Range from -0-100%
+  data.env_lux = 448;         // Range from 0 to 1000
+  data.dev_voltage = 6245;     // Range from 0-6.5535V (val/10000=V) (val/10=mV)
+  data.dev_gyro_x = 21;          // Range from -250 to 250 (val*2=°)
+  data.dev_gyro_y = 21;          // Range from -250 to 250 (val*2=°)
+  data.dev_gyro_z = 21;          // Range from -250 to 250 (val*2=°)
+
+  send_data_over_lora(data);
 }
 
 void setupLoRa() {
@@ -51,7 +57,9 @@ void send_data_over_lora(ssr_data_t data) {
     sprintf(command, "AT+MSGHEX=\"%04X%04X%02X%04X%04X%02X%02X%02X\"\r\n", 
         data.seq_number, data.env_temperature, data.env_humidity, data.env_lux,
         data.dev_voltage, data.dev_gyro_x, data.dev_gyro_y, data.dev_gyro_z);
-    // serial_print(command);
+    #ifdef DEBUG
+    serial_print(command);
+    #endif
     write_read_command(command, devEui);
     memset(command,0,strlen(command));
     
@@ -65,6 +73,7 @@ void write_read_command(char* command, char* check) {
     char r_buf[100] = {0};
     HAL_UART_Receive(&huart1, (uint8_t*) r_buf, sizeof(r_buf), 1000);
 
+    #ifdef DEBUG
     // Check reception
     if (strstr(r_buf, check) != NULL) {
         serial_print(r_buf);
@@ -75,4 +84,5 @@ void write_read_command(char* command, char* check) {
         serial_print("\tCheck:\t\t");   serial_print(check);    serial_print("\r\n");
         serial_print("\tOutput:\t\t");  serial_print(r_buf);    serial_print("\r\n");
     }
+    #endif
 }

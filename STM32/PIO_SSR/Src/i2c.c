@@ -140,54 +140,77 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)
 /* USER CODE BEGIN 1 */
 
 void I2C_Scan() {
+  #ifdef DEBUG
   char Buffer[25] = {0};
   char Space[] = " - ";
   char StartMSG[] = "Starting I2C Scanning: \r\n";
   char EndMSG[] = "Done! \r\n\r\n";
+  #endif
 
   uint8_t i = 0, ret;
+
+  #ifdef DEBUG
   serial_print(StartMSG);
+  #endif
   for (i = 0; i < 128; i++) {
     ret = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i << 1), 3, 5);
     if (ret != HAL_OK) { /* No ACK Received At That Address */
+      Error_Handler();
+      #ifdef DEBUG
       serial_print(Space);
+      #endif
     } else if (ret == HAL_OK) {
+      #ifdef DEBUG
       sprintf(Buffer, "0x%X", i);
       serial_print(Buffer);
+      #endif
     }
   }
+  #ifdef DEBUG
   serial_print(EndMSG);
+  #endif
 }
 
 void i2c_write(uint8_t address, uint8_t* data_tx, uint8_t tx_size) {
   ret = HAL_I2C_Master_Transmit(&hi2c1, address << 1, data_tx, tx_size, 1000);
   if (ret != HAL_OK) {
+    Error_Handler();
+    #ifdef DEBUG
     char Buffer[8] = {"Error\r\n"};
     serial_print(Buffer);
     HAL_Delay(1000);
+    #endif
   }
 }
 
 void i2c_write_read(uint8_t address, uint8_t* data_tx, uint8_t tx_size, uint8_t* data_rx, uint8_t rx_size) {
   ret = HAL_I2C_Master_Transmit(&hi2c1, address << 1, data_tx, tx_size, 1000);
   if (ret != HAL_OK) {
+    Error_Handler();
+    #ifdef DEBUG
     char Buffer[8] = {"Error\r\n"};
     serial_print(Buffer);
     HAL_Delay(1000);
+    #endif
   } else {
     // read bytes
     //HAL_Delay(1000);
     ret = HAL_I2C_Master_Receive(&hi2c1, address << 1, data_rx, rx_size, 1000);
     if (ret != HAL_OK) {
+      Error_Handler();
+      #ifdef DEBUG
       char Buffer[8] = {"Error\r\n"};
       serial_print(Buffer);
       HAL_Delay(1000);
+      #endif
     } else {
-      // for (int i = 0; i < rx_size; i++) {
-      //   char Buffer[16] = {0};
-      //   sprintf(Buffer, "data_rx[%i] = %02X\n", i, data_rx[i]);
-      //   serial_print(&Buffer);
-      // }
+      #ifdef DEBUG
+      for (int i = 0; i < rx_size; i++) {
+        char Buffer[16] = {0};
+        sprintf(Buffer, "data_rx[%i] = %02X\n", i, data_rx[i]);
+        serial_print(&Buffer);
+      }
+      #endif
     }
   }
 }

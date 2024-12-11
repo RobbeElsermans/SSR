@@ -10,10 +10,6 @@ extern "C" {
 #include "stm32l4xx_hal.h"
 #include "usart.h"
 
-typedef void (*delay_callback_t)(uint32_t time);
-void loraDelayCallback(delay_callback_t dc_fp);
-extern delay_callback_t _delay_callback;
-
 // Methods
 void testLoRa();
 void setupLoRa();

@@ -272,20 +272,6 @@ void test_code() {
   char Buffer[16] = {0};
   sprintf(Buffer, "Test code\r\n");
   serial_print(Buffer);
-
-  setupLoRa();
-  ssr_data_t data;
-
-  data.seq_number = 100;      // Range from 0 to 511 (8 bits total usage)
-  data.env_temperature = 300; // Range from -327.68 to 327.67 °C (val/100=°C)
-  data.env_humidity = 37;    // Range from -0-100%
-  data.env_lux = 448;         // Range from 0 to 1000
-  data.dev_voltage = 6245;     // Range from 0-6.5535V (val/10000=V) (val/10=mV)
-  data.dev_gyro_x = 21;          // Range from -250 to 250 (val*2=°)
-  data.dev_gyro_y = 21;          // Range from -250 to 250 (val*2=°)
-  data.dev_gyro_z = 21;          // Range from -250 to 250 (val*2=°)
-
-  send_data_over_lora(data);
 }
 
 void taskReadBattery()
