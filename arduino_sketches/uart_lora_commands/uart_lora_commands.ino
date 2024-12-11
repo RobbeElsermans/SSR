@@ -57,7 +57,7 @@ void sendSettings() {
   delayMicroseconds(10);
   sendCommand("AT+KEY=NWKSKEY,\""+NWKSKEY+"\"");
   delayMicroseconds(10);
-  sendCommand("AT+id=DevEui,\""+DevEui+"\"");
+  sendCommand("AT+ID=DevEui,\""+DevEui+"\"");
   delayMicroseconds(10);
   sendCommand("AT+ID=AppEui,\""+DevEui+"\"");
   delayMicroseconds(10);
