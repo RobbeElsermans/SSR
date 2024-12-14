@@ -7,16 +7,16 @@ By Adam Hejduk, Robbe Elsermans, and Thomas Kramp
 As humanities interest in Mars grows, an understanding of its weather is needed. One of the greatest challenges that the planet provides are the frequent dust storms.
 This project will try to monitor the weather phenomenon (such as temperature, humidity, light, ...) to predict such storms.
 ## Project goal
-1 systems that is his own master. They wonder around on the surface of mars. When a node gets lost or anything else, and another node approaches, it can share valuable information. For the rest, they act on their own.
-BLE is used to check proximities of each other and share some valuable information that could have been lost during dust storms (due to no communication available). Also, if a device is unable to move due to a mechanical problem, it can still transmit its data to surrounding nodes.
-## Project division
-#### to divide
+Each system operates autonomously as its own master, navigating the surface of Mars independently. When a node becomes lost or encounters an issue, and another node approaches, they can exchange valuable information to assist each other. Otherwise, each node functions independently.
 
+BLE technology is used to detect proximity between nodes and share crucial information about their headings, preventing collisions. Additionally, if a node encounters a mechanical problem and becomes immobile, it can still transmit its data to nearby nodes and gateways for continued operation and coordination.
+## Project division
 #### Adam
 - Environmental sensing
 - Energy harvesting
 #### Thomas
 - LoRa connectivity
+- Dashboard
 - Gyroscope
 - Rover actuation
 #### Robbe
@@ -26,8 +26,6 @@ BLE is used to check proximities of each other and share some valuable informati
 - Energy awareness algorithm
 ## Board selection
 [Brain Board Selection](Pages/Investigation/Brain_Board_Selection.md)
-
-
 ## MVP
 The MVP (Minimal Vital Product) contains the following items:
 - LoRa-module that transmits data to a gateway.
@@ -39,9 +37,9 @@ The MVP (Minimal Vital Product) contains the following items:
 [Power Profiling](Pages/Power_Profiling/Power_Profiling.md)
 ## STM32 Module
 [STM32 module](Pages/Brain_module/STM32L412KB.md)
-## BLE Module code
+## BLE Module
 [BLE Module](Pages/BLE_Module/nRF52_SEEED_XIAO.md)
-## I2C communication sensor SHT40
+## SHT40 (temperature and humidity)
 [SHT40](Pages/Sensor/SHT40.md)
 - addressing an array x addressing a place in an array 
 - UART printing is not the same as printf sprintf...
@@ -50,7 +48,7 @@ The MVP (Minimal Vital Product) contains the following items:
 - programing in more dvanced C
 
 
-## I2C communication of LTR-329
+## LTR-329 (light)
 [LTR-329](Pages/Sensor/LTR-329.md)
 
 
@@ -80,73 +78,13 @@ waking up: 10 ms
 For reasons unknown Standby mode draws 96 microAmpers insted od promised 5microAmpers
 Maesuring peak: 300microAmpers
 SemiPeak : 157microAmpers
+
 ## Energy Harvesting
-[Enegry Harvesting Module AEM1094](AEM10941.md)
-The goal is to pover as many peripherals as possible... SHT40, LTR-329, STM32, BLE ?
-We have:
-- Outside S.P.
-- Inside S.P.
-- 2x 2,7V1F Supercap
-- 2x AEM10941 Evaluation Kit 
-Note to self: Make sure to have SuperCap connected before connecting power source (S.P.)
+[Energy Harvesting page](../Pages/Energy_Harvesting/Energy_Harvesting.md)
 
-Tested Single Cell Configuration: It seems to be ok on 2,7V treshhold, the module gets slighty over 2,7 Volts and than regulates it down so that the Capacitor is okay. 
-HighOUT: 1,8V
-LowOUT? 1,2V
-according to datasheet
-It takes about 1h 35m to charge the Cap. to 2,3V WITH additional artiffical lights
-![[Pasted image 20241129210421.png]]
-
-
-### Update on energy harvesting 
-I previously tested only one E.H.M. since i expected them to be the same i only worked with one... Unfortunetly other board has a 'shorted input of source' - it would behave in a way like: if you connect a solar panel the panel would drop its Voltage to about 0.2 V which cant charge a capacitor
-
-#### New way of powering 
-We will use a Configuration of Dual-cell supercapacitor (Using the two supercaps in series)
-![[Pasted image 20241211150229.png]]
-2,7 + 2,7 = 5,4 V -> Capacitors should not explode when charged to Max. Threshold
-Module should be powering at 3.92V  (HighOut = 3.3V) (LowOut = 1.8V)
-If the SuperCaps would reach max threshold Module will regulate the Voltage until 3.6V re reached
-
-After reaching 3.92V on the Dual-cell Capacitor  HighOUT had 3.3V => Success
-
-
-### Voltage measurement of the energy harvesting module
-Hardware Setup: 
-- Use the **ADC (Analog-to-Digital Converter)** on the STM32 to measure the voltage of the energy storage device.
-- Connect the energy storage's (SUPERCAP) positive terminal to a voltage divider to scale it down if it exceeds the ADC input range of the STM32.
-- Connect the output of the voltage divider to an ADC pin.
-**Supercapacitor:**
-
-- For supercapacitors, the energy is directly proportional to the square of the voltage:
- E = 1/2 C V^2
-    - Measuring voltage allows you to calculate energy, provided you know the capacitance.
-
-https://www.youtube.com/watch?v=EsZLgqhqfO0
-ADC1_IN8 PA3 A2 - reading pin 
-![[Pasted image 20241203172736.png]]
-We have been succesfull in reading voltage on a potenciometer
-Measuring capacitor: 
-**Hardware Setup**:
-
-- Connect one terminal of the capacitor to the ADC pin (PA2).
-- The other terminal should be connected to ground (GND).
-- Ensure the voltage across the capacitor does not exceed the reference voltage of the ADC (typically 3.3V). If needed, use a voltage divider.
-
-
- WE WANT A HUGE RESISTOR ! FOR LESS CONSUMPTION 
- AND WE WANT TO READ ONLY ONE WHEN NEEDED
-
-
-
-New plan : Use status 1,2,3 pins to see if we are running out of power
-![[Pasted image 20241204133049.png]] 
-### Powering the STM32 Nucleo with the H.M.
-![[Pasted image 20241210160716.png]]
-### Decision making
 ## UART Communication with LoRa-Module
 For the LoRa-Module, we utilize the Wio-e5 mini board.
-![[lora_e5_mini_pinout.jpg]]
+![lora_e5_mini_pinout](Images/LoRa/lora_e5_mini_pinout.jpg)
 *[Wio-e5 mini pinout](https://wiki.seeedstudio.com/LoRa_E5_mini/)*
 
 For our communication to work we need to perform three tasks:
@@ -155,11 +93,11 @@ For our communication to work we need to perform three tasks:
 - Create a [back-end](SSR_Portfolio/Pages/LoRa/Back-End) that collects the data and visualizes it.
 
 If we follow these pages we should get a connection as follows:
-![[lora_working.png]]
+![lora_working](Images/LoRa/lora_working.png)
 
 *Some handy videos include: [setup device](https://www.youtube.com/watch?v=L_acKpwNvnc&list=WL&index=11&t=600s) & [setup MQTT](https://www.youtube.com/watch?v=9H6GFXatOCY&list=WL&index=12&t=128s)*
 
-![[Wio-E5 Datasheet.pdf]]
+[Wio-E5 Datasheet](Datasheets/Wio-E5_Datasheet.pdf)
 
 ==Tom==
 

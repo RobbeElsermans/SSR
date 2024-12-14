@@ -5,24 +5,23 @@ Our brain, STM32L412KB, will have a certain flow as depicted in the block schema
 
 This is coded in a finite state machine which cycles through the different states. This to provide a minimal code footprint onto the MCU.
 
-```
+```c
 struct ble_module_data_t
 {
-uint8_t ssr_id; // The ID of the rover itself
-int32_t counter; //The packet counter of the measurements.
-int16_t env_temperature; // Range from -327.68 to 327.67 °C (val/100=°C)
-uint8_t env_humidity; // Range from -0-100%
-uint16_t env_lux; // Range from 0 to 1000
-uint16_t dev_voltage; // Range from 0-6.5535V (val/10000=V) (val/10=mV)
-int8_t gyro_x; // Range from -60 to 60 (val*3=°)
-int8_t gyro_y; // Range from -60 to 60 (val*3=°)
-int8_t gyro_z; // Range from -60 to 60 (val*3=°)
+	uint8_t ssr_id; // The ID of the rover itself
+	int32_t counter; //The packet counter of the measurements.
+	int16_t env_temperature; // Range from -327.68 to 327.67 °C (val/100=°C)
+	uint8_t env_humidity; // Range from -0-100%
+	uint16_t env_lux; // Range from 0 to 1000
+	uint16_t dev_voltage; // Range from 0-6.5535V (val/10000=V) (val/10=mV)
+	int8_t dev_gyro_x; // Range from -60 to 60 (val*3=°)
+	int8_t dev_gyro_y; // Range from -60 to 60 (val*3=°)
+	int8_t dev_gyro_z; // Range from -60 to 60 (val*3=°)
 };
 ```
 
 ## EEPROM (or flash)
  >This was an attempt to use flash as EEPROM emulator. Fortunately, Flash has different needs then EEPROM and can not be used the same as ordinary EEPROM (due to banks etc.). Therefore, this approach is abandoned because time was short. 
-
 
 To enable a measurement and keep the value in our system when we enter a deep sleep mode, we need a certain storage for these values. This MCU has a flash region up to 128KB flash. 
 
@@ -47,7 +46,7 @@ STEP_EEPROM_REG = 0x0800000F;
 ```
 
 object of the rover to be used internally. This can be transmitted over LoRa for instance.
-```
+```c
 struct ble_module_data_t
 {
 uint8_t ssr_id; // The ID of the rover itself
@@ -56,9 +55,9 @@ int16_t env_temperature; // Range from -327.68 to 327.67 °C (val/100=°C)
 uint8_t env_humidity; // Range from -0-100%
 uint16_t env_lux; // Range from 0 to 1000
 uint16_t dev_voltage; // Range from 0-6.5535V (val/10000=V) (val/10=mV)
-int8_t gyro_x; // Range from -60 to 60 (val*3=°)
-int8_t gyro_y; // Range from -60 to 60 (val*3=°)
-int8_t gyro_z; // Range from -60 to 60 (val*3=°)
+int8_t dev_gyro_x; // Range from -60 to 60 (val*3=°)
+int8_t dev_gyro_y; // Range from -60 to 60 (val*3=°)
+int8_t dev_gyro_z; // Range from -60 to 60 (val*3=°)
 };
 ```
 ## Connection

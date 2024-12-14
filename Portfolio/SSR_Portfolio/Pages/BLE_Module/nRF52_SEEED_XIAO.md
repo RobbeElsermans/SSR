@@ -3,19 +3,19 @@
 
 To enable the BLE inter-communication, we use I2C as device connection to the STM32L4. 
 Here, the BLE module shall have the address $0x12$ and the following struct will be send over.
-```
+```c
 struct ble_module_data_t
 {
-uint8_t mode; // The mode of the BLE-module, 0 -> beacon, 1-> scan
-uint8_t ssr_id; // The ID of the rover itself
-uint8_t air_time; // How long the beacon may last (val*100=ms)
-int16_t env_temperature; // Range from -327.68 to 327.67 °C (val/100=°C)
-uint8_t env_humidity; // Range from -0-100%
-uint16_t env_lux; // Range from 0 to 1000
-uint16_t dev_voltage; // Range from 0-6.5535V (val/10000=V) (val/10=mV)
-int8_t gyro_x; // Range from -60 to 60 (val*3=°)
-int8_t gyro_y; // Range from -60 to 60 (val*3=°)
-int8_t gyro_z; // Range from -60 to 60 (val*3=°)
+	uint8_t mode; // The mode of the BLE-module, 0 -> beacon, 1-> scan
+	uint8_t ssr_id; // The ID of the rover itself
+	uint8_t air_time; // How long the beacon may last (val*100=ms)
+	int16_t env_temperature; // Range from -327.68 to 327.67 °C (val/100=°C)
+	uint8_t env_humidity; // Range from -0-100%
+	uint16_t env_lux; // Range from 0 to 1000
+	uint16_t dev_voltage; // Range from 0-6.5535V (val/10000=V) (val/10=mV)
+	int8_t gyro_x; // Range from -60 to 60 (val*3=°)
+	int8_t gyro_y; // Range from -60 to 60 (val*3=°)
+	int8_t gyro_z; // Range from -60 to 60 (val*3=°)
 };
 ```
 A total of 11 bytes (without gyro or other parameters).
@@ -30,27 +30,27 @@ After the performed *mode*, the BLE-module will wait for the STM32L4 to reach ou
 The result can be a *ble_beacon_result_t* or a *ble_scan_result_t* depending on the selected mode at the beginning of the computation.
 
 *ble_beacon_result_t*  is selected when we had mode 0 or beacon mode.
-```
+```c
 struct ble_beacon_result_t
 {
-uint8_t amount_of_ack;
+	uint8_t amount_of_ack;
 };
 ```
 This result will yield the amount of acknowledgements from scanners in the area.
 
 The *ble_scan_result_t* gives a more detailed result of the found beacon in the area.
-```
+```c
 struct ble_scan_result_t
 {
-uint8_t ssr_id; // The ID of the source
-int16_t temperature; // Range from -327.68 to 327.67 °C (val/100=°C)
-uint8_t humidity; // Range from -0-100%
-uint16_t lux; // Range from 0 to 1000
-uint16_t voltage; // Range from 0-6.5535V (val/10000=V) (val/10=mV)
-int8_t rssi; //rssi
-int8_t gyro_x; // Range from -60 to 60 (val*3=°)
-int8_t gyro_y; // Range from -60 to 60 (val*3=°)
-int8_t gyro_z; // Range from -60 to 60 (val*3=°)
+	uint8_t ssr_id; // The ID of the source
+	int16_t temperature; // Range from -327.68 to 327.67 °C (val/100=°C)
+	uint8_t humidity; // Range from -0-100%
+	uint16_t lux; // Range from 0 to 1000
+	uint16_t voltage; // Range from 0-6.5535V (val/10000=V) (val/10=mV)
+	int8_t rssi; //rssi
+	int8_t gyro_x; // Range from -60 to 60 (val*3=°)
+	int8_t gyro_y; // Range from -60 to 60 (val*3=°)
+	int8_t gyro_z; // Range from -60 to 60 (val*3=°)
 };
 ```
 For now, only 1 beacon gets saved and returned to the STM32L4 on request.

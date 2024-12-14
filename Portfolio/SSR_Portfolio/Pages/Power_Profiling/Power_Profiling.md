@@ -30,6 +30,13 @@ A closer look at the standby mode current consumption.
 
 The total cycle uses an average current of $\pm 2.7mA$.
 This can be reduced by using a compare value of $0xFFFF$.
+#### better standby mode (Without load of peripherals)
+![[Pasted image 20241211160438.png]]
+Lowest point = 300nA
+Peak = 11mA
+SemiPeak =8.8mA
+
+There can be seen that the STM32 needs to reinitialise in full. This can be seen by the short duration before the led goes on. This phenomena doesn't occur in the other graphs.
 #### stop 2 mode
 This power measurement is conducted on JP1.
 
@@ -67,25 +74,13 @@ while(1)
 ![STM32 stop 2 mode profile](../../Images/Power_profiling/STM32_Delay_mode.png)
 ##### stop mode 2
 ![STM32 stop 2 mode profile](../../Images/Power_profiling/STM32_Stop_2_mode.png)
-
 ##### standby mode
 ![STM32 stop 2 mode profile](../../Images/Power_profiling/STM32_Standby_mode.png)
-#### better sandby mode (Without load of peripherals)
-![[Pasted image 20241211160438.png]]
-Lowest point = 300nA
-Peak = 11mA
-SemiPeak =8.8mA
-
-
-
-
-There can be seen that the STM32 needs to reinitialise in full. This can be seen by the short duration before the led goes on. This phenomena doesn't occur in the other graphs.
 ##### Conclusion
 It can be concluded that we need to replace any delay in our code by the stop 2 mode. This to ensure best power reduction while maintaining the RAM so our code can continue its work when we wake it up to continue.
 
 If we do not need RAM retention, standby mode can be utilised to reduce the power even more.
 ![STM_wait_modes.png](../../Images/STM_wait_modes.png)
-
 
 ### XIAO nRF52840 
 #### peripheral mode
@@ -205,7 +200,7 @@ while(1)
 
 ##### basic wait on flank
 ![BLE_basic_wait_power_profile](../../Images/Power_Profiling/BLE_Basic_wait.png)
-As can be observed, the led on and off flanks are whitenest in the beginning of the line. Then, we enter the ```while(!digitalRead(2))``` code which just waits infinitely on a high flank on pin 2. This wil give more consumption to the MCU because it must constantly power the peripherals and use the MCU in full. Therefore, the consumption rises significantly.
+As can be observed, the led on and off flanks are whitnest in the beginning of the line. Then, we enter the ```while(!digitalRead(2))``` code which just waits infinitely on a high flank on pin 2. This wil give more consumption to the MCU because it must constantly power the peripherals and use the MCU in full. Therefore, the consumption rises significantly.
 
 If a flank is detected, it again will blink the led once.
 ##### low-power wait on flank
@@ -222,7 +217,8 @@ The power profiling answers our assumptions as the nRF52 self adjusts its power 
 ##### Conclusion
 Using a delay of 1 second or entering deep sleep gives the same power consumption. However, the 1 second gives us RAM retention as the values keep assigned where this is not the case for deep sleep mode.
 Another advantage in using just a delay of 1 second is the wake-up duration. In deel_sleep, the trigger and wake-up duration is around 1 second. Therefore, the delay of 1 second is faster in operation.
-![bar chart about BLE different wait modes](../images/BLE_wait_modes.png)
+![bar chart about BLE different wait modes](../../images/BLE_wait_modes.png)
+
 
 
 ### LTR-329 Light Sensor
