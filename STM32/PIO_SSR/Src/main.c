@@ -61,7 +61,8 @@
 ble_module_data_t ble_data;
 ble_beacon_result_t ble_beacon_result;
 ble_scan_result_t ble_scan_result;
-ssr_data_t ssr_data;
+ssr_data_t ssr_data[256];
+uint8_t ssr_data_index = 0;
 
 uint8_t bool_buffer = 0;
 
@@ -85,7 +86,8 @@ void clearBuf();
  * @brief  The application entry point.
  * @retval int
  */
-int main(void){
+int main(void)
+{
 
   /* USER CODE BEGIN 1 */
 
@@ -107,7 +109,7 @@ int main(void){
 
   /* ltr-386 lib function calls */
   ltrDelayCallback(HAL_Delay);
-  
+
   // ltrWakeCallback(wakeltrModule);
   // ltrSleepCallback(sleepltrModule);
 
@@ -115,8 +117,8 @@ int main(void){
   // sht40DelayCallback(HAL_Delay);
 
   /* LineBot lob function calls */
-  //lineBotDelayCallback(HAL_Delay);
-  
+  // lineBotDelayCallback(HAL_Delay);
+
   /* mpu6050 lob function calls */
   gyroDelayCallback(HAL_Delay);
 
@@ -140,20 +142,7 @@ int main(void){
   MX_ADC1_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-
-  HAL_Delay(2000);
-
-  //I2C_Scan();
-
-  #ifdef DEBUG
-  char Buffer[11] = {0};
-  sprintf(Buffer, "Her Am I\r\n");
-  serial_print(Buffer);
-  #endif
-  // while(1) {
-  //   test_code();
-  // }
-
+  // HAL_Delay(2000);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -161,6 +150,15 @@ int main(void){
 
   while (1)
   {
+
+    ssr_data[ssr_data_index].seq_number = ssr_data_index; // Define sequence number
+
+#ifdef DEBUG
+    clearBuf();
+    sprintf((char *)Buffer, "\r\n Start \r\n");
+    serial_print((char *)Buffer);
+#endif
+
     taskReadBattery(); // Read the ADC voltage
 
     // Determine path of execution based on voltage (energy) available
@@ -218,7 +216,7 @@ int main(void){
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    HAL_Delay(2000);
+    // HAL_Delay(2000);
   }
   /* USER CODE END 3 */
 }
@@ -268,7 +266,8 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
-void test_code() {
+void test_code()
+{
   char Buffer[16] = {0};
   sprintf(Buffer, "Test code\r\n");
   serial_print(Buffer);
@@ -276,36 +275,48 @@ void test_code() {
 
 void taskReadBattery()
 {
-  ssr_data.dev_voltage = (readVoltage(&hadc1))*1000.0; //COnvert to mV and save only int
+  ssr_data[ssr_data_index].dev_voltage = (readVoltage(&hadc1)) * 1000.0; // COnvert to mV and save only int
 
-  #ifdef DEBUG
+#ifdef DEBUG
   clearBuf();
-  sprintf((char *)Buffer, "taskReadBattery - mV: %d \r\n", ssr_data.dev_voltage);
-  serial_print(Buffer);
-  #endif
+  sprintf((char *)Buffer, "taskReadBattery - mV: %d \r\n", ssr_data[ssr_data_index].dev_voltage);
+  serial_print((char *)Buffer);
+#endif
 }
 
 void taskDetermineTasks()
 {
   // Do this based on the voltage value.
+  //For now, we use light sleep due to no non-volatile memory available
 
-  if (ssr_data.dev_voltage >= 2.6) //Fully charged
+  if (ssr_data[ssr_data_index].dev_voltage >= 2.6) // Fully charged
   {
-    bool_buffer = 0b10111111; //Do all tasks
+    bool_buffer = 0b10111111; // Do all tasks
   }
-  else if (ssr_data.dev_voltage < 2.6 && ssr_data.dev_voltage >= 2.4)
+  else if (ssr_data[ssr_data_index].dev_voltage < 2.6 && ssr_data[ssr_data_index].dev_voltage >= 2.4)
   {
-    bool_buffer = 0b10011111; //Do all tasks
+    bool_buffer = 0b10011111; // Do not drive
   }
-  else if (ssr_data.dev_voltage < 2.4 && ssr_data.dev_voltage >= 2.3)
+  else if (ssr_data[ssr_data_index].dev_voltage < 2.4 && ssr_data[ssr_data_index].dev_voltage >= 2.3)
   {
-    
+    bool_buffer = 0b10011011; // Do not do lora & drive
+  }
+  else if (ssr_data[ssr_data_index].dev_voltage < 2.3 && ssr_data[ssr_data_index].dev_voltage >= 2.1)
+  {
+    bool_buffer = 0b10000000; // Only deep sleep
   }
 
   // Here, the boolean buffer **bool_buffer** is used with the defines of TASK described in main.h.
   // bool_buffer = 0b010000011; // Set DEEP_SLEEP, STORE, SENS,
   //  bool_buffer = 0b10010001; // Set SLEEP, BEACON, SENS
   bool_buffer = 0b10001001; // Set SLEEP, SCAN, SENS
+
+#ifdef DEBUG
+  clearBuf();
+  sprintf((char *)Buffer, "taskDetermineTasks \r\n sens %d\r\n store %d\r\n lora %d\r\n scan %d\r\n beacon %d\r\n drive %d\r\n deepsleep %d\r\n lightsleep %d\r\n",
+          bool_buffer >> 0 & 0x01, bool_buffer >> 1 & 0x01, bool_buffer >> 2 & 0x01, bool_buffer >> 3 & 0x01, bool_buffer >> 4 & 0x01, bool_buffer >> 5 & 0x01, bool_buffer >> 6 & 0x01, bool_buffer >> 7 & 0x01);
+  serial_print((char *)Buffer);
+#endif
 }
 
 void taskSens()
@@ -321,48 +332,56 @@ void taskSens()
   // LTR329_Init(&hi2c1);
   ltr329Init(&hi2c1);
   // SHT4x_Init(&hi2c1);
-  //setMPU6050();
+  // setMPU6050();
 
   /* Read out the sens values */
   // lux = GetLuxAll(&hi2c1);
   ltr329GetLuxAll(&hi2c1, &lux);
   SHT40_ReadSensor(&temperature, &humidity);
-  //readGyroscope(&gyro_x, &gyro_y, &gyro_z);
-
+  // readGyroscope(&gyro_x, &gyro_y, &gyro_z);
 
   /* put to sleep/ halt */
   // LTR329_Sleep(&hi2c1);
   ltr329Sleep(&hi2c1);
   SHT40_Sleep();
-  //Sleep MPU
+  // Sleep MPU
 
   /* Compose data structure of the environment */
-  ssr_data.env_humidity = (uint8_t)(humidity);
-  ssr_data.env_temperature = (uint16_t)(temperature * 100);
-  ssr_data.env_lux = (uint16_t)(lux);
-  ssr_data.dev_gyro_x = (uint8_t)gyro_x; 
-  ssr_data.dev_gyro_y = (uint8_t)gyro_y; 
-  ssr_data.dev_gyro_z = (uint8_t)gyro_z; 
-  
-  /* Display onto serial monitor */
-  #ifdef DEBUG
+  ssr_data[ssr_data_index].env_humidity = (uint8_t)(humidity);
+  ssr_data[ssr_data_index].env_temperature = (uint16_t)(temperature * 100);
+  ssr_data[ssr_data_index].env_lux = (uint16_t)(lux);
+  ssr_data[ssr_data_index].dev_gyro_x = (uint8_t)gyro_x;
+  ssr_data[ssr_data_index].dev_gyro_y = (uint8_t)gyro_y;
+  ssr_data[ssr_data_index].dev_gyro_z = (uint8_t)gyro_z;
+
+/* Display onto serial monitor */
+#ifdef DEBUG
   clearBuf();
-  sprintf((char *)Buffer, "taskSens - lux: %d, t: %d, h: %d \r\n", ssr_data.env_lux, ssr_data.env_temperature, ssr_data.env_humidity);
-  serial_print(Buffer);
-  clearBuf();
-  sprintf((char *)Buffer, "taskSens - x: %d, y: %d, z: %d \r\n", gyro_x, gyro_y, gyro_z);
-  serial_print(Buffer);
-  #endif
+  sprintf((char *)Buffer, "taskSens - lux: %d, t: %d, h: %d, x: %d, y: %d, z: %d \r\n", ssr_data[ssr_data_index].env_lux, ssr_data[ssr_data_index].env_temperature, ssr_data[ssr_data_index].env_humidity, gyro_x, gyro_y, gyro_z);
+  serial_print((char *)Buffer);
+#endif
 }
 
 void taskStore()
 {
-  // TODO see Flash-Write project
+  // TODO
+  ssr_data_index++; // Increase sequence number
+
+#ifdef DEBUG
+  clearBuf();
+  sprintf((char *)Buffer, "taskStore - storing index %d\r\n", ssr_data_index-1);
+  serial_print((char *)Buffer);
+#endif
 }
 
 void taskLora()
 {
-  // TODO
+// TODO
+#ifdef DEBUG
+  clearBuf();
+  sprintf((char *)Buffer, "taskLora - sending out \r\n");
+  serial_print((char *)Buffer);
+#endif
 }
 
 void taskScan()
@@ -371,32 +390,32 @@ void taskScan()
 
   ble_data.mode = 1;
   ble_data.ssr_id = SSR_ID;
-  ble_data.air_time = air_time/100;
+  ble_data.air_time = air_time / 100;
 
-  ble_data.env_temperature = ssr_data.env_temperature; // Range from -327.68 to 327.67 °C (val/100=°C)
-  ble_data.env_humidity = ssr_data.env_humidity;       // Range from -0-100%
-  ble_data.env_lux = ssr_data.env_lux;                 // Range from 0 to 1000
-  ble_data.dev_voltage = ssr_data.dev_voltage;         // Range from 0-6.5535V (val/10000=V) (val/10=mV)
-  ble_data.dev_gyro_x = ssr_data.dev_gyro_x;               // Range from -60 to 60 (val*3=°)
-  ble_data.dev_gyro_y = ssr_data.dev_gyro_y;               // Range from -60 to 60 (val*3=°)
-  ble_data.dev_gyro_z = ssr_data.dev_gyro_z;               // Range from -60 to 60 (val*3=°)
+  ble_data.env_temperature = ssr_data[ssr_data_index].env_temperature; // Range from -327.68 to 327.67 °C (val/100=°C)
+  ble_data.env_humidity = ssr_data[ssr_data_index].env_humidity;       // Range from -0-100%
+  ble_data.env_lux = ssr_data[ssr_data_index].env_lux;                 // Range from 0 to 1000
+  ble_data.dev_voltage = ssr_data[ssr_data_index].dev_voltage;         // Range from 0-6.5535V (val/10000=V) (val/10=mV)
+  ble_data.dev_gyro_x = ssr_data[ssr_data_index].dev_gyro_x;           // Range from -60 to 60 (val*3=°)
+  ble_data.dev_gyro_y = ssr_data[ssr_data_index].dev_gyro_y;           // Range from -60 to 60 (val*3=°)
+  ble_data.dev_gyro_z = ssr_data[ssr_data_index].dev_gyro_z;           // Range from -60 to 60 (val*3=°)
 
-  #ifdef DEBUG
+#ifdef DEBUG
   clearBuf();
   sprintf((char *)Buffer, "taskScan - start scan %d \r\n", ble_data.air_time);
-  serial_print(Buffer);
-  #endif
+  serial_print((char *)Buffer);
+#endif
 
   ble_scan_result = scan(&hi2c1, &ble_data);
 
-  /* Display onto serial monitor */
-  #ifdef DEBUG
+/* Display onto serial monitor */
+#ifdef DEBUG
   clearBuf();
   sprintf((char *)Buffer,
-          "taskScan - \r\n ssr_id: %d\r\n temp: %d\r\n h: %d\r\n l: %d\r\n x: %d\r\n y: %d\r\n z: %d\r\n vcc: %d\r\n rssi: %d\r\n",
+          "taskScan - received ssr_id: %d temp: %d h: %d l: %d x: %d y: %d z: %d vcc: %d rssi: %d\r\n",
           ble_scan_result.ssr_id, ble_scan_result.env_temperature, ble_scan_result.env_humidity, ble_scan_result.env_lux, ble_scan_result.dev_voltage, ble_scan_result.dev_gyro_x, ble_scan_result.dev_gyro_y, ble_scan_result.dev_gyro_z, ble_scan_result.rssi);
-  serial_print(Buffer);
-  #endif
+  serial_print((char *)Buffer);
+#endif
 }
 
 void taskBeacon()
@@ -407,29 +426,29 @@ void taskBeacon()
   ble_data.ssr_id = SSR_ID;
   ble_data.air_time = air_time / 100;
 
-  ble_data.env_temperature = ssr_data.env_temperature; // Range from -327.68 to 327.67 °C (val/100=°C)
-  ble_data.env_humidity = ssr_data.env_humidity;       // Range from -0-100%
-  ble_data.env_lux = ssr_data.env_lux;                 // Range from 0 to 1000
-  ble_data.dev_voltage = ssr_data.dev_voltage;         // Range from 0-6.5535V (val/10000=V) (val/10=mV)
-  ble_data.dev_gyro_x = ssr_data.dev_gyro_x;               // Range from -60 to 60 (val*3=°)
-  ble_data.dev_gyro_y = ssr_data.dev_gyro_y;               // Range from -60 to 60 (val*3=°)
-  ble_data.dev_gyro_z = ssr_data.dev_gyro_z;               // Range from -60 to 60 (val*3=°)
+  ble_data.env_temperature = ssr_data[ssr_data_index].env_temperature; // Range from -327.68 to 327.67 °C (val/100=°C)
+  ble_data.env_humidity = ssr_data[ssr_data_index].env_humidity;       // Range from -0-100%
+  ble_data.env_lux = ssr_data[ssr_data_index].env_lux;                 // Range from 0 to 1000
+  ble_data.dev_voltage = ssr_data[ssr_data_index].dev_voltage;         // Range from 0-6.5535V (val/10000=V) (val/10=mV)
+  ble_data.dev_gyro_x = ssr_data[ssr_data_index].dev_gyro_x;           // Range from -60 to 60 (val*3=°)
+  ble_data.dev_gyro_y = ssr_data[ssr_data_index].dev_gyro_y;           // Range from -60 to 60 (val*3=°)
+  ble_data.dev_gyro_z = ssr_data[ssr_data_index].dev_gyro_z;           // Range from -60 to 60 (val*3=°)
 
-  #ifdef DEBUG
+#ifdef DEBUG
   clearBuf();
   sprintf((char *)Buffer, "taskBeacon - start beacon %d \r\n", ble_data.air_time);
-  serial_print(Buffer);
-  #endif
+  serial_print((char *)Buffer);
+#endif
 
   ble_beacon_result = beacon(&hi2c1, &ble_data);
 
   /* Display onto serial monitor */
 
-  #ifdef DEBUG
+#ifdef DEBUG
   clearBuf();
-  sprintf((char *)Buffer, "taskBeacon - amount of ACK: %d \r\n", ble_beacon_result.amount_of_ack);
-  serial_print(Buffer);
-  #endif
+  sprintf((char *)Buffer, "taskBeacon received - amount of ACK: %d \r\n", ble_beacon_result.amount_of_ack);
+  serial_print((char *)Buffer);
+#endif
 }
 
 void taskDrive()
@@ -437,15 +456,33 @@ void taskDrive()
   // Do something with the struct *ble_scan_result* and gyro measurements + RSSI?
   // Do something with the struct *ble_beacon_result*?
   //  TODO
+
+#ifdef DEBUG
+  clearBuf();
+  sprintf((char *)Buffer, "taskDrive - driving\r\n");
+  serial_print((char *)Buffer);
+#endif
 }
 
 void taskDeepSleep()
 {
+#ifdef DEBUG
+  clearBuf();
+  sprintf((char *)Buffer, "taskDeepSleep - go to deep sleep \r\n");
+  serial_print((char *)Buffer);
+#endif
+
   deep_sleep(&hrtc, 20000); // 20 seconds deep sleep
 }
 
 void taskLightSleep()
 {
+#ifdef DEBUG
+  clearBuf();
+  sprintf((char *)Buffer, "taskLightSleep - go to light sleep \r\n");
+  serial_print((char *)Buffer);
+#endif
+
   half_sleep(&hrtc, 10000); // 20 seconds half sleep
 }
 
@@ -560,7 +597,7 @@ uint8_t checkBool(uint8_t *bool_carrier, uint8_t bool_place)
 
 void clearBuf()
 {
-  for(uint8_t i = 0; i < sizeof(Buffer); i++)
+  for (uint8_t i = 0; i < sizeof(Buffer); i++)
   {
     Buffer[i] = 0;
   }

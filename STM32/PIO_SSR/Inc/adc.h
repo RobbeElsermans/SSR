@@ -36,7 +36,7 @@ extern ADC_HandleTypeDef hadc1;
 
 /* USER CODE BEGIN Private defines */
 
-#define DEBUG
+// #define DEBUG
 
 /* USER CODE END Private defines */
 

@@ -20,6 +20,22 @@ struct ble_module_data_t
 };
 ```
 
+### BLE communication
+![BLE_2_way_Communication_STM32](../../Images/BLE/BLE_2_way_Communication_STM32.png)
+The image displays a terminal or command-line interface showing the output of an execution path. The output is divided into two sections, each beginning with "Start" and followed by a series of tasks and their statuses. Here's a summary of what each section includes:
+
+1. **Battery Voltage Reading**: The first task shows the battery voltage reading, measured in millivolts (mV).
+    
+2. **Task Determination**: Indicates the status of various tasks such as sensing, storage, LoRa communication, scanning, beacon, driving, deep sleep, and light sleep.
+    
+3. **Sensor Readings**: Displays values for different sensors including lux (light), temperature (t), humidity (h), and coordinates (x, y, z).
+    
+4. **Scan Task**: Shows the start of a scan and receipt of data with specific values for sensor ID, temperature, humidity, coordinates, voltage, and RSSI (Received Signal Strength Indicator).
+    
+5. **Light Sleep Mode**: Indicates the system entering light sleep mode.
+
+Here, only sens, scan and sleep is used. The BLE-module returns its founded results of a scanner nearby.
+
 ## EEPROM (or flash)
  >This was an attempt to use flash as EEPROM emulator. Fortunately, Flash has different needs then EEPROM and can not be used the same as ordinary EEPROM (due to banks etc.). Therefore, this approach is abandoned because time was short. 
 

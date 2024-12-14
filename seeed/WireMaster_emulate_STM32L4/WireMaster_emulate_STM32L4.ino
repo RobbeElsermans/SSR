@@ -15,9 +15,9 @@ void setup() {
 
 void loop() {
   digitalWrite(13, HIGH);
-  delay(100);
+  delay(1000);
   digitalWrite(13, LOW);
-  delay(250);
+  delay(1000);
   
 
   //Write message to the slave
@@ -38,7 +38,7 @@ void loop() {
   uint8_t error = Wire.endTransmission(true);
   Serial.print("endTransmission");
 
-  delay(10000 + 1000);
+  delay(10000 + 500);
 
   //Read all scan bytes from the slave
   uint8_t bytesReceived = Wire.requestFrom(I2C_DEV_ADDR, 10);

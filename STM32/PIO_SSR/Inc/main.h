@@ -49,7 +49,7 @@ struct ssr_data
   int8_t    dev_gyro_z;      // Range from -125 to 125 (val*2=°)
 };
 typedef struct ssr_data ssr_data_t;
-extern ssr_data_t ssr_data;
+extern ssr_data_t ssr_data[256];
 
 /*  
     0: SENS, 
