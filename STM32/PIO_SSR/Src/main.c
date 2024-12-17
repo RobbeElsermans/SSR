@@ -27,14 +27,11 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "ble_module.h"
-// #include "ltr_329.h"
 #include "ltr329.h"
+#include "sht40.h"
 #include "linebot.h"
 #include "gyro.h"
-#include "sht4x.h"
 #include "wio5e.h"
-
-// #include "lp.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,6 +47,7 @@
 
 #define SCAN_AIR_TIME 5000
 #define BEACON_AIR_TIME 7000
+#define SLEEP_TIME 10000
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -103,26 +101,30 @@ int main(void)
   /* USER CODE BEGIN Init */
 
   /* I2C lib function calls */
-  bleDelayCallback(HAL_Delay);
+  //bleDelayCallback(HAL_Delay);
+  bleDelayCallback(half_sleep);
   bleSendCallback(HAL_I2C_Master_Transmit);
   bleReceiveCallback(HAL_I2C_Master_Receive);
   bleAvailableCallback(HAL_I2C_IsDeviceReady);
   bleWakeCallback(wakeBleModule);
 
   /* ltr-386 lib function calls */
-  ltrDelayCallback(HAL_Delay);
-
+  //ltrDelayCallback(HAL_Delay);
+  ltrDelayCallback(half_sleep);
   // ltrWakeCallback(wakeltrModule);
   // ltrSleepCallback(sleepltrModule);
 
   /* sht40 lob function calls */
-  // sht40DelayCallback(HAL_Delay);
+  //sht40DelayCallback(HAL_Delay);
+  sht40DelayCallback(half_sleep);
 
   /* LineBot lob function calls */
-  // lineBotDelayCallback(HAL_Delay);
+  //lineBotDelayCallback(HAL_Delay);
+  lineBotDelayCallback(half_sleep);
 
   /* mpu6050 lob function calls */
-  gyroDelayCallback(HAL_Delay);
+  //gyroDelayCallback(HAL_Delay);
+  gyroDelayCallback(half_sleep);
 
   /* USER CODE END Init */
 
@@ -218,7 +220,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    // HAL_Delay(2000);
   }
   /* USER CODE END 3 */
 }
@@ -312,7 +313,8 @@ void taskDetermineTasks()
   // bool_buffer = 0b010000011; // Set DEEP_SLEEP, STORE, SENS,
   //  bool_buffer = 0b10010001; // Set SLEEP, BEACON, SENS
   
-  // bool_buffer = 0b10001001; // Set SLEEP, SCAN, SENS
+  //bool_buffer = 0b10001001; // Set SLEEP, SCAN, SENS
+  bool_buffer = 0b10000001; // Set SLEEP, SENS
 
 #ifdef DEBUG
   clearBuf();
@@ -332,21 +334,18 @@ void taskSens()
   uint8_t gyro_z = 0;
 
   /* Initialize sensors */
-  // LTR329_Init(&hi2c1);
   ltr329Init(&hi2c1);
-  // SHT4x_Init(&hi2c1);
+  sht40Init(&hi2c1);
   // setMPU6050();
 
   /* Read out the sens values */
-  // lux = GetLuxAll(&hi2c1);
   ltr329GetLuxAll(&hi2c1, &lux);
-  SHT40_ReadSensor(&temperature, &humidity);
+  sht40ReadTempAndHumidity(&hi2c1, &temperature, &humidity, 2);
   // readGyroscope(&gyro_x, &gyro_y, &gyro_z);
 
   /* put to sleep/ halt */
-  // LTR329_Sleep(&hi2c1);
   ltr329Sleep(&hi2c1);
-  SHT40_Sleep();
+  sht40Sleep(&hi2c1);
   // Sleep MPU
 
   /* Compose data structure of the environment */
@@ -389,7 +388,7 @@ void taskLora()
 
 void taskScan()
 {
-  uint16_t air_time = SCAN_AIR_TIME; // 7 seconds scanning
+  uint16_t air_time = SCAN_AIR_TIME;
 
   ble_data.mode = 1;
   ble_data.ssr_id = SSR_ID;
@@ -445,8 +444,6 @@ void taskBeacon()
 
   ble_beacon_result = beacon(&hi2c1, &ble_data);
 
-  /* Display onto serial monitor */
-
 #ifdef DEBUG
   clearBuf();
   sprintf((char *)Buffer, "taskBeacon received - amount of ACK: %d \r\n", ble_beacon_result.amount_of_ack);
@@ -475,7 +472,7 @@ void taskDeepSleep()
   serial_print((char *)Buffer);
 #endif
 
-  deep_sleep(&hrtc, 20000); // 20 seconds deep sleep
+  deep_sleep(&hrtc, SLEEP_TIME);
 }
 
 void taskLightSleep()
@@ -486,7 +483,7 @@ void taskLightSleep()
   serial_print((char *)Buffer);
 #endif
 
-  half_sleep(&hrtc, 10000); // 20 seconds half sleep
+  half_sleep(&hrtc, SLEEP_TIME);
 }
 
 void wakeBleModule()

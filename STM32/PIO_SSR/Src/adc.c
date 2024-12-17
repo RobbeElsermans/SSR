@@ -159,8 +159,8 @@ float readVoltage(ADC_HandleTypeDef* adcHandle)
   float voltage = (base * (float)raw_adc_val*(division_factor));
 
   #ifdef DEBUG
-  uint8_t Buffer[80] = {0};
-  sprintf((char *)Buffer, "readVoltage - raw:%d \r\n", raw_adc_val);
+  char Buffer[80] = {0};
+  sprintf(Buffer, "readVoltage - raw:%ld \r\n", raw_adc_val);
   serial_print(Buffer);
   #endif
 
