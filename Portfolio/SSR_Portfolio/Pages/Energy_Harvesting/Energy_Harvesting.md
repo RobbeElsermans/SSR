@@ -49,7 +49,8 @@ Measuring capacitor:
 - Connect one terminal of the capacitor to the ADC pin (PA2).
 - The other terminal should be connected to ground (GND).
 - Ensure the voltage across the capacitor does not exceed the reference voltage of the ADC (typically 3.3V). If needed, use a voltage divider.
-
+  8.2 Mohm resistors 
+  5,4/8 200 000 = 6,58537 * 10 ^-7
  WE WANT A HUGE RESISTOR ! FOR LESS CONSUMPTION 
  AND WE WANT TO READ ONLY ONE WHEN NEEDED
 
@@ -57,5 +58,7 @@ New plan : Use status 1,2,3 pins to see if we are running out of power
 ![[StatusChecksSig.png]] 
 ### Powering the STM32 Nucleo with the H.M.
 ![[3V3PowerSuplyNucleo.png]]
+Unsouldering SBs until 12:45
+Charging 12:57
 
 ### Decision making
