@@ -36,17 +36,28 @@ void loop() {
   Wire.write(0);
   Wire.write(0);
   uint8_t error = Wire.endTransmission(true);
-  Serial.print("endTransmission");
 
-  delay(10000 + 500);
+  delay(10000 + 3000);
 
   //Read all scan bytes from the slave
-  uint8_t bytesReceived = Wire.requestFrom(I2C_DEV_ADDR, 10);
+  uint8_t bytesReceived = Wire.requestFrom(I2C_DEV_ADDR, 1);
   Serial.print("requestFrom: ");
   Serial.println(bytesReceived);
   if ((bool)bytesReceived) {  //If received more than zero bytes
     uint8_t temp[bytesReceived];
     Wire.readBytes(temp, bytesReceived);
     //log_print_buf(temp, bytesReceived);
+    for(uint8_t i = 0; i < bytesReceived; i++)
+    {
+      Serial.print(temp[i]);
+      Serial.print(" ,");
+    }
+    Serial.println();
+    
   }
+  else
+  {
+  Serial.println("endTransmission");
+  }
+  delay(1000);
 }

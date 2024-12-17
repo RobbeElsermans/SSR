@@ -48,6 +48,8 @@
 /* Comment when no debug needed */
 #define DEBUG
 
+#define SCAN_AIR_TIME 5000
+#define BEACON_AIR_TIME 7000
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -289,19 +291,19 @@ void taskDetermineTasks()
   // Do this based on the voltage value.
   //For now, we use light sleep due to no non-volatile memory available
 
-  if (ssr_data[ssr_data_index].dev_voltage >= 2.6) // Fully charged
+  if (ssr_data[ssr_data_index].dev_voltage < VOLTAGE_MAX_HIGH && ssr_data[ssr_data_index].dev_voltage >= VOLTAGE_MAX_LOW) // Fully charged
   {
     bool_buffer = 0b10111111; // Do all tasks
   }
-  else if (ssr_data[ssr_data_index].dev_voltage < 2.6 && ssr_data[ssr_data_index].dev_voltage >= 2.4)
+  else if (ssr_data[ssr_data_index].dev_voltage < VOLTAGE_SEM_MAX_HIGH && ssr_data[ssr_data_index].dev_voltage >= VOLTAGE_SEM_MAX_LOW)
   {
     bool_buffer = 0b10011111; // Do not drive
   }
-  else if (ssr_data[ssr_data_index].dev_voltage < 2.4 && ssr_data[ssr_data_index].dev_voltage >= 2.3)
+  else if (ssr_data[ssr_data_index].dev_voltage < VOLTAGE_MED_HIGH && ssr_data[ssr_data_index].dev_voltage >= VOLTAGE_MED_LOW)
   {
     bool_buffer = 0b10011011; // Do not do lora & drive
   }
-  else if (ssr_data[ssr_data_index].dev_voltage < 2.3 && ssr_data[ssr_data_index].dev_voltage >= 2.1)
+  else if (ssr_data[ssr_data_index].dev_voltage < VOLTAGE_LOW_HIGH && ssr_data[ssr_data_index].dev_voltage >= VOLTAGE_LOW_LOW)
   {
     bool_buffer = 0b10000000; // Only deep sleep
   }
@@ -309,7 +311,8 @@ void taskDetermineTasks()
   // Here, the boolean buffer **bool_buffer** is used with the defines of TASK described in main.h.
   // bool_buffer = 0b010000011; // Set DEEP_SLEEP, STORE, SENS,
   //  bool_buffer = 0b10010001; // Set SLEEP, BEACON, SENS
-  bool_buffer = 0b10001001; // Set SLEEP, SCAN, SENS
+  
+  // bool_buffer = 0b10001001; // Set SLEEP, SCAN, SENS
 
 #ifdef DEBUG
   clearBuf();
@@ -386,7 +389,7 @@ void taskLora()
 
 void taskScan()
 {
-  uint16_t air_time = 7000; // 7 seconds scanning
+  uint16_t air_time = SCAN_AIR_TIME; // 7 seconds scanning
 
   ble_data.mode = 1;
   ble_data.ssr_id = SSR_ID;
@@ -420,7 +423,7 @@ void taskScan()
 
 void taskBeacon()
 {
-  uint16_t air_time = 10000; // 10 seconds beacon
+  uint16_t air_time = BEACON_AIR_TIME; // 10 seconds beacon
 
   ble_data.mode = 0;
   ble_data.ssr_id = SSR_ID;

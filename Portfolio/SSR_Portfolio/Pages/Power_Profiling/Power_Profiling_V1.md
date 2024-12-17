@@ -156,7 +156,7 @@ setup
 **Key Observations:**
 1. **Wait for I2C connection:** ~13mA.
 2. **Beacon Transmission:** ~0.46mA for 5 seconds.
-3. **Deep Sleep:** ~0.18mA.
+3. **Deep Sleep:** ~0.002mA.
 
 **Average Current Consumption:** ~0.3566mA.
 
@@ -217,7 +217,9 @@ while(1)
 - Delay retains RAM, ensuring faster wake-up (~1 second) compared to deep sleep.
 
 ![BLE Different Wait Modes](../../images/BLE_wait_modes.png)
-
+Some problems here,
+The used module has for some reasons a current consumption of 0.179µA. This should be lower. Therefore, a new module is used with the same code and yields different values which are correctly.
+![[BLE_observation_right.png]]
 ### LTR-329 Light Sensor
 
 #### Default Operation

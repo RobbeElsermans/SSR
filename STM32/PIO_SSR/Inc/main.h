@@ -77,7 +77,19 @@ extern uint8_t bool_buffer;
 #define TASK_DEEP_SLEEP 6
 #define TASK_LIGHT_SLEEP 7
 
-#define SSR_ID 0x11
+#define SSR_ID 0x10
+
+#define VOLTAGE_MAX_HIGH 2.72
+#define VOLTAGE_MAX_LOW 2.4
+
+#define VOLTAGE_SEM_MAX_HIGH 2.4
+#define VOLTAGE_SEM_MAX_LOW 2.2
+
+#define VOLTAGE_MED_HIGH 2.2
+#define VOLTAGE_MED_LOW 2.0
+
+#define VOLTAGE_LOW_HIGH 2.0
+#define VOLTAGE_LOW_LOW 1.7
 
 /* USER CODE END EC */
 

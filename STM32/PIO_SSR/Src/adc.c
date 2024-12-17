@@ -23,7 +23,7 @@
 
 /* USER CODE BEGIN 0 */
 const float base = 0.000805664;
-const float division_factor = 1.198011114; //3.3/2.7 ish
+const float division_factor = 2.694789758;//1.198011114; //3.3/2.7 ish
 /* USER CODE END 0 */
 
 ADC_HandleTypeDef hadc1;

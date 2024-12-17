@@ -4,10 +4,13 @@
 // https://learn.adafruit.com/bluefruit-nrf52-feather-learning-guide/blebeacon
 #include <bluefruit.h>
 #include <Wire.h>
+#include <Adafruit_SPIFlash.h>
 
 #define MANUFACTURER_ID   0x0059
 
 #define BEACON_SSR_ID 0x3F  //Add ssr_id to it. Is a 8-bit value.
+
+Adafruit_FlashTransport_QSPI flashTransport;
 
 // IBeacon format used
 // https://semiwiki.com/semiconductor-services/einfochips/302892-understanding-ble-beacons-and-their-applications/
@@ -128,11 +131,15 @@ void setup()
   Wire.onReceive(receive_event); // register event
   Wire.onRequest(request_event);
 
+  pinMode(11, OUTPUT);
+
   // Uncomment to blocking wait for Serial connection
   //while ( !Serial ) delay(10);
   //delay(1000);
   Serial.println("Wait for data");
-  while(!received_data); //Wait for I2C transfer
+  while(!received_data){
+    delay(100); //Wait for I2C transfer
+  }
   Serial.println("data received! ");
   received_data = false;
   uint16_t time_left = 0;
@@ -141,6 +148,7 @@ void setup()
   {
     init_beacon();
     set_data_beacon();
+    digitalWrite(11, LOW);
     Serial.println("Broadcasting beacon, open your beacon app to test");
     timer = millis();
     while(millis()-timer < i2c_data.air_time*100)
@@ -150,23 +158,26 @@ void setup()
       Serial.printf("time left: %d", time_left);
       start_beacon(time_left);
       //Wait until a connection is made again
-      while(Bluefruit.Advertising.isRunning());
+      while(Bluefruit.Advertising.isRunning())
+      {
+        delay(100);
+      }
       Serial.println("advertising done");
-      delay(1);
       Bluefruit.Periph.clearBonds();
 
       //Continue the loop for beacon
     }
-  
+    digitalWrite(11, HIGH);
     //Transfer data of beacon to master
     Serial.printf("Amount of ACK's: %d \r\n", beacon_data.amount_of_ack);
-    delay(200);
+    //delay(200);
   }
   else
   {
     init_scan();
-
+  
     //check if scanning timer has finished
+    digitalWrite(11, LOW);
     timer = millis();
     while(millis()-timer < i2c_data.air_time*100)
     {
@@ -176,13 +187,17 @@ void setup()
       start_scan(time_left);
 
       //perform scanning
-      while(Bluefruit.Scanner.isRunning());
+      while(Bluefruit.Scanner.isRunning()){
+        delay(100);
+      }
 
       //Stop the loop for scanner
       // request_event must be altered if more beacons can be scanned.
       break;
     }
   }
+
+  digitalWrite(11, HIGH);
   
   time_left = i2c_data.air_time*100 - (millis()-timer);
   //Wait for I2C read from master
@@ -198,6 +213,9 @@ void setup()
     delay(10);
   }
 
+
+  Wire.end();
+    
   deep_sleep();
 }
 
@@ -210,7 +228,7 @@ void init_beacon()
 {
   Bluefruit.begin();
   Bluefruit.autoConnLed(false);
-  Bluefruit.setTxPower(0);    // Check bluefruit.h for supported values
+  Bluefruit.setTxPower(2);    // Check bluefruit.h for supported values
   beacon.setManufacturer(MANUFACTURER_ID);
   beacon.setMajorMinor((BEACON_SSR_ID << 8 |i2c_data.ssr_id), 0x0000);
 }
@@ -255,10 +273,10 @@ void start_beacon(uint16_t timer)
     
   //Bluefruit.Advertising.restartOnDisconnect(false); //in order so the beacon stops sending after ACK.
   Bluefruit.Advertising.restartOnDisconnect(false);
-  Bluefruit.Advertising.setInterval(160,160);         // in unit of 0.625 ms
+  Bluefruit.Advertising.setInterval(80,80);         // in unit of 0.625 ms
   
   Bluefruit.Advertising.setFastTimeout(1);            // number of seconds in fast mode
-  //Bluefruit.Advertising.start(data.air_time/10);    // 0 = Don't stop advertising after n seconds  
+  //Bluefruit.Advertising.start(i2c_data.air_time/10);    // 0 = Don't stop advertising after n seconds  
 
   uint8_t timer_sec = timer/1000;
 
@@ -266,9 +284,16 @@ void start_beacon(uint16_t timer)
   Serial.println(timer_sec);
 
   if (timer_sec <= 0)
-    Bluefruit.Advertising.start(1);
+  {
+    
+    //Bluefruit.Advertising.setFastTimeout(1);  
+    Bluefruit.Advertising.start(1); // number of s//econds in fast mode
+  }
   else
+  {
     Bluefruit.Advertising.start(timer_sec);
+    //Bluefruit.Advertising.setFastTimeout(timer_sec);            // number of seconds in fast mode
+  }
 }
 
 /**
@@ -462,8 +487,11 @@ void request_event()
       Wire.write(255-beacon_data.amount_of_ack);
       Serial.printf("write mode 0: %d\r\n", beacon_data.amount_of_ack);
     }
+
+    Wire.end();
     
     Serial.printf("A request on I2C\r\n");
+    deep_sleep();
   }
 }
 
@@ -558,21 +586,14 @@ void receive_event(int howMany)
 
 void deep_sleep()
 {
-  //Bluefruit.end(); //Didn't tested yet
+//  Bluefruit.end(); //Didn't tested yet
   
   Serial.println("Go to deep sleep");
-  delay(1000);
-  //https://pperego83.medium.com/how-to-sleep-arduino-nano-ble-33-c4fe4d38b357
-  //https://forum.arduino.cc/t/put-nano-33-ble-into-power-on-sleep-mode/1169463
-  //https://forum.seeedstudio.com/t/sleep-current-of-xiao-nrf52840-deep-sleep-vs-light-sleep/271841
-  //https://devzone.nordicsemi.com/f/nordic-q-a/100602/seeed-xiao-nrf82840-wakeup-after-nrf_power-systemoff
-
-  //nrf_gpio_cfg_sense_input(digitalPinToInterrupt(2), NRF_GPIO_PIN_PULLDOWN, NRF_GPIO_PIN_SENSE_HIGH);
-
-
-  //Found it on https://forum.seeedstudio.com/t/xiao-ble-sense-in-deep-sleep-mode/263477/129?page=7
-  //nrf_gpio_cfg_sense_input(g_ADigitalPinMap[2], NRF_GPIO_PIN_PULLUP, NRF_GPIO_PIN_SENSE_LOW); //wake from deep sleep
+  Serial.end();
+  flashTransport.begin();
+  flashTransport.runCommand(0xB9);
+  flashTransport.end();
+  
   nrf_gpio_cfg_sense_input(g_ADigitalPinMap[2], NRF_GPIO_PIN_PULLDOWN, NRF_GPIO_PIN_SENSE_HIGH); //wake from deep sleep
-  delay(200);
   NRF_POWER->SYSTEMOFF = 1;
 }
