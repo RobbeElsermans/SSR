@@ -31,7 +31,7 @@ A closer look at the standby mode current consumption.
 The total cycle uses an average current of $\pm 2.7mA$.
 This can be reduced by using a compare value of $0xFFFF$.
 #### better standby mode (Without load of peripherals)
-![[Pasted image 20241211160438.png]]
+![[STM32SleepPowerProfile.png]]
 Lowest point = 300nA
 Peak = 11mA
 SemiPeak =8.8mA
@@ -228,7 +228,7 @@ Joule scope is used as amp meter (by using only the red wires).
 ![ltr_329_consumption](../../Images/Power_Profiling/ltr_329_consumption.png)
 
 Sandby mode
-![[Pasted image 20241210174523.png]]
+![[StandbyModeLTR329.png]]
 
 For reasons unknown Standby mode draws 96 microAmpers insted od promised 5microAmpers
 Maesuring peak: 300microAmpers
@@ -241,7 +241,7 @@ Joule scope is used as amp meter (by using only the red wires).
 
 ![sht40_consumption](../../Images/Power_Profiling/sht40_consumption.png)
 #todo 
-![[Pasted image 20241211092950.png]]
+![[PowerProfileSHT40.png]]
 Between the two peaks of 447 microAmps
 nonpeak - 114 microAmps
 ### LoRa Module

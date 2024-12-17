@@ -68,13 +68,13 @@ Sleepmode:
     
     - The `LTR329_WakeUp` function sets the sensor back to active mode.
     - A delay is added after wake-up to allow the sensor to stabilize before the next reading.
-![[Pasted image 20241203122154.png]] 
+![[StarupSequance.png]] 
 according to datasheet: 
 standby current: 5 $micro$A
 initial startup: 100 ms
 waking up: 10 ms 
 
-![[Pasted image 20241210174523.png]]
+![[StandbyModeLTR329.png]]
 For reasons unknown Standby mode draws 96 microAmpers insted od promised 5microAmpers
 Maesuring peak: 300microAmpers
 SemiPeak : 157microAmpers

@@ -12,7 +12,7 @@ HighOUT: 1,8V
 LowOUT? 1,2V
 according to datasheet
 It takes about 1h 35m to charge the Cap. to 2,3V WITH additional artiffical lights
-![[Pasted image 20241129210421.png]]
+![[ChargingOfCap.png]]
 
 
 ### Update on energy harvesting 
@@ -20,7 +20,7 @@ I previously tested only one E.H.M. since i expected them to be the same i only 
 
 #### New way of powering 
 We will use a Configuration of Dual-cell supercapacitor (Using the two supercaps in series)
-![[Pasted image 20241211150229.png]]
+![[DualCellConfig.png]]
 2,7 + 2,7 = 5,4 V -> Capacitors should not explode when charged to Max. Threshold
 Module should be powering at 3.92V  (HighOut = 3.3V) (LowOut = 1.8V)
 If the SuperCaps would reach max threshold Module will regulate the Voltage until 3.6V re reached
@@ -41,7 +41,7 @@ Hardware Setup:
 
 https://www.youtube.com/watch?v=EsZLgqhqfO0
 ADC1_IN8 PA3 A2 - reading pin 
-![[Pasted image 20241203172736.png]]
+![[STMConfigVolReading.png]]
 We have been succesfull in reading voltage on a potenciometer
 Measuring capacitor: 
 **Hardware Setup**:
@@ -54,8 +54,8 @@ Measuring capacitor:
  AND WE WANT TO READ ONLY ONE WHEN NEEDED
 
 New plan : Use status 1,2,3 pins to see if we are running out of power
-![[Pasted image 20241204133049.png]] 
+![[StatusChecksSig.png]] 
 ### Powering the STM32 Nucleo with the H.M.
-![[Pasted image 20241210160716.png]]
+![[3V3PowerSuplyNucleo.png]]
 
 ### Decision making
