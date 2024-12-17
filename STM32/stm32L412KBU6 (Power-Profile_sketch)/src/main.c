@@ -80,6 +80,7 @@ int main(void)
     // Blinky blinky
     blink_led(1000);
     HAL_Delay(2000);
+    blink_led_times(1000,3);
     //half_sleep(5000);
     deep_sleep(5000);
     //HAL_Delay(5000);
