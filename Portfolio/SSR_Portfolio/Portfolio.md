@@ -26,6 +26,7 @@ BLE technology is used to detect proximity between nodes and share crucial infor
 - Energy awareness algorithm
 ## Board selection
 [Brain Board Selection](Pages/Investigation/Brain_Board_Selection.md)
+
 ## MVP
 The MVP (Minimal Vital Product) contains the following items:
 - LoRa-module that transmits data to a gateway.
@@ -33,6 +34,7 @@ The MVP (Minimal Vital Product) contains the following items:
 - The ability to measure temperature and humidity.
 - Energy awareness
 - Use environmental source as energy source
+![[Pasted image 20241218114618.png]]
 ## Power Profiling
 [Power Profiling](Pages/Power_Profiling/Power_Profiling.md)
 ## STM32 Module

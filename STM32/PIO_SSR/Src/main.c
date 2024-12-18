@@ -278,11 +278,11 @@ void test_code()
 
 void taskReadBattery()
 {
-  ssr_data[ssr_data_index].dev_voltage = (readVoltage(&hadc1)) * 1000.0; // COnvert to mV and save only int
+  ssr_data[ssr_data_index].dev_voltage = (readVoltage(&hadc1)) * 10000.0; // Convert to value and save only int
 
 #ifdef DEBUG
   clearBuf();
-  sprintf((char *)Buffer, "taskReadBattery - mV: %d \r\n", ssr_data[ssr_data_index].dev_voltage);
+  sprintf((char *)Buffer, "taskReadBattery - mV: %d \r\n", ssr_data[ssr_data_index].dev_voltage/10);
   serial_print((char *)Buffer);
 #endif
 }
@@ -292,21 +292,24 @@ void taskDetermineTasks()
   // Do this based on the voltage value.
   //For now, we use light sleep due to no non-volatile memory available
 
-  if (ssr_data[ssr_data_index].dev_voltage < VOLTAGE_MAX_HIGH && ssr_data[ssr_data_index].dev_voltage >= VOLTAGE_MAX_LOW) // Fully charged
+  if (ssr_data[ssr_data_index].dev_voltage/10 < VOLTAGE_MAX_HIGH/1000.0 && ssr_data[ssr_data_index].dev_voltage/10 >= VOLTAGE_MAX_LOW/1000.0) // Fully charged
   {
     bool_buffer = 0b10111111; // Do all tasks
   }
-  else if (ssr_data[ssr_data_index].dev_voltage < VOLTAGE_SEM_MAX_HIGH && ssr_data[ssr_data_index].dev_voltage >= VOLTAGE_SEM_MAX_LOW)
+  else if (ssr_data[ssr_data_index].dev_voltage/10 < VOLTAGE_SEM_MAX_HIGH/1000.0 && ssr_data[ssr_data_index].dev_voltage/10 >= VOLTAGE_SEM_MAX_LOW/1000.0)
   {
     bool_buffer = 0b10011111; // Do not drive
   }
-  else if (ssr_data[ssr_data_index].dev_voltage < VOLTAGE_MED_HIGH && ssr_data[ssr_data_index].dev_voltage >= VOLTAGE_MED_LOW)
+  else if (ssr_data[ssr_data_index].dev_voltage/10 < VOLTAGE_MED_HIGH/1000.0 && ssr_data[ssr_data_index].dev_voltage/10 >= VOLTAGE_MED_LOW/1000.0)
   {
     bool_buffer = 0b10011011; // Do not do lora & drive
   }
-  else if (ssr_data[ssr_data_index].dev_voltage < VOLTAGE_LOW_HIGH && ssr_data[ssr_data_index].dev_voltage >= VOLTAGE_LOW_LOW)
+  else if (ssr_data[ssr_data_index].dev_voltage/10 < VOLTAGE_LOW_HIGH/1000.0)
   {
     bool_buffer = 0b10000000; // Only deep sleep
+  }
+  else{
+     bool_buffer = 0b10000000; // Only deep sleep
   }
 
   // Here, the boolean buffer **bool_buffer** is used with the defines of TASK described in main.h.
@@ -314,7 +317,8 @@ void taskDetermineTasks()
   //  bool_buffer = 0b10010001; // Set SLEEP, BEACON, SENS
   
   //bool_buffer = 0b10001001; // Set SLEEP, SCAN, SENS
-  bool_buffer = 0b10000001; // Set SLEEP, SENS
+  //bool_buffer = 0b10000001; // Set SLEEP, SENS
+  //bool_buffer = 0b10000000; // Set SLEEP
 
 #ifdef DEBUG
   clearBuf();
@@ -368,7 +372,7 @@ void taskStore()
 {
   // TODO
   ssr_data_index++; // Increase sequence number
-
+  ssr_data[ssr_data_index].seq_number = ssr_data_index;
 #ifdef DEBUG
   clearBuf();
   sprintf((char *)Buffer, "taskStore - storing index %d\r\n", ssr_data_index-1);
@@ -472,7 +476,7 @@ void taskDeepSleep()
   serial_print((char *)Buffer);
 #endif
 
-  deep_sleep(&hrtc, SLEEP_TIME);
+  deep_sleep(SLEEP_TIME);
 }
 
 void taskLightSleep()
@@ -483,7 +487,7 @@ void taskLightSleep()
   serial_print((char *)Buffer);
 #endif
 
-  half_sleep(&hrtc, SLEEP_TIME);
+  half_sleep(SLEEP_TIME);
 }
 
 void wakeBleModule()
@@ -518,27 +522,27 @@ uint16_t counter_value(uint16_t time_millis)
   return counter_value;
 }
 
-void half_sleep(RTC_HandleTypeDef *hrtc, uint16_t time)
+void half_sleep(uint32_t time)
 {
   // Setup RTC and setup interupt
   //  MX_RTC_Init(); //DOne in main.c
   HAL_SuspendTick();
-  HAL_RTCEx_SetWakeUpTimer_IT(hrtc, counter_value(time), RTC_WAKEUPCLOCK_RTCCLK_DIV16, 0);
+  HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, counter_value(time), RTC_WAKEUPCLOCK_RTCCLK_DIV16, 0);
 
   /* Enter STOP 2 mode */
   HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
-  HAL_RTCEx_DeactivateWakeUpTimer(hrtc);
+  HAL_RTCEx_DeactivateWakeUpTimer(&hrtc);
   SystemClock_Config();
   HAL_ResumeTick();
 }
 
-void deep_sleep(RTC_HandleTypeDef *hrtc, uint16_t time)
+void deep_sleep(uint32_t time)
 {
   GPIO_Disable();
   HAL_PWREx_EnableSRAM2ContentRetention();
   HAL_PWREx_EnableBORPVD_ULP();
-  HAL_RTCEx_DeactivateWakeUpTimer(hrtc);
-  HAL_RTCEx_SetWakeUpTimer_IT(hrtc, counter_value(time), RTC_WAKEUPCLOCK_RTCCLK_DIV16, 0);
+  HAL_RTCEx_DeactivateWakeUpTimer(&hrtc);
+  HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, counter_value(time), RTC_WAKEUPCLOCK_RTCCLK_DIV16, 0);
   HAL_PWR_EnterSTANDBYMode();
 }
 

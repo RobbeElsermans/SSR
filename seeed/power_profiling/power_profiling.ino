@@ -1,75 +1,43 @@
 #include <bluefruit.h>
 #include "Adafruit_SPIFlash.h"
 
-#define DO_WORK_PIN   D2
-#define SHUTDOWN_PIN  D3
-
 Adafruit_FlashTransport_QSPI flashTransport;
-SemaphoreHandle_t xSemaphore;
-bool gotoSystemOffSleep = false;
-int work_LED_status = HIGH;
 
-void QSPIF_sleep(void)
+void deep_sleep()
 {
+  // Turn of flash, has like 15µA consumption.
   flashTransport.begin();
   flashTransport.runCommand(0xB9);
-  flashTransport.end();  
+  flashTransport.end();
+
+  // wake pin from deep sleep
+  nrf_gpio_cfg_sense_input(g_ADigitalPinMap[2], NRF_GPIO_PIN_PULLDOWN, NRF_GPIO_PIN_SENSE_HIGH);
+
+  // set deep sleep power off mode.
+  NRF_POWER->SYSTEMOFF = 1;
 }
 
 void setup()
 {
-  pinMode(LED_RED, OUTPUT);
-  pinMode(LED_GREEN, OUTPUT);
-  
-  digitalWrite(LED_RED, HIGH);
-  digitalWrite(LED_GREEN, HIGH);
-  digitalWrite(LED_BLUE, work_LED_status);
+  pinMode(LED_BUILTIN, OUTPUT);
 
-  QSPIF_sleep();
-
-  pinMode(DO_WORK_PIN, INPUT_PULLUP_SENSE);
-  attachInterrupt(digitalPinToInterrupt(DO_WORK_PIN), doWorkISR, FALLING);
-
-  pinMode(SHUTDOWN_PIN, INPUT_PULLUP_SENSE);
-  attachInterrupt(digitalPinToInterrupt(SHUTDOWN_PIN), shutdownISR, FALLING);
-
-  xSemaphore = xSemaphoreCreateBinary();
-
-  // Flash green to see power on, reset, and wake from system_off
-  digitalWrite(LED_GREEN, LOW);
+  digitalWrite(LED_BUILTIN, LOW);
   delay(1000);
-  digitalWrite(LED_GREEN, HIGH);
-}
+  digitalWrite(LED_BUILTIN, HIGH);  
+  delay(1000);
 
-void doWorkISR()
-{
-  xSemaphoreGive(xSemaphore);
-}
+  // Normal mode
+  while(!digitalRead(2)) //Wait for pin change
+  {
+    //delay(1); //normal
+    delay(500); //normal modified
+  }
+  // End normal mode
 
-void shutdownISR()
-{
-  gotoSystemOffSleep = true;
-  xSemaphoreGive(xSemaphore);
+  // deep sleep mode
+  deep_sleep(); //Wake-up based on external pin change
+  // End deep sleep mode
 }
-
 void loop()
 {
-  // FreeRTOS will automatically put the system in system_on sleep mode here
-  xSemaphoreTake(xSemaphore, portMAX_DELAY);
-
-  if (gotoSystemOffSleep)
-  {
-    //Flash red to see we are going to system_off sleep mode
-    digitalWrite(LED_RED, LOW);
-    delay(1000);
-    digitalWrite(LED_RED, HIGH);
-
-    NRF_POWER->SYSTEMOFF=1; // Execution should not go beyond this
-    //sd_power_system_off() // Use this instead if using the soft device
-  }
-
-  // Not going to system off sleep mode, so do work
-  work_LED_status = !work_LED_status;
-  digitalWrite(LED_GREEN, work_LED_status);
-  digitalWrite(LED_RED, work_LED_status);
 }

@@ -63,5 +63,5 @@ HAL_StatusTypeDef sht40ReadTempAndHumidity(I2C_HandleTypeDef *hi2c, float *tempe
 
 HAL_StatusTypeDef sht40Sleep(I2C_HandleTypeDef *hi2c)
 {
-  return HAL_I2C_Master_Transmit(hi2c, SHT40_I2C_ADDR, (uint8_t *)SHT40_REG_SOFT_RESET, 1, 1);
+  return HAL_I2C_Master_Transmit(hi2c, SHT40_I2C_ADDR, (uint8_t *)SHT40_REG_SOFT_RESET, 1, 10);
 }

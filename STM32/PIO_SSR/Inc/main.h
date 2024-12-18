@@ -121,8 +121,8 @@ void sleepltrModule();
 void GPIO_Disable(void);
 
 uint16_t counter_value(uint16_t time_millis);
-void half_sleep(RTC_HandleTypeDef* hrtc, uint16_t time);
-void deep_sleep(RTC_HandleTypeDef* hrtc, uint16_t time);
+void half_sleep(uint32_t time);
+void deep_sleep(uint32_t time);
 
 /**
  * @brief set a bit inside a byte

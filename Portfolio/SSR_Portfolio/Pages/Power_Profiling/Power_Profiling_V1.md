@@ -201,7 +201,7 @@ while(1)
 	// Normal mode
 	while(!digitalRead(2)) //Wait for pin change
 	{
-		//delay(1); //normal
+		//normal
 		//delay(1000); //normal modified
 	}
 	// End normal mode
@@ -211,25 +211,47 @@ while(1)
 	// End deep sleep mode
 }
 ```
+Below a graph where the normal modified is used (so no delay in the while).
+![[Pasted image 20241218093041.png]]
+A high consumption is present in the while loop with no delay. here, the PMU doesn't get time to decrease energy between CPU cycles. Therefore the full power consumption.
+
+Below a graph where the normal modified is used (so a delay is used).
+![[Pasted image 20241218092342.png]]
+A weird spike happens when the led is on.
+
+Below a graph when system off is used.
+![[Pasted image 20241218091811.png]]
+The difference between the modified delay is that here, we have a reduction of 2. This is not much but more then nothing.
 
 **Key Observations:**
 - Using a delay of 1 second vs. deep sleep yields similar power consumption.
 - Delay retains RAM, ensuring faster wake-up (~1 second) compared to deep sleep.
 
-![BLE Different Wait Modes](../../images/BLE_wait_modes.png)
 A problem we've encountered.
 The used module has for some reasons a current consumption of 0.179µA. This should be lower. Therefore, another module is used with the same code and yields different values which are correctly accordingly to the datasheet.
-![[BLE_observation_right.png]]
+![[Pasted image 20241218092955.png]]
 ### LTR-329 Light Sensor
+```c
+init();
+while(1)
+{
+	// Normal mode
+	while(1) //Wait for pin change
+	{
+		read_sensor();
+		wait 10 sec
+	}
+}
+```
 
 #### Default Operation
 ![LTR-329 Consumption](../../Images/Power_Profiling/ltr_329_consumption.png)
 
 #### Standby mode
-![LTR standby mode](../../Images/Power_Profiling/ltr_329_standby_consumotion.png)
-- Measured consumption: ~96µA (vs. datasheet's 5µA).
-- Peak: ~300µA.
-- Semi-peak: ~157µA.
+![[Pasted image 20241218101025.png]]
+- Active: 171.5µA
+- Idle: 80µA
+- Total: 85.1µA
 
 ### SHT40 Sensor
 
@@ -237,10 +259,13 @@ The used module has for some reasons a current consumption of 0.179µA. This sho
 ![SHT40 Consumption](../../Images/Power_Profiling/sht40_consumption.png)
 
 #### Standby Mode
-![SHT40 standby mode](sht_standby_consumption.png)
-**Key Observations:**
-- Peaks: ~447µA.
-- Non-peak: ~114µA.
+![[Pasted image 20241218102531.png]]
+- Active: 121.14µA
+- Idle: 115.54µA
+- Total: 115.80µA
+
+### Sensors Power Measurement
+
 
 ### LoRa Module
 **(To be documented)**
