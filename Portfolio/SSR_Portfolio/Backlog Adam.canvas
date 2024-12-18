@@ -25,7 +25,8 @@
 		{"id":"a6bc8f5d396f9761","type":"text","text":"charging solars","x":220,"y":-519,"width":250,"height":60,"color":"3"},
 		{"id":"a72273aa34832b6b","type":"text","text":"see if 3V output possible","x":220,"y":-459,"width":250,"height":60,"color":"3"},
 		{"id":"eee81c2eb0071e90","type":"text","text":"3V3 STMModule","x":221,"y":-660,"width":250,"height":60,"color":"3"},
-		{"id":"ce307bc69aed504d","type":"text","text":"Power Profile of sleeping sensors / wake sensors","x":760,"y":-223,"width":250,"height":60,"color":"3"}
+		{"id":"ce307bc69aed504d","type":"text","text":"Power Profile of sleeping sensors / wake sensors","x":760,"y":-223,"width":250,"height":60,"color":"3"},
+		{"id":"c145dadbd2905058","type":"text","text":"Simulate the voltage on Poteciometer","x":318,"y":-731,"width":250,"height":399,"color":"3"}
 	],
 	"edges":[]
 }

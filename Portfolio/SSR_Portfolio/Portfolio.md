@@ -14,6 +14,7 @@ BLE technology is used to detect proximity between nodes and share crucial infor
 #### Adam
 - Environmental sensing
 - Energy harvesting
+- Voltage reading
 #### Thomas
 - LoRa connectivity
 - Dashboard
