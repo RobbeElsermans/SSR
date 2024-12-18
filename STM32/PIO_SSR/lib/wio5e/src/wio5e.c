@@ -1,5 +1,10 @@
 #include "wio5e.h"
 
+delay_callback_t _delay_callback;
+void loraDelayCallback(delay_callback_t dc_fp) {
+  _delay_callback = dc_fp;
+}
+
 char command[64] = {0};
 char devAddr[] = {"26:0B:88:CA"};
 char appsKey[] = {"7121B71152E792B5F6A08E5A9D232ECD"};
@@ -18,13 +23,13 @@ void testLoRa() {
     if (counter > 64) {
        // After this error is given the module has succesfully send the data to TTN
         sleepLoRa(1);
-        _delay_callback(7*60*1000); // 7 minutes needed between transmissions
+        if (_delay_callback) _delay_callback(7*60*1000); // 7 minutes needed between transmissions
         sleepLoRa(0);
         counter = 0;
     }
 
     if (counter == 0) {
-        _delay_callback(27);
+        if (_delay_callback) _delay_callback(27);
         initLoRa();
     }
     
@@ -47,7 +52,7 @@ void testLoRa() {
     // 3200 ms needed between transmissions
     send_data_over_lora(data);  // High power sleep (27)
     sleepLoRa(1);
-    _delay_callback(3200);      // Low power sleep (3173)
+    if (_delay_callback) _delay_callback(3200);      // Low power sleep (3173)
     sleepLoRa(0);
     
     counter++;
@@ -102,14 +107,14 @@ void sleepLoRa(uint8_t sleep) {
         #endif
         //write_read_command_1000("AT+LOWPOWER\r\n", "SLEEP");
         write_command("AT+LOWPOWER\r\n");
-        // _delay_callback(3*60*1000); // 3 minutes needed between transmissions
+        // if (_delay_callback) _delay_callback(3*60*1000); // 3 minutes needed between transmissions
     } else {
         #ifdef DEBUG
         serial_print("Wake-Up\r\n");
         #endif
         //write_read_command_1000("AT\r\n", "WAKEUP");
         write_command("AT\r\n");
-        _delay_callback(5);     // After waking up, wait 5 ms
+        if (_delay_callback) _delay_callback(5);     // After waking up, wait 5 ms
     }
 }
 
@@ -155,5 +160,5 @@ void write_read_command(char* command, char* check, uint16_t delay) {
 }
 void write_command(char* command) {
     HAL_UART_Transmit(&huart1, (uint8_t*) command, strlen(command), 100);
-    _delay_callback(27);
+    if (_delay_callback) _delay_callback(27);
 }

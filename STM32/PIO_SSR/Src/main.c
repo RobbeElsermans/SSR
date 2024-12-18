@@ -123,7 +123,7 @@ int main(void)
   lineBotDelayCallback(half_sleep);
 
   /* LineBot lob function calls */
-  loraDelayCallback(HAL_Delay);
+  loraDelayCallback(half_sleep);
   
   /* mpu6050 lob function calls */
   //gyroDelayCallback(HAL_Delay);
