@@ -292,19 +292,19 @@ void taskDetermineTasks()
   // Do this based on the voltage value.
   //For now, we use light sleep due to no non-volatile memory available
 
-  if (ssr_data[ssr_data_index].dev_voltage/10 < VOLTAGE_MAX_HIGH/1000.0 && ssr_data[ssr_data_index].dev_voltage/10 >= VOLTAGE_MAX_LOW/1000.0) // Fully charged
+  if (ssr_data[ssr_data_index].dev_voltage/10 > VOLTAGE_MAX_LOW*1000) // Fully charged
   {
     bool_buffer = 0b10111111; // Do all tasks
   }
-  else if (ssr_data[ssr_data_index].dev_voltage/10 < VOLTAGE_SEM_MAX_HIGH/1000.0 && ssr_data[ssr_data_index].dev_voltage/10 >= VOLTAGE_SEM_MAX_LOW/1000.0)
+  else if (ssr_data[ssr_data_index].dev_voltage/10 < VOLTAGE_SEM_MAX_HIGH*1000 && ssr_data[ssr_data_index].dev_voltage/10 >= (double)VOLTAGE_SEM_MAX_LOW*1000)
   {
     bool_buffer = 0b10011111; // Do not drive
   }
-  else if (ssr_data[ssr_data_index].dev_voltage/10 < VOLTAGE_MED_HIGH/1000.0 && ssr_data[ssr_data_index].dev_voltage/10 >= VOLTAGE_MED_LOW/1000.0)
+  else if (ssr_data[ssr_data_index].dev_voltage/10 < VOLTAGE_MED_HIGH*1000 && ssr_data[ssr_data_index].dev_voltage/10 >= (double)VOLTAGE_MED_LOW*1000)
   {
     bool_buffer = 0b10011011; // Do not do lora & drive
   }
-  else if (ssr_data[ssr_data_index].dev_voltage/10 < VOLTAGE_LOW_HIGH/1000.0)
+  else if (ssr_data[ssr_data_index].dev_voltage/10 < VOLTAGE_LOW_HIGH*1000)
   {
     bool_buffer = 0b10000000; // Only deep sleep
   }
@@ -371,8 +371,7 @@ void taskSens()
 void taskStore()
 {
   // TODO
-  ssr_data_index++; // Increase sequence number
-  ssr_data[ssr_data_index].seq_number = ssr_data_index;
+  //ssr_data_index++; // Increase sequence number
 #ifdef DEBUG
   clearBuf();
   sprintf((char *)Buffer, "taskStore - storing index %d\r\n", ssr_data_index-1);
