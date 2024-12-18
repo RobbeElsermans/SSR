@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "SSR_Portfolio/Portfolio.md",
+                "file": "SSR_Portfolio/Pages/LoRa/TheThingsNetwork.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Portfolio"
+              "title": "TheThingsNetwork"
             }
           },
           {
@@ -192,6 +192,8 @@
   },
   "active": "171b5569dd9fdadf",
   "lastOpenFiles": [
+    "SSR_Portfolio/Pages/LoRa/UART communications.md",
+    "SSR_Portfolio/Portfolio.md",
     "SSR_Portfolio/Pasted image 20241203130320.png",
     "SSR_Portfolio/Pasted image 20241203130032.png",
     "SSR_Portfolio/Pages/Sensor/SHT40.md",
@@ -217,8 +219,6 @@
     "SSR_Portfolio/Images/Power_Profiling/STM_32_STOP_2.png",
     "SSR_Portfolio/Images/Power_Profiling/STM32_Stop_2_mode.png",
     "SSR_Portfolio/Images/Power_Profiling/STM32_Standby_mode.png",
-    "SSR_Portfolio/Images/Power_Profiling/STM32_Delay_mode.png",
-    "SSR_Portfolio/Images/Power_Profiling/BLE_low_power_wait.png",
     "SSR_Portfolio/Images/Graph_Generations.m",
     "SSR_Portfolio/Images/BLE-program_flow.pdf",
     "SSR_Portfolio/Docs By Person.canvas",
@@ -226,10 +226,8 @@
     "SSR_Portfolio/Backlog Tom.canvas",
     "SSR_Portfolio/Backlog Robbe.canvas",
     "SSR_Portfolio/Backlog Adam.canvas",
-    "SSR_Portfolio/Portfolio.md",
     "SSR_Portfolio/Nice links.md",
     "SSR_Portfolio/Fixes Software installations.md",
-    "SSR_Portfolio/Pages/LoRa/UART communications.md",
     "SSR_Portfolio/Pages/LoRa/TheThingsNetwork.md",
     "SSR_Portfolio/Pages/LoRa/Back-End.md",
     "SSR_Portfolio/Pages/LoRa/Back-End.md",

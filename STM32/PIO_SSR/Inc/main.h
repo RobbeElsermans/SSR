@@ -91,6 +91,9 @@ extern uint8_t bool_buffer;
 #define VOLTAGE_LOW_HIGH 2.0
 #define VOLTAGE_LOW_LOW 1.7
 
+/* Comment when no debug needed */
+#define DEBUG
+
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/

@@ -122,6 +122,9 @@ int main(void)
   //lineBotDelayCallback(HAL_Delay);
   lineBotDelayCallback(half_sleep);
 
+  /* LineBot lob function calls */
+  loraDelayCallback(HAL_Delay);
+  
   /* mpu6050 lob function calls */
   //gyroDelayCallback(HAL_Delay);
   gyroDelayCallback(half_sleep);
