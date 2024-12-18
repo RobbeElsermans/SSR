@@ -94,6 +94,9 @@ extern uint8_t bool_buffer;
 /* Comment when no debug needed */
 #define DEBUG
 
+/* Comment when no debug needed */
+#define DEBUG
+
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/

@@ -156,5 +156,4 @@ void write_read_command(char* command, char* check, uint16_t delay) {
 void write_command(char* command) {
     HAL_UART_Transmit(&huart1, (uint8_t*) command, strlen(command), 100);
     _delay_callback(27);
-
 }
