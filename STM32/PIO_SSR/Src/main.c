@@ -196,7 +196,8 @@ int main(void)
     }
 
     if (checkBool(&bool_buffer, TASK_BEACON))
-    {
+    { 
+      half_sleep(2000); //Wait a while before starting the BLE up again.
       taskBeacon();                         // Do the task
       clearBool(&bool_buffer, TASK_BEACON); // Clear the bit in bool_buffer
     }
@@ -319,7 +320,7 @@ void taskDetermineTasks()
   // bool_buffer = 0b010000011; // Set DEEP_SLEEP, STORE, SENS,
   //  bool_buffer = 0b10010001; // Set SLEEP, BEACON, SENS
   
-  //bool_buffer = 0b10001001; // Set SLEEP, SCAN, SENS
+  bool_buffer = 0b10011000; // Set SLEEP, SCAN, SENS
   //bool_buffer = 0b10000001; // Set SLEEP, SENS
   //bool_buffer = 0b10000000; // Set SLEEP
 

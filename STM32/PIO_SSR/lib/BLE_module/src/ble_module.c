@@ -112,13 +112,20 @@ ble_beacon_result_t beacon(I2C_HandleTypeDef *hi2c1, ble_module_data_t* ble_data
     receive_ble_data(hi2c1, received_data, 2);
 
     #ifdef DEBUG
-    sprintf(Buffer, "beacon - scanning %d \r\n", i);
+    sprintf(Buffer, "beacon - receiving data try %d \r\n", i);
     serial_print(Buffer);
     #endif
 
+    //received data Beacon found
+    if (received_data[0] + received_data[1] == 255)
+      break;
+
     i++;
+
+    if(i >= 10)
+      break;
   }
-  while((received_data[0] + received_data[1]) != 255 && i < 10);
+  while(1);
   //Make sure the received value is correct based on the second value
 
   //Set the value in our own data struct
