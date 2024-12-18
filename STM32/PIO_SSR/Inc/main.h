@@ -79,6 +79,9 @@ extern uint8_t bool_buffer;
 
 #define SSR_ID 0x11
 
+/* Comment when no debug needed */
+#define DEBUG
+
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/

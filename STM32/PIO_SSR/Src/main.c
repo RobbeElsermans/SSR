@@ -45,9 +45,6 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-/* Comment when no debug needed */
-#define DEBUG
-
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -116,9 +113,12 @@ int main(void){
 
   /* LineBot lob function calls */
   //lineBotDelayCallback(HAL_Delay);
+
+  /* LineBot lob function calls */
+  loraDelayCallback(HAL_Delay);
   
   /* mpu6050 lob function calls */
-  gyroDelayCallback(HAL_Delay);
+  // gyroDelayCallback(HAL_Delay);
 
   /* USER CODE END Init */
 
@@ -150,9 +150,10 @@ int main(void){
   sprintf(Buffer, "Her Am I\r\n");
   serial_print(Buffer);
   #endif
-  // while(1) {
-  //   test_code();
-  // }
+  setupLoRa();
+  while(1) {
+    test_code();
+  }
 
   /* USER CODE END 2 */
 
@@ -273,19 +274,7 @@ void test_code() {
   sprintf(Buffer, "Test code\r\n");
   serial_print(Buffer);
 
-  setupLoRa();
-  ssr_data_t data;
-
-  data.seq_number = 100;      // Range from 0 to 511 (8 bits total usage)
-  data.env_temperature = 300; // Range from -327.68 to 327.67 °C (val/100=°C)
-  data.env_humidity = 37;    // Range from -0-100%
-  data.env_lux = 448;         // Range from 0 to 1000
-  data.dev_voltage = 6245;     // Range from 0-6.5535V (val/10000=V) (val/10=mV)
-  data.dev_gyro_x = 21;          // Range from -250 to 250 (val*2=°)
-  data.dev_gyro_y = 21;          // Range from -250 to 250 (val*2=°)
-  data.dev_gyro_z = 21;          // Range from -250 to 250 (val*2=°)
-
-  send_data_over_lora(data);
+  testLoRa();
 }
 
 void taskReadBattery()
