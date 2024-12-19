@@ -1,5 +1,5 @@
 ## BLE and STM32 I2C communication
-![BLE code flow](BLE_Code_flow.png)
+![BLE code flow](/Images/BLE/BLE_Code_flow.png)
 
 To enable the BLE inter-communication, we use I2C as device connection to the STM32L4. 
 Here, the BLE module shall have the address $0x12$ and the following struct will be send over.
@@ -18,18 +18,17 @@ struct ble_module_data_t
 	int8_t gyro_z; // Range from -60 to 60 (val*3=°)
 };
 ```
-A total of 11 bytes (without gyro or other parameters).
+A total of 13 bytes.
 
-The STM32L4 will wake-up at a certain point and will check if the BLE-Beacon must be activated or not. If so, the BLE-module will be waken up on GPIO2 with a High flank trigger. This will bring the BLE-module out of deep sleep.
+The STM32L4 periodically wakes up to check whether the BLE module needs to be activated. If activation is required, the BLE module is brought out of deep sleep by triggering a high signal on the GPIO2 pin.
 
-Then, STM32L4 will wait when the device is available on the I2C bus. After the BLE-module has set itself as available, the STM32L4 sends the *ble_module_data_t* struct with certain values over I2C to BLE-module.
+After awakening the BLE module, the STM32L4 waits for it to become available on the I2C bus. Once the BLE module signals its availability, the STM32L4 sends a `ble_module_data_t` structure containing specific parameters to the BLE module via I2C.
 
-Based on the *mode* it will either perform a beacon or a scanning operation for *air_time* amount of seconds.
+Based on the provided `mode`, the BLE module will either perform a beacon operation or a scanning operation for a specified duration, defined by `air_time`.
 
-After the performed *mode*, the BLE-module will wait for the STM32L4 to reach out to get the result of the performed mode.
-The result can be a *ble_beacon_result_t* or a *ble_scan_result_t* depending on the selected mode at the beginning of the computation.
+Upon completing the operation, the BLE module waits for the STM32L4 to request the result. The result is either a `ble_beacon_result_t` or a `ble_scan_result_t`, depending on the mode selected at the start of the process.
 
-*ble_beacon_result_t*  is selected when we had mode 0 or beacon mode.
+*ble_beacon_result_t*  is selected when mode 0 or beacon mode was selected.
 ```c
 struct ble_beacon_result_t
 {
@@ -53,22 +52,33 @@ struct ble_scan_result_t
 	int8_t gyro_z; // Range from -60 to 60 (val*3=°)
 };
 ```
-For now, only 1 beacon gets saved and returned to the STM32L4 on request.
+For now, only one beacon is saved and returned to the STM32L4 upon request. To validate the received data on the STM32L4 side, a small check is implemented. This check adds a byte to the return value, which is calculated as the difference of 255 and the first byte of the transmitted data.
 
-To know on the STM32L4 side that the received data is valid, their is a small "check" build in that will be the difference of $255$ with the first written byte. This value is added to the return value.
+For example, given the first byte `15` in the `ble_beacon_result_t` struct:
 
-> For example, given this first byte: $15$ for the return struct of *ble_beacon_result_t*. 
-> There is only 1 byte present in this struct, so we add another byte which has value $15-255=230$
-> Total bytes transmitted: $[15,230]$
+- The struct contains only one byte (`15`).
+- An additional byte is added with the value `15 - 255 = 230`.
+- The total bytes transmitted are `[15, 230]`.
 
-In order to not let the BLE-Module wait infinite on the request of the STM32L4, there is a timeout implemented that after 2 seconds, will trigger after the BLE-module has completed its task. This to prevent power consumption if the SMT32L4 missed something or that something went wrong. When the receive window ends, the data will be lost.
+Upon completing its task, the BLE module waits up to two seconds for a request from the STM32L4. If no request is received within this timeout, the BLE module discards the result to prevent unnecessary power consumption. This mechanism ensures that the BLE module does not remain in an indefinite waiting state.
 
-![BLE scan response with emulated STM32L4](BLE_Scan_Response.png)
-**ttyUSB0** (left) represents the emulated STM32 which triggers the BLE-module in mode 1 and waits for its response.
-**ttyACM2** (middle) represents the BLE-module in scanning mode (mode 1) and will scan the medium until a beacon is discovered as shown.
-**ttyACM3** (right) represents the beacon BLE-module and is connected to the STM32L4.
+Upon completing the operation, the BLE module waits for the STM32L4 to request the result. The result is either a `ble_beacon_result_t` or a `ble_scan_result_t`, depending on the mode selected at the start of the process.
 
-As can be observed, a beacon gets fireded where the scanner detect the beacon. The scanner saves the UUID values of the beacon which has $SSR_{id}=0x81$. This ID can be spotted at the received data on the emulated STM32L4. The same holds for the temperature $0x71 = 113$, humidity $0x00 = 0$, lux $0x72=114$, voltage $0x73 = 115$, and rssi $0xd4 = -44$.
+![BLE scan response with emulated STM32L4](/Images/BLE/BLE_Scan_Response.png)
+
+The following illustrates an example scenario:
+
+- **ttyUSB0** (left): Represents the emulated STM32L4, which triggers the BLE module in mode 1 and waits for its response.
+- **ttyACM2** (middle): Represents the BLE module in scanning mode (mode 1). It scans the medium until a beacon is discovered.
+- **ttyACM3** (right): Represents the beacon BLE module connected to the STM32L4.
+
+In this example, a beacon is fired, and the scanner detects it. The scanner saves the UUID values of the beacon with `SSR_id = 0x81`. This ID is visible in the data received by the emulated STM32L4. Other parameters include:
+
+- Temperature: `0x71 = 113`
+- Humidity: `0x00 = 0`
+- Lux: `0x72 = 114`
+- Voltage: `0x73 = 115`
+- RSSI: `0xd4 = -44`.
 
 ## Modes
 ### Mode 0
@@ -115,13 +125,13 @@ All this data is encapsulated in the advertisement data packet. This consists of
 - Protocol Data Unit (2-39-bytes)
 - CRC (3-bytes)
 
-![PDU Packet](BLE_LE_Packet.png)
+![PDU Packet](/Images/BLE/BLE_LE_Packet.png)
 
 Our wanted data will be situated in the Protocol Data Unit or PDU packet. Here we have the following structure:
 - Header (2-bytes)
 - Payload (0-37-bytes)
 
-![PDU Packet](PDU_Packet.png)
+![PDU Packet](/Images/BLE/PDU_Packet.png)
 
 And the header can be subdivided into:
 - PDU types (4-bits)
@@ -150,7 +160,7 @@ An example where we distinguish all elements in the full Bluetooth BLE packet
     - **LE General Discoverable Mode** (bit 1 set).
     - **BR/EDR Not Supported** (bit 2 set).
 
-**2. Manufacturer Specific Data** (`1A-FF-59-00-02-15-00-5C-00-00-5D-00-5E-FF-FF-FF-FF-FF-FF-FF-FF-FF-3F-6C-00-00-CA`):
+**2. Payload Specific Data** (`1A-FF-59-00-02-15-00-5C-00-00-5D-00-5E-FF-FF-FF-FF-FF-FF-FF-FF-FF-3F-6C-00-00-CA`):
 
 - **Length (1A)**: 26 bytes.
 - **Type (FF)**: Manufacturer Specific Data.

@@ -77,7 +77,7 @@ int8_t dev_gyro_z; // Range from -60 to 60 (val*3=°)
 };
 ```
 ## Connection
-![STM32 connections](../..//Images/STM32L412_Connectivity.png)
+![STM32 connections](../../Images/STM32L412_Connectivity.png)
 The connectivity to the SMT32L412.
 
 ![SSR_Global connectivity](../../Images/SSR_Main_board.svg)The connectivity with all the other used modules
