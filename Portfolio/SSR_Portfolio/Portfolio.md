@@ -6,6 +6,8 @@ By Adam Hejduk, Robbe Elsermans, and Thomas Kramp
 ## Intro
 As humanities interest in Mars grows, an understanding of its weather is needed. One of the greatest challenges that the planet provides are the frequent dust storms.
 This project will try to monitor the weather phenomenon (such as temperature, humidity, light, ...) to predict such storms.
+
+> This documentation is written in [Obsidian](https://obsidian.md/).
 ## Project goal
 Each system operates autonomously as its own master, navigating the surface of Mars independently. When a node becomes lost or encounters an issue, and another node approaches, they can exchange valuable information to assist each other. Otherwise, each node functions independently.
 
