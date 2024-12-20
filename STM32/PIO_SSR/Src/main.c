@@ -310,7 +310,7 @@ void taskDetermineTasks()
   }
   else if (ssr_data[ssr_data_index].dev_voltage / 10 < VOLTAGE_LOW_HIGH * 1000)
   {
-    bool_buffer = 0b10000000; // Only deep sleep
+    bool_buffer = 0b10010000; // Only deep sleep and beacon
   }
   else
   {

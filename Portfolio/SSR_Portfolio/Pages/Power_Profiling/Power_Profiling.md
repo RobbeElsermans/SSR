@@ -80,7 +80,7 @@ while(1)
 It can be concluded that we need to replace any delay in our code by the stop 2 mode. This to ensure best power reduction while maintaining the RAM so our code can continue its work when we wake it up to continue.
 
 If we do not need RAM retention, standby mode can be utilised to reduce the power even more.
-![STM_wait_modes.png](../../Images/STM_wait_modes.png)
+![STM_wait_modes.png](STM_wait_modes.png)
 
 ### XIAO nRF52840 
 #### peripheral mode

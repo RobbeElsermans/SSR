@@ -16,7 +16,6 @@ BLE technology is used to detect proximity between nodes and share crucial infor
 - Energy harvesting ​
 - Energy output management​
 - Soldering man
-
 #### Thomas
 - LoRa connectivity
 - Dashboard
@@ -37,11 +36,12 @@ The MVP (Minimal Vital Product) contains the following items:
 - The ability to measure temperature and humidity.
 - Energy awareness
 - Use environmental source as energy source
-![Block Diagram](Images/block_diagram.pdf)
+
+![Block Diagram](Images/diagrams/Block_Diagram.png)
 ## Power Profiling
 [Power Profiling page](Pages/Power_Profiling/Power_Profiling_V1.md)
 ## STM32 Module
-[STM32 module page](Pages/Brain_module/STM32L412KB.md)
+[STM32 module page](STM32L412KB.md)
 ## BLE Module
 [BLE Module page](Pages/BLE_Module/nRF52_SEEED_XIAO.md)
 ## SHT40 (temperature and humidity)

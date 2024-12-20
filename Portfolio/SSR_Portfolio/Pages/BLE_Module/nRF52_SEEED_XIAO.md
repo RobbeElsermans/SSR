@@ -4,7 +4,7 @@
 To enable the BLE inter-communication, we use I2C as device connection to the STM32L4. 
 Here, the BLE module shall have the address $0x12$ and the following struct will be send over.
 ```c
-struct ble_module_data_t
+struct ble_module_data
 {
 	uint8_t mode; // The mode of the BLE-module, 0 -> beacon, 1-> scan
 	uint8_t ssr_id; // The ID of the rover itself
@@ -13,10 +13,11 @@ struct ble_module_data_t
 	uint8_t env_humidity; // Range from -0-100%
 	uint16_t env_lux; // Range from 0 to 1000
 	uint16_t dev_voltage; // Range from 0-6.5535V (val/10000=V) (val/10=mV)
-	int8_t gyro_x; // Range from -60 to 60 (val*3=°)
-	int8_t gyro_y; // Range from -60 to 60 (val*3=°)
-	int8_t gyro_z; // Range from -60 to 60 (val*3=°)
+	int8_t dev_gyro_x; // Range from -60 to 60 (val*3=°)
+	int8_t dev_gyro_y; // Range from -60 to 60 (val*3=°)
+	int8_t dev_gyro_z; // Range from -60 to 60 (val*3=°)
 };
+typedef struct ble_module_data ble_module_data_t;
 ```
 A total of 13 bytes.
 
@@ -30,27 +31,30 @@ Upon completing the operation, the BLE module waits for the STM32L4 to request t
 
 *ble_beacon_result_t*  is selected when mode 0 or beacon mode was selected.
 ```c
-struct ble_beacon_result_t
+struct ble_beacon_result
 {
+	// How many devices have acked the Beacon. this determines the amount of nodes present
 	uint8_t amount_of_ack;
 };
+typedef struct ble_beacon_result ble_beacon_result_t;
 ```
 This result will yield the amount of acknowledgements from scanners in the area.
 
 The *ble_scan_result_t* gives a more detailed result of the found beacon in the area.
 ```c
-struct ble_scan_result_t
+struct ble_scan_result
 {
 	uint8_t ssr_id; // The ID of the source
-	int16_t temperature; // Range from -327.68 to 327.67 °C (val/100=°C)
-	uint8_t humidity; // Range from -0-100%
-	uint16_t lux; // Range from 0 to 1000
-	uint16_t voltage; // Range from 0-6.5535V (val/10000=V) (val/10=mV)
+	int16_t env_temperature;// temperature
+	uint8_t env_humidity; // humidity
+	uint16_t env_lux; // lux (light)
+	uint16_t dev_voltage; // voltage
 	int8_t rssi; //rssi
-	int8_t gyro_x; // Range from -60 to 60 (val*3=°)
-	int8_t gyro_y; // Range from -60 to 60 (val*3=°)
-	int8_t gyro_z; // Range from -60 to 60 (val*3=°)
+	int8_t dev_gyro_x; // Range from -60 to 60 (val*3=°)
+	int8_t dev_gyro_y; // Range from -60 to 60 (val*3=°)
+	int8_t dev_gyro_z; // Range from -60 to 60 (val*3=°)
 };
+typedef struct ble_scan_result ble_scan_result_t ;
 ```
 For now, only one beacon is saved and returned to the STM32L4 upon request. To validate the received data on the STM32L4 side, a small check is implemented. This check adds a byte to the return value, which is calculated as the difference of 255 and the first byte of the transmitted data.
 

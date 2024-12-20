@@ -94,7 +94,7 @@ while(1)
 - **Stop Mode 2** should replace any plain delay in code to achieve significant power savings while retaining RAM.
 - Use **Standby Mode** for even greater power reduction when RAM retention is unnecessary.
 
-![Comparison of STM Wait Modes](../../Images/STM_wait_modes.png)
+![Comparison of STM Wait Modes](STM_wait_modes.png)
 
 ### XIAO nRF52840
 
