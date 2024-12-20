@@ -41,7 +41,7 @@ The MVP (Minimal Vital Product) contains the following items:
 ## Power Profiling
 [Power Profiling page](Pages/Power_Profiling/Power_Profiling_V1.md)
 ## STM32 Module
-[STM32 module page](/Pages/Brain_module/STM32L412KB.md)
+[STM32 module page](/Pages/Brain_Module/STM32L412KB.md)
 ## BLE Module
 [BLE Module page](Pages/BLE_Module/nRF52_SEEED_XIAO.md)
 ## SHT40 (temperature and humidity)
