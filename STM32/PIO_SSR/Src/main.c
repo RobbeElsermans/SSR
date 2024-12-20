@@ -162,7 +162,7 @@ int main(void)
 
 #ifdef DEBUG
     clearBuf();
-    sprintf((char *)Buffer, "\r\n Start \r\n");
+    sprintf((char *)Buffer, "\r\n Start on id: %d\r\n", SSR_ID);
     serial_print((char *)Buffer);
 #endif
 
@@ -320,7 +320,8 @@ void taskDetermineTasks()
   // bool_buffer = 0b010000011; // Set DEEP_SLEEP, STORE, SENS,
   //  bool_buffer = 0b10010001; // Set SLEEP, BEACON, SENS
   
-  bool_buffer = 0b10011000; // Set SLEEP, SCAN, SENS
+  //  bool_buffer = 0b10001001; // Set SLEEP, SCAN, SENS
+  bool_buffer = 0b10001000; // Set SLEEP, BEACON, SCAN, SENS
   //bool_buffer = 0b10000001; // Set SLEEP, SENS
   //bool_buffer = 0b10000000; // Set SLEEP
 
@@ -430,6 +431,13 @@ void taskScan()
 void taskBeacon()
 {
   uint16_t air_time = BEACON_AIR_TIME; // 10 seconds beacon
+
+  
+#ifdef DEBUG
+  clearBuf();
+  sprintf((char *)Buffer, "taskBeacon - ssr_data_index %d \r\n", ssr_data_index);
+  serial_print((char *)Buffer);
+#endif
 
   ble_data.mode = 0;
   ble_data.ssr_id = SSR_ID;

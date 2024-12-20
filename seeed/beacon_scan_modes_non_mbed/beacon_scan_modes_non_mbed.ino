@@ -259,12 +259,12 @@ void init_beacon()
 
 void set_data_beacon()
 {
-  beaconUuid[0] = (i2c_data.env_temperature & 0xFF) >> 8;
+  beaconUuid[0] = (i2c_data.env_temperature >> 8) & 0xFF;
   beaconUuid[1] = (i2c_data.env_temperature & 0xFF);
   beaconUuid[2] = i2c_data.env_humidity;
-  beaconUuid[3] = (i2c_data.env_lux & 0xFF) >> 8;
+  beaconUuid[3] = (i2c_data.env_lux >> 8) & 0xFF;
   beaconUuid[4] = (i2c_data.env_lux & 0xFF);
-  beaconUuid[5] = (i2c_data.dev_voltage & 0xFF) >> 8;
+  beaconUuid[5] = (i2c_data.dev_voltage >> 8) & 0xFF;
   beaconUuid[6] = (i2c_data.dev_voltage & 0xFF);
   beaconUuid[7] = (i2c_data.dev_gyro_x);
   beaconUuid[8] = (i2c_data.dev_gyro_y);
