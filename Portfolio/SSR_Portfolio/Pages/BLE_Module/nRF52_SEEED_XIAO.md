@@ -1,5 +1,5 @@
 ## BLE and STM32 I2C communication
-![BLE code flow](/Images/BLE/BLE_Code_flow.png)
+![BLE code flow](../../Images/BLE/BLE_Code_flow.png)
 
 To enable the BLE inter-communication, we use I2C as device connection to the STM32L4. 
 Here, the BLE module shall have the address $0x12$ and the following struct will be send over.
@@ -68,7 +68,7 @@ Upon completing its task, the BLE module waits up to two seconds for a request f
 
 Upon completing the operation, the BLE module waits for the STM32L4 to request the result. The result is either a `ble_beacon_result_t` or a `ble_scan_result_t`, depending on the mode selected at the start of the process.
 
-![BLE scan response with emulated STM32L4](/Images/BLE/BLE_Scan_Response.png)
+![BLE scan response with emulated STM32L4](../../Images/BLE/BLE_Scan_Response.png)
 
 The following illustrates an example scenario:
 
@@ -129,13 +129,13 @@ All this data is encapsulated in the advertisement data packet. This consists of
 - Protocol Data Unit (2-39-bytes)
 - CRC (3-bytes)
 
-![PDU Packet](/Images/BLE/BLE_LE_Packet.png)
+![PDU Packet](../../Images/BLE/BLE_LE_Packet.png)
 
 Our wanted data will be situated in the Protocol Data Unit or PDU packet. Here we have the following structure:
 - Header (2-bytes)
 - Payload (0-37-bytes)
 
-![PDU Packet](/Images/BLE/PDU_Packet.png)
+![PDU Packet](../../Images/BLE/PDU_Packet.png)
 
 And the header can be subdivided into:
 - PDU types (4-bits)

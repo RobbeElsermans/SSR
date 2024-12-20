@@ -36,7 +36,7 @@ This can be further reduced by using a compare value of `0xFFFF`.
 
 #### Improved Standby Mode (Without Peripheral Load)
 
-![Improved Standby Mode](../../Images/Power_Profiling/Pasted%20image%20241211160438.png)
+![Improved Standby Mode](../../Images/Power_Profiling/STM32SleepPowerProfile.png)
 - **Lowest Point:** ~300nA.
 - **Peak:** ~11mA.
 - **Semi-Peak:** ~8.8mA.
@@ -82,19 +82,19 @@ while(1)
 ```
 
 ##### Normal Delay
-![Normal Delay Profile](../../Images/Power_profiling/STM32_Delay_mode.png)
+![Normal Delay Profile](../../Images/Power_Profiling/STM32_Delay_mode.png)
 
 ##### Stop Mode 2
-![Stop Mode 2 Profile](../../Images/Power_profiling/STM32_Stop_2_mode.png)
+![Stop Mode 2 Profile](../../Images/Power_Profiling/STM32_Stop_2_mode.png)
 
 ##### Standby Mode
-![Standby Mode Profile](../../Images/Power_profiling/STM32_Standby_mode.png)
+![Standby Mode Profile](../../Images/Power_Profiling/STM32_Standby_mode.png)
 
 ##### Conclusion
 - **Stop Mode 2** should replace any plain delay in code to achieve significant power savings while retaining RAM.
 - Use **Standby Mode** for even greater power reduction when RAM retention is unnecessary.
 
-![Comparison of STM Wait Modes](STM_wait_modes.png)
+![Comparison of STM Wait Modes](../../Images/Power_Profiling/STM_wait_modes.png)
 
 ### XIAO nRF52840
 
