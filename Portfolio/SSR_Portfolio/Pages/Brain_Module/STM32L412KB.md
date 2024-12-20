@@ -2,22 +2,22 @@
 Our brain, STM32L412KB, will have a certain flow as depicted in the block schematic below.
 
 
-![Brain_main_code_diagram](/Images/diagrams/Brain_main_code_diagram.png)
+![Brain_main_code_diagram](../../Images/diagrams/Brain_main_code_diagram.png)
 
 Each task is again represented with a code flow diagram
 ### Sens
-![Brain_sens_task_flow_diagram](/Images/diagrams/Brain_sens_task_flow_diagram.png)
+![Brain_sens_task_flow_diagram](../../Images/diagrams/Brain_sens_task_flow_diagram.png)
 ### Store
-![Brain_store_task_flow_diagram](/Images/diagrams/Brain_store_task_flow_diagram.png)
+![Brain_store_task_flow_diagram](../../Images/diagrams/Brain_store_task_flow_diagram.png)
 ### Scan
-![Brain_scan_task_flow_diagram](/Images/diagrams/Brain_scan_task_flow_diagram.png)
+![Brain_scan_task_flow_diagram](../../Images/diagrams/Brain_scan_task_flow_diagram.png)
 ### Beacon
-![Brain_beacon_task_flow_diagram](/Images/diagrams/Brain_beacon_task_flow_diagram.png)
+![Brain_beacon_task_flow_diagram](../../Images/diagrams/Brain_beacon_task_flow_diagram.png)
 ### LoRa
-![Brain_lora_task_flow_diagram](/Images/diagrams/Brain_lora_task_flow_diagram.png)
+![Brain_lora_task_flow_diagram](../../Images/diagrams/Brain_lora_task_flow_diagram.png)
 ### Drive
-![Brain_drive_task_flow_diagram](/Images/diagrams/Brain_drive_task_flow_diagram.png)
-![Brain_drive_task_flow_diagram](/Images/diagrams/Brain_drive_task_flow_diagram.png)
+![Brain_drive_task_flow_diagram](../../Images/diagrams/Brain_drive_task_flow_diagram.png)
+![Brain_drive_task_flow_diagram](../../Images/diagrams/Brain_drive_task_flow_diagram.png)
 
 This is coded in a finite state machine which cycles through the different states. This to provide a minimal code footprint onto the MCU.
 
@@ -105,6 +105,7 @@ typedef struct ble_beacon_result ble_beacon_result_t;
 
 ### BLE communication with STM32 mocking counterpart
 ![BLE_2_way_Communication_STM32](../../Images/BLE/BLE_2_way_Communication_STM32.png)
+
 The image displays a terminal or command-line interface showing the output of an execution path. The output is divided into two sections, each beginning with "Start" and followed by a series of tasks and their statuses. Here's a summary of what each section includes:
 
 1. **Battery Voltage Reading**: The first task shows the battery voltage reading, measured in millivolts (mV).
@@ -121,7 +122,8 @@ Here, only sens, scan and sleep is used. The BLE-module returns its founded resu
 #### Real values example from 2 STM32 modules
 In this example, we took 1 full system and let it run through the sens, scan, beacon and light_sleep tasks. 
 The other module will only consist of a STM32L4 and the BLE-module (due to lack of sensors). This system will go through the tasks scanning and light_sleep.
-![](../../Images/BLE/BLE_Intercommunication_example.png)
+![BLE_Intercommunication_example](../../Images/BLE/BLE_Intercommunication_example.png)
+
 The left represents the output of the scanning controller where the received values can be matched to the right terminal output which is from the full system controller.
 `taskScan - received ssr_id: 3 temp: 2336 h: 54 l: 24 x: 0 y:0 z:0 vcc: 0 rssi: -46`
 
