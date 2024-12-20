@@ -283,7 +283,7 @@ void test_code()
 void taskReadBattery()
 {
   ssr_data[ssr_data_index].dev_voltage = (readVoltage(&hadc1)) * 10000.0; // Convert to value and save only int
-  half_sleep(MAX_RTC_COUNTER_VALUE*2);
+
 #ifdef DEBUG
   clearBuf();
   sprintf((char *)Buffer, "taskReadBattery - mV: %d \r\n", ssr_data[ssr_data_index].dev_voltage / 10);
@@ -322,7 +322,7 @@ void taskDetermineTasks()
   //  bool_buffer = 0b10010001; // Set SLEEP, BEACON, SENS
 
   //  bool_buffer = 0b10001001; // Set SLEEP, SCAN, SENS
-  bool_buffer = 0b10001000; // Set SLEEP, BEACON, SCAN, SENS
+  bool_buffer = 0b10011001; // Set SLEEP, BEACON, SCAN, SENS
   // bool_buffer = 0b10000001; // Set SLEEP, SENS
   // bool_buffer = 0b10000000; // Set SLEEP
 
@@ -548,12 +548,6 @@ void half_sleep(uint32_t time)
     }
   }
 
-#ifdef DEBUG
-  clearBuf();
-  sprintf((char *)Buffer, "time exact %ld, cycles %d\r\n", time, cycles);
-  serial_print((char *)Buffer);
-#endif
-
   while (cycles > 0)
   {
     // Setup RTC and setup interupt
@@ -569,12 +563,6 @@ void half_sleep(uint32_t time)
 
     cycles--;
     time -= MAX_RTC_COUNTER_VALUE;
-
-#ifdef DEBUG
-    clearBuf();
-    sprintf((char *)Buffer, "time_left %ld, cycles %d\r\n", time, cycles);
-    serial_print((char *)Buffer);
-#endif
   }
 }
 

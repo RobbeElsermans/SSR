@@ -20,7 +20,7 @@ struct ble_module_data_t
 };
 ```
 
-### BLE communication
+### BLE communication with STM32 mocking counterpart
 ![BLE_2_way_Communication_STM32](../../Images/BLE/BLE_2_way_Communication_STM32.png)
 The image displays a terminal or command-line interface showing the output of an execution path. The output is divided into two sections, each beginning with "Start" and followed by a series of tasks and their statuses. Here's a summary of what each section includes:
 
@@ -35,7 +35,20 @@ The image displays a terminal or command-line interface showing the output of an
 5. **Light Sleep Mode**: Indicates the system entering light sleep mode.
 
 Here, only sens, scan and sleep is used. The BLE-module returns its founded results of a scanner nearby.
+#### Real values example from 2 STM32 modules
+In this example, we took 1 full system and let it run through the sens, scan, beacon and light_sleep tasks. 
+The other module will only consist of a STM32L4 and the BLE-module (due to lack of sensors). This system will go through the tasks scanning and light_sleep.
+![](../../Images/BLE/BLE_Intercommunication_example.png)
+The left represents the output of the scanning controller where the received values can be matched to the right terminal output which is from the full system controller.
+`taskScan - received ssr_id: 3 temp: 2336 h: 54 l: 24 x: 0 y:0 z:0 vcc: 0 rssi: -46`
 
+- **ssr_id** matches the id 3
+- **temp**(erature) matches the sensed environment temperature 2336 or 23.36°C
+- **h**(umidity) is the same as the sensed one 54%
+- **l**(ux) matches the sensed value 24 lux
+- **x**, **y**, **z** are not sensed because at the time of writing, no implementation exists.
+- **vcc** is zero due to the fact that no supercap is connected to the ADC.
+- **rssi** has a value lesser than the -54@1 meter, -46, thus implies that the beacon is withing 1 meter.
 ## EEPROM (or flash)
  >This was an attempt to use flash as EEPROM emulator. Fortunately, Flash has different needs then EEPROM and can not be used the same as ordinary EEPROM (due to banks etc.). Therefore, this approach is abandoned because time was short. 
 

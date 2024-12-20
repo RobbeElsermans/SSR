@@ -217,7 +217,7 @@ The power profiling answers our assumptions as the nRF52 self adjusts its power 
 ##### Conclusion
 Using a delay of 1 second or entering deep sleep gives the same power consumption. However, the 1 second gives us RAM retention as the values keep assigned where this is not the case for deep sleep mode.
 Another advantage in using just a delay of 1 second is the wake-up duration. In deel_sleep, the trigger and wake-up duration is around 1 second. Therefore, the delay of 1 second is faster in operation.
-![bar chart about BLE different wait modes](../../images/BLE_wait_modes.png)
+![bar chart about BLE different wait modes](BLE_wait_modes.png)
 
 
 
