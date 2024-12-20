@@ -101,7 +101,7 @@ int main(void)
   /* USER CODE BEGIN Init */
 
   /* I2C lib function calls */
-  //bleDelayCallback(HAL_Delay);
+  // bleDelayCallback(HAL_Delay);
   bleDelayCallback(half_sleep);
   bleSendCallback(HAL_I2C_Master_Transmit);
   bleReceiveCallback(HAL_I2C_Master_Receive);
@@ -109,24 +109,24 @@ int main(void)
   bleWakeCallback(wakeBleModule);
 
   /* ltr-386 lib function calls */
-  //ltrDelayCallback(HAL_Delay);
+  // ltrDelayCallback(HAL_Delay);
   ltrDelayCallback(half_sleep);
   // ltrWakeCallback(wakeltrModule);
   // ltrSleepCallback(sleepltrModule);
 
   /* sht40 lob function calls */
-  //sht40DelayCallback(HAL_Delay);
+  // sht40DelayCallback(HAL_Delay);
   sht40DelayCallback(half_sleep);
 
   /* LineBot lob function calls */
-  //lineBotDelayCallback(HAL_Delay);
+  // lineBotDelayCallback(HAL_Delay);
   lineBotDelayCallback(half_sleep);
 
   /* LineBot lob function calls */
   loraDelayCallback(half_sleep);
-  
+
   /* mpu6050 lob function calls */
-  //gyroDelayCallback(HAL_Delay);
+  // gyroDelayCallback(HAL_Delay);
   gyroDelayCallback(half_sleep);
 
   /* USER CODE END Init */
@@ -196,8 +196,8 @@ int main(void)
     }
 
     if (checkBool(&bool_buffer, TASK_BEACON))
-    { 
-      half_sleep(2000); //Wait a while before starting the BLE up again.
+    {
+      half_sleep(2000);                     // Wait a while before starting the BLE up again.
       taskBeacon();                         // Do the task
       clearBool(&bool_buffer, TASK_BEACON); // Clear the bit in bool_buffer
     }
@@ -283,10 +283,10 @@ void test_code()
 void taskReadBattery()
 {
   ssr_data[ssr_data_index].dev_voltage = (readVoltage(&hadc1)) * 10000.0; // Convert to value and save only int
-
+  half_sleep(MAX_RTC_COUNTER_VALUE*2);
 #ifdef DEBUG
   clearBuf();
-  sprintf((char *)Buffer, "taskReadBattery - mV: %d \r\n", ssr_data[ssr_data_index].dev_voltage/10);
+  sprintf((char *)Buffer, "taskReadBattery - mV: %d \r\n", ssr_data[ssr_data_index].dev_voltage / 10);
   serial_print((char *)Buffer);
 #endif
 }
@@ -294,36 +294,37 @@ void taskReadBattery()
 void taskDetermineTasks()
 {
   // Do this based on the voltage value.
-  //For now, we use light sleep due to no non-volatile memory available
+  // For now, we use light sleep due to no non-volatile memory available
 
-  if (ssr_data[ssr_data_index].dev_voltage/10 > VOLTAGE_MAX_LOW*1000) // Fully charged
+  if (ssr_data[ssr_data_index].dev_voltage / 10 > VOLTAGE_MAX_LOW * 1000) // Fully charged
   {
     bool_buffer = 0b10111111; // Do all tasks
   }
-  else if (ssr_data[ssr_data_index].dev_voltage/10 < VOLTAGE_SEM_MAX_HIGH*1000 && ssr_data[ssr_data_index].dev_voltage/10 >= (double)VOLTAGE_SEM_MAX_LOW*1000)
+  else if (ssr_data[ssr_data_index].dev_voltage / 10 < VOLTAGE_SEM_MAX_HIGH * 1000 && ssr_data[ssr_data_index].dev_voltage / 10 >= (double)VOLTAGE_SEM_MAX_LOW * 1000)
   {
     bool_buffer = 0b10011111; // Do not drive
   }
-  else if (ssr_data[ssr_data_index].dev_voltage/10 < VOLTAGE_MED_HIGH*1000 && ssr_data[ssr_data_index].dev_voltage/10 >= (double)VOLTAGE_MED_LOW*1000)
+  else if (ssr_data[ssr_data_index].dev_voltage / 10 < VOLTAGE_MED_HIGH * 1000 && ssr_data[ssr_data_index].dev_voltage / 10 >= (double)VOLTAGE_MED_LOW * 1000)
   {
     bool_buffer = 0b10011011; // Do not do lora & drive
   }
-  else if (ssr_data[ssr_data_index].dev_voltage/10 < VOLTAGE_LOW_HIGH*1000)
+  else if (ssr_data[ssr_data_index].dev_voltage / 10 < VOLTAGE_LOW_HIGH * 1000)
   {
     bool_buffer = 0b10000000; // Only deep sleep
   }
-  else{
-     bool_buffer = 0b10000000; // Only deep sleep
+  else
+  {
+    bool_buffer = 0b10000000; // Only deep sleep
   }
 
   // Here, the boolean buffer **bool_buffer** is used with the defines of TASK described in main.h.
   // bool_buffer = 0b010000011; // Set DEEP_SLEEP, STORE, SENS,
   //  bool_buffer = 0b10010001; // Set SLEEP, BEACON, SENS
-  
+
   //  bool_buffer = 0b10001001; // Set SLEEP, SCAN, SENS
   bool_buffer = 0b10001000; // Set SLEEP, BEACON, SCAN, SENS
-  //bool_buffer = 0b10000001; // Set SLEEP, SENS
-  //bool_buffer = 0b10000000; // Set SLEEP
+  // bool_buffer = 0b10000001; // Set SLEEP, SENS
+  // bool_buffer = 0b10000000; // Set SLEEP
 
 #ifdef DEBUG
   clearBuf();
@@ -376,10 +377,10 @@ void taskSens()
 void taskStore()
 {
   // TODO
-  //ssr_data_index++; // Increase sequence number
+  // ssr_data_index++; // Increase sequence number
 #ifdef DEBUG
   clearBuf();
-  sprintf((char *)Buffer, "taskStore - storing index %d\r\n", ssr_data_index-1);
+  sprintf((char *)Buffer, "taskStore - storing index %d\r\n", ssr_data_index - 1);
   serial_print((char *)Buffer);
 #endif
 }
@@ -432,7 +433,6 @@ void taskBeacon()
 {
   uint16_t air_time = BEACON_AIR_TIME; // 10 seconds beacon
 
-  
 #ifdef DEBUG
   clearBuf();
   sprintf((char *)Buffer, "taskBeacon - ssr_data_index %d \r\n", ssr_data_index);
@@ -520,8 +520,8 @@ uint16_t counter_value(uint16_t time_millis)
 {
   uint16_t counter_value = 0xFFFF; //= 0x2806; // 5 seconds
   // Calculate the time
-  if (time_millis > 31981)  // Maximum available wait time
-    counter_value = 0xFFFF; // Set maximum available time
+  if (time_millis >= MAX_RTC_COUNTER_VALUE) // Maximum available wait time
+    counter_value = 0xFFFF;                // Set maximum available time
   else
     counter_value = (uint16_t)((time_millis / 1000.0) / 0.000488);
 
@@ -535,16 +535,47 @@ uint16_t counter_value(uint16_t time_millis)
 
 void half_sleep(uint32_t time)
 {
-  // Setup RTC and setup interupt
-  //  MX_RTC_Init(); //DOne in main.c
-  HAL_SuspendTick();
-  HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, counter_value(time), RTC_WAKEUPCLOCK_RTCCLK_DIV16, 0);
+  // Determine amounts of replay based on MAX_RTC_COUNTER_VALUE
+  uint8_t cycles = 1; // Default 1 cycle
 
-  /* Enter STOP 2 mode */
-  HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
-  HAL_RTCEx_DeactivateWakeUpTimer(&hrtc);
-  SystemClock_Config();
-  HAL_ResumeTick();
+  if (time > MAX_RTC_COUNTER_VALUE)
+  {
+    cycles = (time / MAX_RTC_COUNTER_VALUE);
+
+    if (MAX_RTC_COUNTER_VALUE * cycles < time)
+    {
+      cycles++;
+    }
+  }
+
+#ifdef DEBUG
+  clearBuf();
+  sprintf((char *)Buffer, "time exact %ld, cycles %d\r\n", time, cycles);
+  serial_print((char *)Buffer);
+#endif
+
+  while (cycles > 0)
+  {
+    // Setup RTC and setup interupt
+    //  MX_RTC_Init(); //DOne in main.c
+    HAL_SuspendTick();
+    HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, counter_value(time), RTC_WAKEUPCLOCK_RTCCLK_DIV16, 0);
+
+    /* Enter STOP 2 mode */
+    HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
+    HAL_RTCEx_DeactivateWakeUpTimer(&hrtc);
+    SystemClock_Config();
+    HAL_ResumeTick();
+
+    cycles--;
+    time -= MAX_RTC_COUNTER_VALUE;
+
+#ifdef DEBUG
+    clearBuf();
+    sprintf((char *)Buffer, "time_left %ld, cycles %d\r\n", time, cycles);
+    serial_print((char *)Buffer);
+#endif
+  }
 }
 
 void deep_sleep(uint32_t time)
