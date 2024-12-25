@@ -53,35 +53,16 @@ The MVP (Minimal Vital Product) contains the following items:
 - HAL libary learining
 - working with datasheets of more complex nature for the first time 
 - programing in more dvanced C
-
-
 ## LTR-329 (light)
 [LTR-329 page](Pages/Sensor/LTR-329.md)
-
+## MPU6050 (gyroscope)
+[MPU6050 page](Pages/Sensor/MPU6050.md)
 ## Energy Harvesting
 [Energy Harvesting page](Pages/Energy_Harvesting/Energy_Harvesting.md)
-
 ## Energy Awareness
 [Energy Awareness page](Pages/Energy_Awareness/Energy_Awareness.md)
-## UART Communication with LoRa-Module
-For the LoRa-Module, we utilize the Wio-e5 mini board.
-![lora_e5_mini_pinout](Images/LoRa/lora_e5_mini_pinout.jpg)
-*[Wio-e5 mini pinout](https://wiki.seeedstudio.com/LoRa_E5_mini/)*
-
-For our communication to work we need to perform three tasks:
-- Install a serial console for [UART communications](SSR_Portfolio/Pages/LoRa/UART%20Communications).
-- Set up [TheThingsNetwork](SSR_Portfolio/Pages/LoRa/TheThingsNetwork).
-- Create a [back-end](SSR_Portfolio/Pages/LoRa/Back-End) that collects the data and visualizes it.
-
-If we follow these pages we should get a connection as follows:
-![lora_working](Images/LoRa/lora_working.png)
-
-*Some handy videos include: [setup device](https://www.youtube.com/watch?v=L_acKpwNvnc&list=WL&index=11&t=600s) & [setup MQTT](https://www.youtube.com/watch?v=9H6GFXatOCY&list=WL&index=12&t=128s)*
-
-[Wio-E5 Datasheet](Datasheets/Wio-E5_Datasheet.pdf)
-
-==Tom==
-
-## I2C Communication with Rover Bot
-==Tom==
+## LoRaModule
+[LoRA Module page](Pages/LoRa/LoRa_Module.md)
+## Rover Bot
+[Rover Bot page](Pages/LineBot/Rover_Bot.md)
 
