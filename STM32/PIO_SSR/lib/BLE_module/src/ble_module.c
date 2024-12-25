@@ -54,6 +54,15 @@ uint8_t send_ble_data(I2C_HandleTypeDef *hi2c1, ble_module_data_t *data)
   buf[11] = data->dev_gyro_y;
   buf[12] = data->dev_gyro_z;
 
+  #ifdef DEBUG
+  char Buffer[60] = {0};
+  for( uint8_t i = 0; i < BLE_DATA_LENGTH; i++)
+  {
+    sprintf(Buffer, "beacon - buffer %d content %d \r\n",i, buf[i] );
+    serial_print(Buffer);
+  }
+  #endif
+
   ret = _ble_send(hi2c1, BLE_ADDRESS, buf, sizeof(buf), 1000);
 
   if (ret == HAL_OK)
@@ -112,13 +121,20 @@ ble_beacon_result_t beacon(I2C_HandleTypeDef *hi2c1, ble_module_data_t* ble_data
     receive_ble_data(hi2c1, received_data, 2);
 
     #ifdef DEBUG
-    sprintf(Buffer, "beacon - scanning %d \r\n", i);
+    sprintf(Buffer, "beacon - receiving data try %d \r\n", i);
     serial_print(Buffer);
     #endif
 
+    //received data Beacon found
+    if (received_data[0] + received_data[1] == 255)
+      break;
+
     i++;
+
+    if(i >= 10)
+      break;
   }
-  while((received_data[0] + received_data[1]) != 255 && i < 10);
+  while(1);
   //Make sure the received value is correct based on the second value
 
   //Set the value in our own data struct
@@ -195,10 +211,10 @@ ble_scan_result_t scan(I2C_HandleTypeDef *hi2c1, ble_module_data_t* ble_data)
   
   if (i < 10){
     ble_scan_data.ssr_id = received_data[0];
-    ble_scan_data.env_temperature = received_data[1]>>8 | received_data[2];
+    ble_scan_data.env_temperature = received_data[1]<<8 | received_data[2];
     ble_scan_data.env_humidity = received_data[3];
-    ble_scan_data.env_lux = received_data[4]>>8 | received_data[5];
-    ble_scan_data.dev_voltage = received_data[6]>>8 | received_data[7];
+    ble_scan_data.env_lux = received_data[4]<<8 | received_data[5];
+    ble_scan_data.dev_voltage = received_data[6]<<8 | received_data[7];
     ble_scan_data.dev_gyro_x = received_data[8];
     ble_scan_data.dev_gyro_y = received_data[9];
     ble_scan_data.dev_gyro_z = received_data[10];

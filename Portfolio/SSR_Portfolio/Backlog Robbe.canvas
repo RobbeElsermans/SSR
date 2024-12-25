@@ -38,14 +38,14 @@
 		{"id":"115a4923d84af0b3","type":"text","text":"Measure running and deep sleep the same code where 1 sec blink and trigger on external interrupt on nRF52","x":1043,"y":-45,"width":250,"height":155,"color":"1"},
 		{"id":"2c29b5bf480aefc8","type":"text","text":"Create Connection Schematic","x":1043,"y":110,"width":250,"height":60,"color":"6"},
 		{"id":"447710117e5ee1e5","type":"text","text":"BLE wake-up STM32? Check if possible","x":-407,"y":-780,"width":250,"height":60,"color":"5"},
-		{"id":"85e88aa687efbdc9","type":"text","text":"Implement energy aware tasks selection","x":-407,"y":-620,"width":250,"height":60,"color":"4"},
 		{"id":"ce11b7bde1245746","type":"text","text":"Use Flash as \"EEPROM\"\nhttps://github.com/STMicroelectronics/STM32CubeL4/blob/master/Projects/NUCLEO-L412KB/Examples/FLASH/FLASH_EraseProgram/Src/main.c\n\n","x":-157,"y":-840,"width":250,"height":330,"color":"4"},
 		{"id":"52ae714619b28f26","type":"text","text":"Reconfigure STM32_low power mode","x":792,"y":135,"width":250,"height":60,"color":"4"},
 		{"id":"23e065630663b641","type":"text","text":"Power Profile temperature and humidity sensor in low-power configuration","x":792,"y":195,"width":250,"height":90,"color":"1"},
 		{"id":"7a3f36592ebf4e08","type":"text","text":"Power Profile light sensor in low power configuration","x":1042,"y":165,"width":250,"height":90,"color":"1"},
 		{"id":"70142436aa023c03","type":"text","text":"Reconfigure BLE power mode","x":1042,"y":255,"width":250,"height":60,"color":"4"},
-		{"id":"a44fedac81a72d48","type":"text","text":"Update and restructure Portfolio","x":-407,"y":-560,"width":250,"height":60,"color":"3"},
-		{"id":"b041949ad8da93ce","type":"text","text":"Implement brain code awareness reading available energy","x":193,"y":-840,"width":250,"height":100,"color":"4"}
+		{"id":"b041949ad8da93ce","type":"text","text":"Implement brain code awareness reading available energy","x":792,"y":285,"width":250,"height":100,"color":"4"},
+		{"id":"85e88aa687efbdc9","type":"text","text":"Implement energy aware tasks selection","x":1043,"y":315,"width":250,"height":60,"color":"4"},
+		{"id":"a44fedac81a72d48","type":"text","text":"Update and restructure Portfolio","x":193,"y":-840,"width":250,"height":60,"color":"3"}
 	],
 	"edges":[
 		{"id":"1ca02d16cd381ae1","fromNode":"7f7b4a5005a943f4","fromSide":"bottom","toNode":"eff54c97c9942c33","toSide":"top"}

@@ -77,7 +77,7 @@ extern uint8_t bool_buffer;
 #define TASK_DEEP_SLEEP 6
 #define TASK_LIGHT_SLEEP 7
 
-#define SSR_ID 0x10
+#define SSR_ID 3
 
 #define VOLTAGE_MAX_HIGH 2.72
 #define VOLTAGE_MAX_LOW 2.4
@@ -91,11 +91,12 @@ extern uint8_t bool_buffer;
 #define VOLTAGE_LOW_HIGH 2.0
 #define VOLTAGE_LOW_LOW 1.7
 
-/* Comment when no debug needed */
-#define DEBUG
+#define MAX_RTC_COUNTER_VALUE 31981
 
 /* Comment when no debug needed */
 #define DEBUG
+
+
 
 /* USER CODE END EC */
 
@@ -126,8 +127,14 @@ void wakeltrModule();
 void sleepltrModule();
 void GPIO_Disable(void);
 
+//Determines the register value with a time specified
+//A maximum of MAX_RTC_COUNTER_VALUE can be archieved.
 uint16_t counter_value(uint16_t time_millis);
+
+//Can handle longer durations then MAX_RTC_COUNTER_VALUE
 void half_sleep(uint32_t time);
+
+//Can only wait for a duration of MAX_RTC_COUNTER_VALUE
 void deep_sleep(uint32_t time);
 
 /**

@@ -25,4 +25,4 @@ nRF52840 and STM32L4 have different types of sleep modes. The table above is com
 - nRF52840: Deep Sleep mode RAM is NOT retained and external interrupt is needed (p. 56).
 
 Conclusion: We continue with STM32L4 which has the ability to use the FLASH as EEPROM where this is not usable in nRF52840 (PROGMEN is read-only so not an option).
-With the usage of EEPROM, we can store the data before entering deep sleep and after the wake-up or reset it can fetch the data or add data to it if needed. This is not the case for nRF52840, although, it has better current consumption in Deep Sleep.
+With the usage of EEPROM, we can store the data before entering deep sleep and after the wake-up or reset it can fetch the data or add data to it if needed. This is not the case for nRF52840.

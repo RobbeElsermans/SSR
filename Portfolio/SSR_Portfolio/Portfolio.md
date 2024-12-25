@@ -6,15 +6,18 @@ By Adam Hejduk, Robbe Elsermans, and Thomas Kramp
 ## Intro
 As humanities interest in Mars grows, an understanding of its weather is needed. One of the greatest challenges that the planet provides are the frequent dust storms.
 This project will try to monitor the weather phenomenon (such as temperature, humidity, light, ...) to predict such storms.
+
+> This documentation is written in [Obsidian](https://obsidian.md/).
 ## Project goal
 Each system operates autonomously as its own master, navigating the surface of Mars independently. When a node becomes lost or encounters an issue, and another node approaches, they can exchange valuable information to assist each other. Otherwise, each node functions independently.
 
 BLE technology is used to detect proximity between nodes and share crucial information about their headings, preventing collisions. Additionally, if a node encounters a mechanical problem and becomes immobile, it can still transmit its data to nearby nodes and gateways for continued operation and coordination.
 ## Project division
 #### Adam
-- Environmental sensing
-- Energy harvesting
-- Voltage reading
+- Environmental Sensing​
+- Energy harvesting ​
+- Energy output management​
+- Soldering man
 #### Thomas
 - LoRa connectivity
 - Dashboard
@@ -22,11 +25,11 @@ BLE technology is used to detect proximity between nodes and share crucial infor
 - Rover actuation
 #### Robbe
 - Project management
-- BLE communication
+- BLE intercommunication
 - Power Profiling
-- Energy awareness algorithm
+- Energy Awareness
 ## Board selection
-[Brain Board Selection](Pages/Investigation/Brain_Board_Selection.md)
+[Brain Board Selection page](Pages/Investigation/Brain_Board_Selection.md)
 
 ## MVP
 The MVP (Minimal Vital Product) contains the following items:
@@ -35,15 +38,16 @@ The MVP (Minimal Vital Product) contains the following items:
 - The ability to measure temperature and humidity.
 - Energy awareness
 - Use environmental source as energy source
-![[Pasted image 20241218114618.png]]
+
+![Block Diagram](Images/diagrams/Block_Diagram.png)
 ## Power Profiling
-[Power Profiling](Pages/Power_Profiling/Power_Profiling.md)
+[Power Profiling page](Pages/Power_Profiling/Power_Profiling_V1.md)
 ## STM32 Module
-[STM32 module](Pages/Brain_module/STM32L412KB.md)
+[STM32 module page](Pages/Brain_Module/STM32L412KB.md)
 ## BLE Module
-[BLE Module](Pages/BLE_Module/nRF52_SEEED_XIAO.md)
+[BLE Module page](Pages/BLE_Module/nRF52_SEEED_XIAO.md)
 ## SHT40 (temperature and humidity)
-[SHT40](Pages/Sensor/SHT40.md)
+[SHT40 page](Pages/Sensor/SHT40.md)
 - addressing an array x addressing a place in an array 
 - UART printing is not the same as printf sprintf...
 - HAL libary learining
@@ -52,39 +56,13 @@ The MVP (Minimal Vital Product) contains the following items:
 
 
 ## LTR-329 (light)
-[LTR-329](Pages/Sensor/LTR-329.md)
-
-
-Sleepmode: 
-### . **How It Works**
-
-1. **Active State**:
-    
-    - The sensor reads ambient light data and transmits it via UART.
-    - The LED (`LD3_Pin`) is turned on to indicate the active state.
-2. **Sleep State**:
-    
-    - The `LTR329_Sleep` function puts the sensor into standby mode.
-    - The LED is turned off to indicate the sleep state.
-    - The system waits for 5 seconds (or your preferred duration).
-3. **Wake-Up State**:
-    
-    - The `LTR329_WakeUp` function sets the sensor back to active mode.
-    - A delay is added after wake-up to allow the sensor to stabilize before the next reading.
-![[StarupSequance.png]] 
-according to datasheet: 
-standby current: 5 $micro$A
-initial startup: 100 ms
-waking up: 10 ms 
-
-![[StandbyModeLTR329.png]]
-For reasons unknown Standby mode draws 96 microAmpers insted od promised 5microAmpers
-Maesuring peak: 300microAmpers
-SemiPeak : 157microAmpers
+[LTR-329 page](Pages/Sensor/LTR-329.md)
 
 ## Energy Harvesting
-[Energy Harvesting page](../Pages/Energy_Harvesting/Energy_Harvesting.md)
+[Energy Harvesting page](Pages/Energy_Harvesting/Energy_Harvesting.md)
 
+## Energy Awareness
+[Energy Awareness page](Pages/Energy_Awareness/Energy_Awareness.md)
 ## UART Communication with LoRa-Module
 For the LoRa-Module, we utilize the Wio-e5 mini board.
 ![lora_e5_mini_pinout](Images/LoRa/lora_e5_mini_pinout.jpg)

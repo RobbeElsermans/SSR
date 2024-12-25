@@ -36,7 +36,7 @@ This can be further reduced by using a compare value of `0xFFFF`.
 
 #### Improved Standby Mode (Without Peripheral Load)
 
-![Improved Standby Mode](../../Images/Power_Profiling/Pasted%20image%20241211160438.png)
+![Improved Standby Mode](../../Images/Power_Profiling/STM32SleepPowerProfile.png)
 - **Lowest Point:** ~300nA.
 - **Peak:** ~11mA.
 - **Semi-Peak:** ~8.8mA.
@@ -82,19 +82,19 @@ while(1)
 ```
 
 ##### Normal Delay
-![Normal Delay Profile](../../Images/Power_profiling/STM32_Delay_mode.png)
+![Normal Delay Profile](../../Images/Power_Profiling/STM32_Delay_mode.png)
 
 ##### Stop Mode 2
-![Stop Mode 2 Profile](../../Images/Power_profiling/STM32_Stop_2_mode.png)
+![Stop Mode 2 Profile](../../Images/Power_Profiling/STM32_Stop_2_mode.png)
 
 ##### Standby Mode
-![Standby Mode Profile](../../Images/Power_profiling/STM32_Standby_mode.png)
+![Standby Mode Profile](../../Images/Power_Profiling/STM32_Standby_mode.png)
 
 ##### Conclusion
 - **Stop Mode 2** should replace any plain delay in code to achieve significant power savings while retaining RAM.
 - Use **Standby Mode** for even greater power reduction when RAM retention is unnecessary.
 
-![Comparison of STM Wait Modes](../../Images/STM_wait_modes.png)
+![Comparison of STM Wait Modes](../../Images/Power_Profiling/STM_wait_modes.png)
 
 ### XIAO nRF52840
 
@@ -212,15 +212,15 @@ while(1)
 }
 ```
 Below a graph where the normal modified is used (so no delay in the while).
-![[Pasted image 20241218093041.png]]
+![BLE_Normal_Power_profile](../../Images/Power_Profiling/BLE_Normal_Power_profile.png)
 A high consumption is present in the while loop with no delay. here, the PMU doesn't get time to decrease energy between CPU cycles. Therefore the full power consumption.
 
 Below a graph where the normal modified is used (so a delay is used).
-![[Pasted image 20241218092342.png]]
+![BLE_Modified_normal_power_profile](../../Images/Power_Profiling/BLE_Modified_normal_power_profile.png)
 A weird spike happens when the led is on.
 
 Below a graph when system off is used.
-![[Pasted image 20241218091811.png]]
+![BLE_Deep_sleep_power_profile](../../Images/Power_Profiling/BLE_Deep_sleep_power_profile.png)
 The difference between the modified delay is that here, we have a reduction of 2. This is not much but more then nothing.
 
 **Key Observations:**
@@ -229,7 +229,7 @@ The difference between the modified delay is that here, we have a reduction of 2
 
 A problem we've encountered.
 The used module has for some reasons a current consumption of 0.179µA. This should be lower. Therefore, another module is used with the same code and yields different values which are correctly accordingly to the datasheet.
-![[Pasted image 20241218092955.png]]
+![BLE_Comparison_power_profile](../../Images/Power_Profiling/BLE_Comparison_power_profile.png)
 ### LTR-329 Light Sensor
 ```c
 init();
@@ -248,7 +248,7 @@ while(1)
 ![LTR-329 Consumption](../../Images/Power_Profiling/ltr_329_consumption.png)
 
 #### Standby mode
-![[Pasted image 20241218101025.png]]
+![LTR329_standby_mode](../../Images/Power_Profiling/LTR329_standby_mode.png)
 - Active: 171.5µA
 - Idle: 80µA
 - Total: 85.1µA
@@ -259,13 +259,13 @@ while(1)
 ![SHT40 Consumption](../../Images/Power_Profiling/sht40_consumption.png)
 
 #### Standby Mode
-![[Pasted image 20241218102531.png]]
+![SHT40_standby_mode](../../Images/Power_Profiling/SHT40_standby_mode.png)
 - Active: 121.14µA
 - Idle: 115.54µA
 - Total: 115.80µA
 
 ### Sensors Power Measurement
-
+![Power_consumption_sensor_differences](../../Images/Power_Profiling/Power_consumption_sensor_differences.png)
 
 ### LoRa Module
 **(To be documented)**

@@ -17,7 +17,7 @@ void testMPU6050() {
   #endif
 
   setMPU6050();
-  HAL_Delay(100);
+  if (_delay_callback) _delay_callback(100);
 
   uint16_t gryo_x, gryo_y, gryo_z;
   readGyroscope(&gryo_x, &gryo_y, &gryo_z);
@@ -26,7 +26,7 @@ void testMPU6050() {
   sprintf(Buffer3, "Gyro X: %d | Gyro Y: %d | Gyro Z: %d\n", gryo_x, gryo_y, gryo_z);
   serial_print(Buffer3);
   #endif
-  HAL_Delay(1000);
+  if (_delay_callback) _delay_callback(1000);
 }
 
 void whoAmI(uint8_t* who_am_i) {

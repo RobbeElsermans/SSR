@@ -80,7 +80,7 @@ while(1)
 It can be concluded that we need to replace any delay in our code by the stop 2 mode. This to ensure best power reduction while maintaining the RAM so our code can continue its work when we wake it up to continue.
 
 If we do not need RAM retention, standby mode can be utilised to reduce the power even more.
-![STM_wait_modes.png](../../Images/STM_wait_modes.png)
+![STM_wait_modes.png](STM_wait_modes.png)
 
 ### XIAO nRF52840 
 #### peripheral mode
@@ -217,7 +217,7 @@ The power profiling answers our assumptions as the nRF52 self adjusts its power 
 ##### Conclusion
 Using a delay of 1 second or entering deep sleep gives the same power consumption. However, the 1 second gives us RAM retention as the values keep assigned where this is not the case for deep sleep mode.
 Another advantage in using just a delay of 1 second is the wake-up duration. In deel_sleep, the trigger and wake-up duration is around 1 second. Therefore, the delay of 1 second is faster in operation.
-![bar chart about BLE different wait modes](../../images/BLE_wait_modes.png)
+![bar chart about BLE different wait modes](BLE_wait_modes.png)
 
 
 
