@@ -1,0 +1,15 @@
+[
+    {
+        "id": "0ba93b73b87ffcb9",
+        "type": "link out",
+        "z": "aacbeea8c606ee88",
+        "name": "decoded_data",
+        "mode": "link",
+        "links": [
+            "a0b4287682f26043"
+        ],
+        "x": 615,
+        "y": 220,
+        "wires": []
+    }
+]

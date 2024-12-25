@@ -14,11 +14,11 @@ extern "C" {
 #define MPU6050_DEV_ADDR          0x68 // I2C address of the MPU6050
 
 // MPU605 register addresses
-#define MPU6050_SMPLRT_DIV        0x19 // sample rate divisor register
+#define MPU6050_SMPLRT_DIV        0x19 // Sample rate divisor register
 #define MPU6050_CONFIG            0x1A // General configuration register
 #define MPU6050_GYRO_CONFIG       0x1B // Gyro specfic configuration register
 #define MPU6050_ACCEL_CONFIG      0x1C // Accelerometer specific configration register
-#define MPU6050_MOT_THR           0x1F // Motion detection threshold bits [7:0]
+#define MPU6050_MOT_THR           0x1F // Motion detection threshold bits
 
 #define MPU6050_FIFO_EN           0x23 // Which sensor measurements are loaded into the FIFO buffer
 #define MPU6050_INT_PIN_CONFIG    0x37 // Interrupt pin configuration register

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "SSR_Portfolio/Pages/LineBot/Rover_Bot.md",
+                "file": "SSR_Portfolio/Pages/LoRa/Back-End.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Rover_Bot"
+              "title": "Back-End"
             }
           },
           {
@@ -33,30 +33,6 @@
               },
               "icon": "lucide-file",
               "title": "UART communications"
-            }
-          },
-          {
-            "id": "c793604ade6c465d",
-            "type": "leaf",
-            "state": {
-              "type": "pdf",
-              "state": {
-                "file": "SSR_Portfolio/Datasheets/skqucaa010_datasheet.pdf"
-              },
-              "icon": "lucide-file-text",
-              "title": "skqucaa010_datasheet"
-            }
-          },
-          {
-            "id": "3f8f210259dae3d3",
-            "type": "leaf",
-            "state": {
-              "type": "pdf",
-              "state": {
-                "file": "SSR_Portfolio/Datasheets/Linebot schematic.pdf"
-              },
-              "icon": "lucide-file-text",
-              "title": "Linebot schematic"
             }
           }
         ]
@@ -202,14 +178,22 @@
   },
   "active": "6803450b6975cfd3",
   "lastOpenFiles": [
+    "SSR_Portfolio/Images/LoRa/dashboard.png",
+    "SSR_Portfolio/Images/LoRa/Screenshot from 2024-12-26 00-21-17.png",
+    "SSR_Portfolio/Images/LoRa/dashboard_outputs.png",
+    "SSR_Portfolio/Images/LoRa/Screenshot from 2024-12-26 00-15-14.png",
+    "SSR_Portfolio/Images/LoRa/dashboard_import_1.png",
+    "SSR_Portfolio/Pages/LoRa/Back-End.md",
+    "SSR_Portfolio/Images/LoRa/dashboard_import_2.png",
+    "SSR_Portfolio/Images/LoRa/Screenshot from 2024-12-26 00-00-15.png",
+    "SSR_Portfolio/Images/LoRa/Screenshot from 2024-12-26 00-01-58.png",
+    "SSR_Portfolio/Pages/LineBot/Rover_Bot.md",
     "SSR_Portfolio/Pages/LoRa/UART communications.md",
     "SSR_Portfolio/Pages/LoRa/LoRA_Module.md",
-    "SSR_Portfolio/Pages/LineBot/Rover_Bot.md",
     "SSR_Portfolio/Datasheets/skqucaa010_datasheet.pdf",
     "SSR_Portfolio/Images/LineBot/joystick_pinout.png",
     "SSR_Portfolio/Images/LineBot/joystick_schematic.png",
     "SSR_Portfolio/Images/LineBot/Screenshot from 2024-12-25 23-29-04.png",
-    "SSR_Portfolio/Images/LineBot/Screenshot from 2024-12-25 23-29-42.png",
     "SSR_Portfolio/Images/LineBot",
     "SSR_Portfolio/Datasheets/Linebot schematic.pdf",
     "SSR_Portfolio/Datasheets/Linebot-schema's_en_PCB.pdf",
@@ -218,14 +202,7 @@
     "SSR_Portfolio/Videos/Sensor/temp.md",
     "SSR_Portfolio/Videos/LoRa/temp.md",
     "SSR_Portfolio/Pages/BLE_Module/nRF52_SEEED_XIAO.md",
-    "SSR_Portfolio/Pages/LoRa/Back-End.md",
     "SSR_Portfolio/Pages/LoRa/TheThingsNetwork.md",
-    "SSR_Portfolio/Pasted image 20241218114618.png",
-    "SSR_Portfolio/Pasted image 20241218102531.png",
-    "SSR_Portfolio/Pasted image 20241218101025.png",
-    "SSR_Portfolio/Pasted image 20241218093041.png",
-    "SSR_Portfolio/Pasted image 20241218092955.png",
-    "SSR_Portfolio/Pasted image 20241218092342.png",
     "SSR_Portfolio/Pages/Power_Profiling/Power_Profiling_V1.md",
     "SSR_Portfolio/Pages/Energy_Harvesting/Energy_Harvesting.md",
     "SSR_Portfolio/Pages/Energy_Harvesting",
@@ -250,7 +227,6 @@
     "ttn_create_application.md",
     "SSR_Portfolio/Images/LoRa/putty_uart_settings.md",
     "SSR_Portfolio/Pages/LoRa/UART.md",
-    "Pages/LoRa/UART.md",
-    "UART.md"
+    "Pages/LoRa/UART.md"
   ]
 }

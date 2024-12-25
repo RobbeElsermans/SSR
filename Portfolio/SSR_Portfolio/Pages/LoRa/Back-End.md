@@ -107,29 +107,73 @@ networks:
 *Note that we will automatically install **the node-red-dashboard** & **node-red-contrib-mongodb4 packages**.*
 
 # Back-end setup
+Node-Red can be opened in any browser with the following URI:
+``` URI
+http://<IP-address>:1880
+http://127.0.0.1:1880
+```
+## Load flow
+The flow for the dashboard can be found under [SSR/LoRa/nodered.json](../../../../LoRa/nodered.json).
+To load this flow in:
+- Open node-red
+- Press "ctrl-i"
+- Click on the "select a file to import" button
+
+![Dashboard import](../../Images/LoRa/dashboard_import_1.png)
+
+- Choose the file "nodered.json"
+- Click on the "import" *button*
+
+![Dashboard import](../../Images/LoRa/dashboard_import_2.png)
+
 ## LoRa connectivity
 ### MQTT node
 Get a "mqtt in" node and put it in the flow, then click on it. A window should slide open. Click on the plus button next to the "server" to setup a connection to TheThingsNetwork.
-![[mqtt_server_creation.png]]
+
+![mqtt server creation](../../Images/LoRa/mqtt_server_creation.png)
+
 Setup server connection.
-![[mqtt_server_connection_settings.png]]
+
+![mqtt server connection setting](../../Images/LoRa/mqtt_server_connection_settings.png)
+
 Setup server connection security.
-![[mqtt_server_security_settings.png]]
+
+![mqtt server security settings](../../Images/LoRa/mqtt_server_security_settings.png)
+
 Subscribe to a certain topic. *For testing porpusus we can use '#' as a any-topic*
-![[mqtt_settings.png]]
+
+![mqtt settings](../../Images/LoRa/mqtt_settings.png)
+
 ### Function node
 Get a "function" node and put it in the flow, then click on it. A window should slide open.
 In the "OnMessage" tab drop the following code:
 ``` js
-msg.payload = msg.payload.uplink_message.decoded_payload.bytes
-//at+msg="hello world"
+// Decode Base64-encoded payload
+const base64Payload = msg.payload.uplink_message.frm_payload;
+const bytes = Buffer.from(base64Payload, 'base64'); // Decode Base64 to bytes
+
+// Extract data from bytes
+let ssr_data = {
+	seq_number: (bytes[0] << 8) | bytes[1],
+	env_temperature: (bytes[2] << 8) | bytes[3],
+	env_humidity: bytes[4],
+	env_lux: (bytes[5] << 8) | bytes[6],
+	dev_voltage: (bytes[7] << 8) | bytes[8],
+	dev_gyro_x: bytes[9],
+	dev_gyro_y: bytes[10],
+	dev_gyro_z: bytes[11]
+};
+
+// Set processed data to the message payload
+msg.payload = ssr_data;
 return msg;
 ```
 ### Debug node
 Add last drop a "debug" node and put it in the flow, and connect:
 1) The MQTT output to the function input.
 2) The function output to the debug intput.
-![[mqtt_debug_flow.png]]
+
+![mqtt debug flow](../../Images/LoRa/mqtt_debug_flow.png)
 ## Container connectivity
 Add the following nodes to the flow:
 - An **inject** node
@@ -137,7 +181,9 @@ Add the following nodes to the flow:
 - A **[mongodb4](https://flows.nodered.org/node/node-red-contrib-mongodb4)**  node
 - A **debug** node
 Then connect them as follows:
-![[mongodb_flow.png]]
+
+![mongodb flow](../../Images/LoRa/mongodb_flow.png)
+
 ### Function nodes
 Click on the "function" node. A window should slide open.
 First let's make a find all function using the following code:
@@ -154,12 +200,53 @@ return msg;
 ### MongoDB node
 Click on the "mongodb4" node. A window should slide open.
 Create a new connection:
-![[mongodb_connection_creation.png]]
+
+![mongodb connection creation](../../Images/LoRa/mongodb_connection_creation.png)
+
 Set the simple URI settings:
-![[mongodb_simple_uri_settings.png]]
+
+![mongodb simple uri settings](../../Images/LoRa/mongodb_simple_uri_settings.png)
+
 Set the advanced URI settings:
-![[mongodb_advanced_uri_settings.png]]
+
+![mongodb advanced uri settings](../../Images/LoRa/mongodb_advanced_uri_settings.png)
+
 Set the global settings:
-![[mongodb_settings.png]]
+
+![mongodb settings](../../Images/LoRa/mongodb_settings.png)
 ## Dashboard
-[dashboard nodes](https://flows.nodered.org/node/node-red-dashboard)
+### Setup
+A dashboard can easily be created using the [dashboard nodes](https://flows.nodered.org/node/node-red-dashboard).
+For this to work the data needs to be split using a function node:
+- In the "Setup" tab, set the output to 8:
+
+![Dashboard outputs](../../Images/LoRa/dashboard_outputs.png)
+
+- In the "On Message" tab, paste the following code:
+
+``` js
+var ssr_data = msg.payload;
+
+var snum_msg = { payload: msg.payload.seq_number };
+var temp_msg = { payload: msg.payload.env_temperature/100 };
+var hum_msg = { payload: msg.payload.env_humidity };
+var lux_msg = { payload: msg.payload.env_lux };
+var volt_msg = { payload: msg.payload.dev_voltage/1000 };
+var gyrx_msg = { payload: msg.payload.dev_gyro_x*2 };
+var gyry_msg = { payload: msg.payload.dev_gyro_y*2 };
+var gyrz_msg = { payload: msg.payload.dev_gyro_z*2 };
+
+return [
+	snum_msg, temp_msg, hum_msg, lux_msg,
+	volt_msg, gyrx_msg, gyry_msg, gyrz_msg
+];
+```
+
+### Home screen
+The dashboard can be opened in any browser with the following URI:
+``` URI
+http://<IP-address>:1880/ui/#!/0
+http://127.0.0.1:1880/ui/#!/0
+```
+
+![dashbaord](../../Images/LoRa/dashboard.png)
