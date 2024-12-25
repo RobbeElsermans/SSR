@@ -48,6 +48,9 @@ Portfolio/SSR_Portfolio/.obsidian
 *.idb
 *.pdb
 
+# Video files
+*.mp4
+
 # Kernel Module Compile Results
 *.mod*
 *.cmd
