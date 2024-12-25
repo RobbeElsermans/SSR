@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "SSR_Portfolio/Videos/Sensor/temp.md",
+                "file": "SSR_Portfolio/Pages/Sensor/MPU6050.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "temp"
+              "title": "MPU6050"
             }
           }
         ]
@@ -164,8 +164,8 @@
   },
   "active": "6803450b6975cfd3",
   "lastOpenFiles": [
-    "SSR_Portfolio/Videos/LoRa/temp.md",
     "SSR_Portfolio/Videos/Sensor/temp.md",
+    "SSR_Portfolio/Videos/LoRa/temp.md",
     "SSR_Portfolio/Pages/Sensor/MPU6050.md",
     "SSR_Portfolio/Pages/BLE_Module/nRF52_SEEED_XIAO.md",
     "SSR_Portfolio/Pages/LoRa/Back-End.md",
