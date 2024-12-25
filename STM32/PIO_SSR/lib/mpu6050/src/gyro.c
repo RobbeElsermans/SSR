@@ -49,7 +49,7 @@ void setMPU6050() {
   data_tx[1] = 0b00000000;
   i2c_write(MPU6050_DEV_ADDR, data_tx, 2);
 
-  // Set accelerometer measuring accuracy
+  // Set gyroscope measuring accuracy
   data_tx[0] = MPU6050_GYRO_CONFIG;
   data_tx[1] = 0b00000000;
   i2c_write(MPU6050_DEV_ADDR, data_tx, 2);
