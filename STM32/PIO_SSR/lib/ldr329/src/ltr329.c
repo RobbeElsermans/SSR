@@ -21,7 +21,7 @@ void ltr329Init(I2C_HandleTypeDef *i2c_obj)
   // Set ALS measurement rate and integration time
   data[0] = LTR329_ALS_MEAS_RATE;
   data[1] = 0x13; // 200ms integration, 500ms measurement rate
-  HAL_I2C_Master_Transmit(i2c_obj, LTR329_I2C_ADDR, data, 2, HAL_MAX_DELAY);
+  HAL_I2C_Master_Transmit(i2c_obj, LTR329_I2C_ADDR, data, 2, 1000);
 
   if (_delay_callback)
     _delay_callback(200);
@@ -51,7 +51,7 @@ HAL_StatusTypeDef ltr329ReadALS(I2C_HandleTypeDef *i2c_obj, uint8_t channel, uin
 
   // Read 2 bytes (low and high) from the sensor
   HAL_StatusTypeDef ret;
-  ret = HAL_I2C_Master_Transmit(i2c_obj, LTR329_I2C_ADDR, &regAddr, 1, HAL_MAX_DELAY);
+  ret = HAL_I2C_Master_Transmit(i2c_obj, LTR329_I2C_ADDR, &regAddr, 1, 1000);
   if (ret != HAL_OK)
     return ret;
 
@@ -60,7 +60,7 @@ HAL_StatusTypeDef ltr329ReadALS(I2C_HandleTypeDef *i2c_obj, uint8_t channel, uin
   else
     HAL_Delay(10);
 
-  HAL_I2C_Master_Receive(i2c_obj, LTR329_I2C_ADDR, &rawData0, 1, HAL_MAX_DELAY);
+  HAL_I2C_Master_Receive(i2c_obj, LTR329_I2C_ADDR, &rawData0, 1, 1000);
   if (ret != HAL_OK)
     return ret;
 
@@ -70,7 +70,7 @@ HAL_StatusTypeDef ltr329ReadALS(I2C_HandleTypeDef *i2c_obj, uint8_t channel, uin
     HAL_Delay(10);
 
   regAddr++;
-  HAL_I2C_Master_Transmit(i2c_obj, LTR329_I2C_ADDR, &regAddr, 1, HAL_MAX_DELAY);
+  HAL_I2C_Master_Transmit(i2c_obj, LTR329_I2C_ADDR, &regAddr, 1, 1000);
   if (ret != HAL_OK)
     return ret;
 
@@ -79,7 +79,7 @@ HAL_StatusTypeDef ltr329ReadALS(I2C_HandleTypeDef *i2c_obj, uint8_t channel, uin
   else
     HAL_Delay(10);
 
-  HAL_I2C_Master_Receive(i2c_obj, LTR329_I2C_ADDR, &rawData1, 1, HAL_MAX_DELAY);
+  HAL_I2C_Master_Receive(i2c_obj, LTR329_I2C_ADDR, &rawData1, 1, 1000);
   if (ret != HAL_OK)
     return ret;
 
@@ -110,7 +110,7 @@ HAL_StatusTypeDef ltr329Sleep(I2C_HandleTypeDef *hi2c1)
   // Write to ALS_CONTR register to set the sensor in standby mode (0x00).
   data[0] = LTR329_ALS_CONTR;
   data[1] = 0x00; // Standby mode
-  return HAL_I2C_Master_Transmit(hi2c1, LTR329_I2C_ADDR, data, 2, HAL_MAX_DELAY);
+  return HAL_I2C_Master_Transmit(hi2c1, LTR329_I2C_ADDR, data, 2, 1000);
 }
 
 void ltr329WakeUp(I2C_HandleTypeDef *hi2c1)
@@ -120,7 +120,7 @@ void ltr329WakeUp(I2C_HandleTypeDef *hi2c1)
   // Write to ALS_CONTR register to set the sensor in active mode.
   data[0] = LTR329_ALS_CONTR;
   data[1] = 0x01; // Active mode with default gain
-  HAL_I2C_Master_Transmit(hi2c1, LTR329_I2C_ADDR, data, 2, HAL_MAX_DELAY);
+  HAL_I2C_Master_Transmit(hi2c1, LTR329_I2C_ADDR, data, 2, 1000);
 
   // Wait for the sensor to wake up.
   if (_delay_callback)

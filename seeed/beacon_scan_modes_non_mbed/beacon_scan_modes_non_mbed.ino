@@ -133,6 +133,9 @@ void setup()
 {
 #ifdef DEBUG
   Serial.begin(115200);
+    // Uncomment to blocking wait for Serial connection
+  //while ( !Serial ) delay(10);
+  //delay(500);
 #endif
   Wire.begin(0x12);              // join i2c bus with address 0x12
   Wire.onReceive(receive_event); // register event
@@ -140,17 +143,18 @@ void setup()
 
   pinMode(RED_LED, OUTPUT);
 
-  // Uncomment to blocking wait for Serial connection
-  // while ( !Serial ) delay(10);
-  // delay(1000);
-
 #ifdef DEBUG
   Serial.println("Wait for data");
 #endif
-
+  int tryouts = 40; // wait a maximum of 4 seconds before continuing
   while (!received_data)
   {
     delay(100); // Wait for I2C transfer
+
+    //Check when the maximum is reached
+    tryouts--;
+    if(tryouts == 0)
+      deep_sleep();
   }
 
 #ifdef DEBUG

@@ -84,11 +84,10 @@ ble_beacon_result_t beacon(I2C_HandleTypeDef *hi2c1, ble_module_data_t* ble_data
 {
   ble_beacon_result_t beacon_result = {0};
 
-  if(_wake_device) _wake_device();
-
   // wait until device is available
   while (ble_device_ready(hi2c1))
   {
+    if(_wake_device) _wake_device();
     if (_delay_callback) _delay_callback(100);
     else HAL_Delay(100);
   }
@@ -153,8 +152,10 @@ ble_scan_result_t scan(I2C_HandleTypeDef *hi2c1, ble_module_data_t* ble_data)
 {
   ble_scan_result_t ble_scan_data = {0};
   if(_wake_device) _wake_device();
+  if (_delay_callback) _delay_callback(500);
+  else HAL_Delay(500);
 
-  // wait until device is available
+   // wait until device is available
   while (ble_device_ready(hi2c1))
   {
     if (_delay_callback) _delay_callback(100);
