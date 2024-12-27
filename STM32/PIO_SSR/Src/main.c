@@ -321,8 +321,8 @@ void taskDetermineTasks()
   // bool_buffer = 0b010000011; // Set DEEP_SLEEP, STORE, SENS,
   //  bool_buffer = 0b10010001; // Set SLEEP, BEACON, SENS
 
-  bool_buffer = 0b01001000; // Set DEEP_SLEEP, SCAN, SENS
-  // bool_buffer = 0b10011001; // Set SLEEP, BEACON, SCAN, SENS
+  //bool_buffer = 0b01001000; // Set DEEP_SLEEP, SCAN, SENS
+  bool_buffer = 0b10011001; // Set SLEEP, BEACON, SCAN, SENS
   //  bool_buffer = 0b10000001; // Set SLEEP, SENS
   //  bool_buffer = 0b10000000; // Set SLEEP
 

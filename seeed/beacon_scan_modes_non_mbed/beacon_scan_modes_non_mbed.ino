@@ -6,7 +6,7 @@
 #include <Wire.h>
 #include <Adafruit_SPIFlash.h>
 
-#define DEBUG
+//#define DEBUG
 #define RED_LED 11
 
 #define MANUFACTURER_ID 0x0059 // Defines that it is Nordic semiconductors manufacturer
