@@ -321,10 +321,10 @@ void taskDetermineTasks()
   // bool_buffer = 0b010000011; // Set DEEP_SLEEP, STORE, SENS,
   //  bool_buffer = 0b10010001; // Set SLEEP, BEACON, SENS
 
-  //  bool_buffer = 0b10001001; // Set SLEEP, SCAN, SENS
+  //bool_buffer = 0b01001000; // Set DEEP_SLEEP, SCAN, SENS
   bool_buffer = 0b10011001; // Set SLEEP, BEACON, SCAN, SENS
-  // bool_buffer = 0b10000001; // Set SLEEP, SENS
-  // bool_buffer = 0b10000000; // Set SLEEP
+  //  bool_buffer = 0b10000001; // Set SLEEP, SENS
+  //  bool_buffer = 0b10000000; // Set SLEEP
 
 #ifdef DEBUG
   clearBuf();
@@ -424,7 +424,7 @@ void taskScan()
   clearBuf();
   sprintf((char *)Buffer,
           "taskScan - received ssr_id: %d temp: %d h: %d l: %d x: %d y: %d z: %d vcc: %d rssi: %d\r\n",
-          ble_scan_result.ssr_id, ble_scan_result.env_temperature, ble_scan_result.env_humidity, ble_scan_result.env_lux, ble_scan_result.dev_voltage, ble_scan_result.dev_gyro_x, ble_scan_result.dev_gyro_y, ble_scan_result.dev_gyro_z, ble_scan_result.rssi);
+          ble_scan_result.ssr_id, ble_scan_result.env_temperature, ble_scan_result.env_humidity, ble_scan_result.env_lux, ble_scan_result.dev_gyro_x, ble_scan_result.dev_gyro_y, ble_scan_result.dev_gyro_z, ble_scan_result.dev_voltage, ble_scan_result.rssi);
   serial_print((char *)Buffer);
 #endif
 }
@@ -504,7 +504,7 @@ void taskLightSleep()
 void wakeBleModule()
 {
   HAL_GPIO_WritePin(BLE_EN_GPIO_Port, BLE_EN_Pin, GPIO_PIN_SET);
-  HAL_Delay(10);
+  HAL_Delay(100);
   HAL_GPIO_WritePin(BLE_EN_GPIO_Port, BLE_EN_Pin, GPIO_PIN_RESET);
 }
 void wakeltrModule()
@@ -521,7 +521,7 @@ uint16_t counter_value(uint16_t time_millis)
   uint16_t counter_value = 0xFFFF; //= 0x2806; // 5 seconds
   // Calculate the time
   if (time_millis >= MAX_RTC_COUNTER_VALUE) // Maximum available wait time
-    counter_value = 0xFFFF;                // Set maximum available time
+    counter_value = 0xFFFF;                 // Set maximum available time
   else
     counter_value = (uint16_t)((time_millis / 1000.0) / 0.000488);
 

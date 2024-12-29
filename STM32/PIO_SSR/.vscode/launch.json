@@ -12,11 +12,11 @@
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug",
-            "executable": "/home/thomas/Documents/studies/semester_5/I-internet_of_things/SSR/STM32/PIO_SSR/.pio/build/nucleo_l412kb/firmware.elf",
+            "executable": "/home/robbe/Documents/GitHub/SSR/STM32/PIO_SSR/.pio/build/nucleo_l412kb/firmware.elf",
             "projectEnvName": "nucleo_l412kb",
-            "toolchainBinDir": "/home/thomas/.platformio/packages/toolchain-gccarmnoneeabi/bin",
+            "toolchainBinDir": "/home/robbe/.platformio/packages/toolchain-gccarmnoneeabi@1.70201.0/bin",
             "internalConsoleOptions": "openOnSessionStart",
-            "svdPath": "/home/thomas/.platformio/platforms/ststm32/misc/svd/STM32L412.svd",
+            "svdPath": "/home/robbe/.platformio/platforms/ststm32/misc/svd/STM32L412.svd",
             "preLaunchTask": {
                 "type": "PlatformIO",
                 "task": "Pre-Debug"
@@ -26,21 +26,21 @@
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug (skip Pre-Debug)",
-            "executable": "/home/thomas/Documents/studies/semester_5/I-internet_of_things/SSR/STM32/PIO_SSR/.pio/build/nucleo_l412kb/firmware.elf",
+            "executable": "/home/robbe/Documents/GitHub/SSR/STM32/PIO_SSR/.pio/build/nucleo_l412kb/firmware.elf",
             "projectEnvName": "nucleo_l412kb",
-            "toolchainBinDir": "/home/thomas/.platformio/packages/toolchain-gccarmnoneeabi/bin",
+            "toolchainBinDir": "/home/robbe/.platformio/packages/toolchain-gccarmnoneeabi@1.70201.0/bin",
             "internalConsoleOptions": "openOnSessionStart",
-            "svdPath": "/home/thomas/.platformio/platforms/ststm32/misc/svd/STM32L412.svd"
+            "svdPath": "/home/robbe/.platformio/platforms/ststm32/misc/svd/STM32L412.svd"
         },
         {
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug (without uploading)",
-            "executable": "/home/thomas/Documents/studies/semester_5/I-internet_of_things/SSR/STM32/PIO_SSR/.pio/build/nucleo_l412kb/firmware.elf",
+            "executable": "/home/robbe/Documents/GitHub/SSR/STM32/PIO_SSR/.pio/build/nucleo_l412kb/firmware.elf",
             "projectEnvName": "nucleo_l412kb",
-            "toolchainBinDir": "/home/thomas/.platformio/packages/toolchain-gccarmnoneeabi/bin",
+            "toolchainBinDir": "/home/robbe/.platformio/packages/toolchain-gccarmnoneeabi@1.70201.0/bin",
             "internalConsoleOptions": "openOnSessionStart",
-            "svdPath": "/home/thomas/.platformio/platforms/ststm32/misc/svd/STM32L412.svd",
+            "svdPath": "/home/robbe/.platformio/platforms/ststm32/misc/svd/STM32L412.svd",
             "loadMode": "manual"
         }
     ]

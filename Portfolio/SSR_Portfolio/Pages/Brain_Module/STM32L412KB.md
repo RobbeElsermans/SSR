@@ -17,9 +17,8 @@ Each task is again represented with a code flow diagram
 ![Brain_lora_task_flow_diagram](../../Images/diagrams/Brain_lora_task_flow_diagram.png)
 ### Drive
 ![Brain_drive_task_flow_diagram](../../Images/diagrams/Brain_drive_task_flow_diagram.png)
-![Brain_drive_task_flow_diagram](../../Images/diagrams/Brain_drive_task_flow_diagram.png)
 
-This is coded in a finite state machine which cycles through the different states. This to provide a minimal code footprint onto the MCU.
+All tasks are coded in a finite state machine which cycles through the different states. This to provide a minimal code footprint onto the MCU.
 
 ## Data formats
 
@@ -100,9 +99,6 @@ struct ble_beacon_result
 typedef struct ble_beacon_result ble_beacon_result_t;
 ```
 
-
-#todo 
-
 ### BLE communication with STM32 mocking counterpart
 ![BLE_2_way_Communication_STM32](../../Images/BLE/BLE_2_way_Communication_STM32.png)
 
@@ -118,7 +114,8 @@ The image displays a terminal or command-line interface showing the output of an
     
 5. **Light Sleep Mode**: Indicates the system entering light sleep mode.
 
-Here, only sens, scan and sleep is used. The BLE-module returns its founded results of a scanner nearby.
+Here, only sens, scan and sleep is used. The BLE-module returns its founded results of a beacon nearby.
+
 #### Real values example from 2 STM32 modules
 In this example, we took 1 full system and let it run through the sens, scan, beacon and light_sleep tasks. 
 The other module will only consist of a STM32L4 and the BLE-module (due to lack of sensors). This system will go through the tasks scanning and light_sleep.
@@ -180,4 +177,8 @@ The connectivity to the SMT32L412.
 
 ![SSR_Global connectivity](../../Images/SSR_Main_board.svg)The connectivity with all the other used modules
 
-Final 
+Final prototype module
+![prototype_board_front](../../Images/prototype_board_front.jpg)
+![prototype_board_back](../../Images/prototype_board_back.jpg)
+
+As can be observed, our final prototype that we've used, does not include the power switches.
