@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "SSR_Portfolio/Pages/LoRa/LoRa_Module.md",
+                "file": "SSR_Portfolio/Pages/LoRa/UART_Communications.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "LoRa_Module"
+              "title": "UART_Communications"
             }
           },
           {
@@ -178,10 +178,13 @@
   },
   "active": "d505ad75eac9efbe",
   "lastOpenFiles": [
+    "SSR_Portfolio/Images/LoRa/uart_font_settings.png",
+    "SSR_Portfolio/Images/LoRa/Screenshot from 2024-12-29 21-30-10.png",
+    "SSR_Portfolio/Pages/LoRa/Screenshot from 2024-12-29 21-30-10.png",
     "SSR_Portfolio/Pages/LoRa/TheThingsNetwork.md",
-    "SSR_Portfolio/Pages/LoRa/LoRa_Module.md",
-    "SSR_Portfolio/Pages/LoRa/Back_End.md",
     "SSR_Portfolio/Pages/LoRa/UART_Communications.md",
+    "SSR_Portfolio/Pages/LoRa/Back_End.md",
+    "SSR_Portfolio/Pages/LoRa/LoRa_Module.md",
     "SSR_Portfolio/Portfolio.md",
     "SSR_Portfolio/Pages/Sensor/MPU6050.md",
     "SSR_Portfolio/Images/LoRa/dashboard.png",
@@ -194,8 +197,6 @@
     "SSR_Portfolio/Images/LoRa/Screenshot from 2024-12-26 00-01-58.png",
     "SSR_Portfolio/Pages/LineBot/Rover_Bot.md",
     "SSR_Portfolio/Datasheets/skqucaa010_datasheet.pdf",
-    "SSR_Portfolio/Images/LineBot/joystick_pinout.png",
-    "SSR_Portfolio/Images/LineBot/joystick_schematic.png",
     "SSR_Portfolio/Images/LineBot",
     "SSR_Portfolio/Datasheets/Linebot schematic.pdf",
     "SSR_Portfolio/Datasheets/Linebot-schema's_en_PCB.pdf",
