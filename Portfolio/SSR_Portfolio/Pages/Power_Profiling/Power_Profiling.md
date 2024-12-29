@@ -206,7 +206,7 @@ If a flank is detected, it again will blink the led once.
 ##### low-power wait on flank
 ![BLE_basic_low_power_power_profile](../../Images/Power_Profiling/BLE_low_power_wait.png)
 Here, it again starts with a blink of a led. Then it enters a deep sleep mode. As can be observed, the nRF52 has a deep sleep enabled when the delay of 1000ms is initiated in the blink led. There is not much difference here. 
-The current consumption in deep sleep is still quite high, deeper investigation is needed as described here: [[Nano_BLE_MCU-nRF52840_PS_v1.1.pdf#page=67&selection=27,0,27,21|Nano_BLE_MCU-nRF52840_PS_v1.1, page 67]]
+The current consumption in deep sleep is still quite high, deeper investigation is needed as described here: [[Prod_Spec_BLE_MCU-nRF52840.pdf#page=67&selection=27,0,27,21|Nano_BLE_MCU-nRF52840_PS_v1.1, page 67]]
 
 
 Therefore, another measurement will be conducted in the while loop where we set the internal delay to 500ms to test this theory out.

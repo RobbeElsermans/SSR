@@ -25,7 +25,6 @@ Open the serial monitor application and use the following settings:
 - Flow Control: None
 
 ![uart settings](../../Images/LoRa/uart_settings.png)
-
 If the terminal crashes after opening the connection, it might be due to the default font being faulty. Use the following settings:
 
 ![uart font settings](../../Images/LoRa/uart_font_settings.png)

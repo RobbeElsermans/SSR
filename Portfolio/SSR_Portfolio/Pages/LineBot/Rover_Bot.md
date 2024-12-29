@@ -9,11 +9,11 @@ Due to time constraints, creating an I2C slave sketch wasn't feasible.
 The only option left is to find exposed pins and try to communicate via GPIO.
 
 # Finding the pins
-In the [schematic](../../Datasheets/Linebot%20schematic.pdf) the pinout for a joystick can be found on the second page in the bottom left corner. This Joytsick is connected to the ground and 5 GPIO pins. These being PB3 up to PB7.
+In the [schematic](SCH_Linebot.pdf) the pinout for a joystick can be found on the second page in the bottom left corner. This Joytsick is connected to the ground and 5 GPIO pins. These being PB3 up to PB7.
 
 ![Joystick schematic](../../Images/LineBot/joystick_schematic.png)
 
-These pins are configured with interrupts, as can be seen in the provided code. Using the [datasheet of the joystick](../../Datasheets/skqucaa010_datasheet.pdf), it can be derived that the interrupts are active LOW (since the joystick will equal any pin chosen pin to the ground).
+These pins are configured with interrupts, as can be seen in the provided code. Using the [datasheet of the joystick](DataS_skqucaa010.pdf), it can be derived that the interrupts are active LOW (since the joystick will equal any pin chosen pin to the ground).
 
 ![Joystick pinout](../../Images/LineBot/joystick_pinout.png)
 
