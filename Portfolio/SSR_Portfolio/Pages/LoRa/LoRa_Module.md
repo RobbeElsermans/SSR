@@ -5,9 +5,9 @@ For the LoRa-Module, we utilize the Wio-e5 mini board.
 *[Wio-e5 mini pinout](https://wiki.seeedstudio.com/LoRa_E5_mini/)*
 
 For our communication to work we need to perform three tasks:
-- Install a serial console for [UART communications](SSR_Portfolio/Pages/LoRa/UART%20Communications.md).
+- Install a serial console for [UART communications](UART_Communications.md).
 - Set up [TheThingsNetwork](SSR_Portfolio/Pages/LoRa/TheThingsNetwork.md).
-- Create a [back-end](SSR_Portfolio/Pages/LoRa/Back-End.md) that collects the data and visualizes it.
+- Create a [back-end](Back_End.md) that collects the data and visualizes it.
 
 If we follow these pages we should get a connection as follows: [lora_working](https://youtu.be/k0ebGLbgOsk)
 
