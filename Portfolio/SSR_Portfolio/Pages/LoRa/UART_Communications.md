@@ -23,15 +23,20 @@ Open the serial monitor application and use the following settings:
 - Stop Bit:          1
 - Parity:             None
 - Flow Control: None
+
 ![uart settings](../../Images/LoRa/uart_settings.png)
+
 If the terminal crashes after opening the connection, it might be due to the default font being faulty. Use the following settings:
+
 ![uart font settings](../../Images/LoRa/uart_font_settings.png)
 # Test connection
 To test the connection, we just need to use the base AT command.
 ``` Serial
 AT
 ```
+
 ![uart test output](../../Images/LoRa/uart_test_output.png)
+
 # Setup connection to TheThingsNetwork
 Enter the test mode
 ``` Serial

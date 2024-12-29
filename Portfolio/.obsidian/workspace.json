@@ -35,7 +35,8 @@
               "title": "TheThingsNetwork"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -176,13 +177,13 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "d505ad75eac9efbe",
+  "active": "64a898d224c8305c",
   "lastOpenFiles": [
+    "SSR_Portfolio/Pages/LoRa/UART_Communications.md",
     "SSR_Portfolio/Images/LoRa/uart_font_settings.png",
     "SSR_Portfolio/Images/LoRa/Screenshot from 2024-12-29 21-30-10.png",
     "SSR_Portfolio/Pages/LoRa/Screenshot from 2024-12-29 21-30-10.png",
     "SSR_Portfolio/Pages/LoRa/TheThingsNetwork.md",
-    "SSR_Portfolio/Pages/LoRa/UART_Communications.md",
     "SSR_Portfolio/Pages/LoRa/Back_End.md",
     "SSR_Portfolio/Pages/LoRa/LoRa_Module.md",
     "SSR_Portfolio/Portfolio.md",
@@ -194,7 +195,6 @@
     "SSR_Portfolio/Images/LoRa/dashboard_import_1.png",
     "SSR_Portfolio/Images/LoRa/dashboard_import_2.png",
     "SSR_Portfolio/Images/LoRa/Screenshot from 2024-12-26 00-00-15.png",
-    "SSR_Portfolio/Images/LoRa/Screenshot from 2024-12-26 00-01-58.png",
     "SSR_Portfolio/Pages/LineBot/Rover_Bot.md",
     "SSR_Portfolio/Datasheets/skqucaa010_datasheet.pdf",
     "SSR_Portfolio/Images/LineBot",
