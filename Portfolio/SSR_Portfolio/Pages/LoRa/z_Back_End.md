@@ -119,30 +119,30 @@ To load this flow in:
 - Press "ctrl-i"
 - Click on the "select a file to import" button
 
-![Dashboard import](../../Images/LoRa/dashboard_import_1.png)
+![Dashboard import](dashboard_import_1.png)
 
 - Choose the file "nodered.json"
 - Click on the "import" *button*
 
-![Dashboard import](../../Images/LoRa/dashboard_import_2.png)
+![Dashboard import](dashboard_import_2.png)
 
 ## LoRa connectivity
 ### MQTT node
 Get a "mqtt in" node and put it in the flow, then click on it. A window should slide open. Click on the plus button next to the "server" to setup a connection to TheThingsNetwork.
 
-![mqtt server creation](../../Images/LoRa/mqtt_server_creation.png)
+![mqtt server creation](mqtt_server_creation.png)
 
 Setup server connection.
 
-![mqtt server connection setting](../../Images/LoRa/mqtt_server_connection_settings.png)
+![mqtt server connection setting](mqtt_server_connection_settings.png)
 
 Setup server connection security.
 
-![mqtt server security settings](../../Images/LoRa/mqtt_server_security_settings.png)
+![mqtt server security settings](mqtt_server_security_settings.png)
 
 Subscribe to a certain topic. *For testing porpusus we can use '#' as a any-topic*
 
-![mqtt settings](../../Images/LoRa/mqtt_settings.png)
+![mqtt settings](mqtt_settings.png)
 
 ### Function node
 Get a "function" node and put it in the flow, then click on it. A window should slide open.
@@ -173,7 +173,7 @@ Add last drop a "debug" node and put it in the flow, and connect:
 1) The MQTT output to the function input.
 2) The function output to the debug intput.
 
-![mqtt debug flow](../../Images/LoRa/mqtt_debug_flow.png)
+![mqtt debug flow](mqtt_debug_flow.png)
 ## Container connectivity
 Add the following nodes to the flow:
 - An **inject** node
@@ -182,7 +182,7 @@ Add the following nodes to the flow:
 - A **debug** node
 Then connect them as follows:
 
-![mongodb flow](../../Images/LoRa/mongodb_flow.png)
+![mongodb flow](mongodb_flow.png)
 
 ### Function nodes
 Click on the "function" node. A window should slide open.
@@ -201,26 +201,26 @@ return msg;
 Click on the "mongodb4" node. A window should slide open.
 Create a new connection:
 
-![mongodb connection creation](../../Images/LoRa/mongodb_connection_creation.png)
+![mongodb connection creation](mongodb_connection_creation.png)
 
 Set the simple URI settings:
 
-![mongodb simple uri settings](../../Images/LoRa/mongodb_simple_uri_settings.png)
+![mongodb simple uri settings](mongodb_simple_uri_settings.png)
 
 Set the advanced URI settings:
 
-![mongodb advanced uri settings](../../Images/LoRa/mongodb_advanced_uri_settings.png)
+![mongodb advanced uri settings](mongodb_advanced_uri_settings.png)
 
 Set the global settings:
 
-![mongodb settings](../../Images/LoRa/mongodb_settings.png)
+![mongodb settings](mongodb_settings.png)
 ## Dashboard
 ### Setup
 A dashboard can easily be created using the [dashboard nodes](https://flows.nodered.org/node/node-red-dashboard).
 For this to work the data needs to be split using a function node:
 - In the "Setup" tab, set the output to 8:
 
-![Dashboard outputs](../../Images/LoRa/dashboard_outputs.png)
+![Dashboard outputs](dashboard_outputs.png)
 
 - In the "On Message" tab, paste the following code:
 
@@ -249,4 +249,4 @@ http://<IP-address>:1880/ui/#!/0
 http://127.0.0.1:1880/ui/#!/0
 ```
 
-![dashbaord](../../Images/LoRa/dashboard.png)
+![dashbaord](dashboard_example.png)

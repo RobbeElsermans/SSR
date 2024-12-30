@@ -8,7 +8,7 @@
         "type": "tabs",
         "children": [
           {
-            "id": "d505ad75eac9efbe",
+            "id": "cf9aeab18b8129f7",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -22,17 +22,15 @@
             }
           },
           {
-            "id": "64a898d224c8305c",
+            "id": "48b4937d69d9b675",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "image",
               "state": {
-                "file": "SSR_Portfolio/Pages/LoRa/TheThingsNetwork.md",
-                "mode": "source",
-                "source": false
+                "file": "SSR_Portfolio/Images/LoRa/module/lora_test_ttn_connection.png"
               },
-              "icon": "lucide-file",
-              "title": "TheThingsNetwork"
+              "icon": "lucide-image",
+              "title": "lora_test_ttn_connection"
             }
           }
         ]
@@ -176,56 +174,56 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "d505ad75eac9efbe",
+  "active": "cf9aeab18b8129f7",
   "lastOpenFiles": [
-    "SSR_Portfolio/Pages/LoRa/TheThingsNetwork.md",
+    "SSR_Portfolio/Images/LoRa/module/lora_test_ttn_connection.png",
+    "SSR_Portfolio/Images/LoRa/module/at_command_error_output.png",
+    "SSR_Portfolio/Pages/LoRa/LoRa_Module.md",
+    "SSR_Portfolio/Images/LoRa/module/at_command_send_message_output.png",
+    "SSR_Portfolio/Datasheets/Lora_Specifications.pdf",
+    "SSR_Portfolio/Pages/LoRa/z_Back_End.md",
+    "SSR_Portfolio/Pages/LoRa/z_LoRa_Module.md",
+    "SSR_Portfolio/Pages/LoRa/z_UART_Communications.md",
+    "SSR_Portfolio/Pages/LoRa/Setup_LoRaWAN_progams.md",
+    "SSR_Portfolio/Images/LoRa/module/at_command_set_channel_output.png",
+    "SSR_Portfolio/Images/LoRa/module/at_command_channel_settings_output.png",
+    "SSR_Portfolio/Images/LoRa/module/at_command_config_output.png",
+    "SSR_Portfolio/Images/LoRa/module/at_command_full_output.png",
+    "SSR_Portfolio/Images/LoRa/module/at_command_set_appeui_output.png",
+    "SSR_Portfolio/Images/LoRa/module/at_command_set_appskey_output.png",
+    "SSR_Portfolio/Images/LoRa/module/at_command_set_data_rate_output.png",
+    "SSR_Portfolio/Datasheets/BLE_GATT_Specification.pdf",
+    "SSR_Portfolio/Pages/LoRa/Dashboard.md",
+    "SSR_Portfolio/Pages/Brain_Module/STM32L412KB.md",
+    "SSR_Portfolio/Pages/LoRa/z_TheThingsNetwork.md",
+    "SSR_Portfolio/Images/LoRa/module",
+    "SSR_Portfolio/Images/LoRa/back_end",
+    "SSR_Portfolio/Images/LoRa/Untitled.md",
+    "SSR_Portfolio/Images/LoRa/dashboard",
+    "SSR_Portfolio/Pages/BLE_Module/nRF52_SEEED_XIAO.md",
+    "SSR_Portfolio/Portfolio.md",
+    "SSR_Portfolio/Pages/Investigation/Brain_Board_Selection.md",
     "SSR_Portfolio/Datasheets/Guide_Bluefruit_nrf52_feather.pdf",
     "SSR_Portfolio/Datasheets/Guide_AEM10941_Evaluation_Kit.pdf",
     "SSR_Portfolio/Datasheets/DataS_SuperCaps.pdf",
     "SSR_Portfolio/Datasheets/DataS_stm32l412c8-1.pdf",
     "SSR_Portfolio/Datasheets/SCH_Linebot.pdf",
-    "SSR_Portfolio/Datasheets/DataS_STM32_EEPROM.pdf",
-    "SSR_Portfolio/Datasheets/DataS_STM32.pdf",
-    "SSR_Portfolio/Datasheets/DataS_skqucaa010.pdf",
-    "SSR_Portfolio/Datasheets/DataS_SHT4x.pdf",
-    "SSR_Portfolio/Datasheets/Prod_Spec_BLE_MCU-nRF52840.pdf",
     "SSR_Portfolio/Datasheets/AEM10941.md",
-    "SSR_Portfolio/Pages/LoRa/LoRa_Module.md",
-    "SSR_Portfolio/Pages/LoRa/UART_Communications.md",
-    "SSR_Portfolio/Images/LoRa/uart_font_settings.png",
-    "SSR_Portfolio/Images/LoRa/Screenshot from 2024-12-29 21-30-10.png",
-    "SSR_Portfolio/Pages/LoRa/Screenshot from 2024-12-29 21-30-10.png",
-    "SSR_Portfolio/Pages/LoRa/Back_End.md",
-    "SSR_Portfolio/Portfolio.md",
     "SSR_Portfolio/Pages/Sensor/MPU6050.md",
-    "SSR_Portfolio/Images/LoRa/dashboard.png",
-    "SSR_Portfolio/Images/LoRa/Screenshot from 2024-12-26 00-21-17.png",
-    "SSR_Portfolio/Images/LoRa/dashboard_outputs.png",
-    "SSR_Portfolio/Images/LoRa/Screenshot from 2024-12-26 00-15-14.png",
-    "SSR_Portfolio/Images/LoRa/dashboard_import_1.png",
-    "SSR_Portfolio/Images/LoRa/dashboard_import_2.png",
-    "SSR_Portfolio/Images/LoRa/Screenshot from 2024-12-26 00-00-15.png",
     "SSR_Portfolio/Pages/LineBot/Rover_Bot.md",
     "SSR_Portfolio/Pages/Sensor/LTR-329.md",
     "SSR_Portfolio/Videos/Sensor/temp.md",
     "SSR_Portfolio/Videos/LoRa/temp.md",
-    "SSR_Portfolio/Pages/BLE_Module/nRF52_SEEED_XIAO.md",
     "SSR_Portfolio/Pages/Power_Profiling/Power_Profiling_V1.md",
     "SSR_Portfolio/Pages/Energy_Harvesting/Energy_Harvesting.md",
     "SSR_Portfolio/Pages/Sensor/SHT40.md",
     "SSR_Portfolio/Pages/Power_Profiling/Power_Profiling.md",
-    "SSR_Portfolio/Pages/Investigation/Brain_Board_Selection.md",
-    "SSR_Portfolio/Pages/Brain_Module/STM32L412KB.md",
     "SSR_Portfolio/Images/block.md",
     "SSR_Portfolio/Docs By Person.canvas",
     "SSR_Portfolio/Backlog Tom.canvas",
     "SSR_Portfolio/Backlog Robbe.canvas",
     "SSR_Portfolio/Backlog Adam.canvas",
     "SSR_Portfolio/Nice links.md",
-    "SSR_Portfolio/Fixes Software installations.md",
-    "ttn_create_application.md",
-    "SSR_Portfolio/Images/LoRa/putty_uart_settings.md",
-    "SSR_Portfolio/Pages/LoRa/UART.md",
-    "Pages/LoRa/UART.md"
+    "SSR_Portfolio/Fixes Software installations.md"
   ]
 }

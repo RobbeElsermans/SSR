@@ -1,7 +1,6 @@
 ## Code flow diagram
 Our brain, STM32L412KB, will have a certain flow as depicted in the block schematic below.
 
-
 ![Brain_main_code_diagram](../../Images/diagrams/Brain_main_code_diagram.png)
 
 Each task is again represented with a code flow diagram
