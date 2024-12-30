@@ -1,7 +1,9 @@
 For the LoRa-Module, we utilize the [Wio-e5 mini board](https://wiki.seeedstudio.com/LoRa_E5_mini/).
 
-![lora_e5_mini_pinout](../../Images/LoRa/module/lora_e5_mini_pinout.jpg)
+![lora_e5_mini_pinout](../../Images/LoRa/lora_e5_mini_pinout.jpg)
 *[Wio-e5 mini pinout](https://wiki.seeedstudio.com/LoRa_E5_mini/)*
+
+*Some handy videos include: [setup device](https://www.youtube.com/watch?v=L_acKpwNvnc&list=WL&index=11&t=600s) & [setup MQTT](https://www.youtube.com/watch?v=9H6GFXatOCY&list=WL&index=12&t=128s)*
 # Communications
 ## Diagram
 The base communication flow is depicted in the block schematic below.
@@ -80,7 +82,6 @@ AT+ID=AppEui,"2CF7F12052608782"
 
 ![at_command_set_deveui_output](../../Images/LoRa/module/at_command_set_deveui_output.png)
 ![at_command_set_appeui_output](../../Images/LoRa/module/at_command_set_appeui_output.png)
-
 ### Configure channel communication
 As previously established the module uses ABP mode.
 ``` AT Command
@@ -149,7 +150,6 @@ AT+EEPROM
 ![at_command_error_output](../../Images/LoRa/module/at_command_error_output.png)
 ## Add the device to TTN
 Create an account on TheThingsNetwork *(TTN)* and open the dashboard. *If help is needed for this follow the steps on the [setup programs](Setup_Programs.md) page.
-
 ### Create an application
 Hover over the plus sign and click on "Add application".
 
@@ -158,7 +158,6 @@ Hover over the plus sign and click on "Add application".
 Give the application a name and ID.
 
 ![ttn_application_settings](../../Images/LoRa/back_end/ttn_application_settings.png)
-
 ## Add a device
 Under the "End devices" tab, click op the "Register end device" button.
 
@@ -174,11 +173,20 @@ Use the following settings to register an end device:
 ![ttn_advanced_activation_settings](../../Images/LoRa/back_end/ttn_advanced_activation_settings.png)
 
 ![ttn_provisioning_information](../../Images/LoRa/back_end/ttn_provisioning_information.png)
-
-
 ## Create a dashboard
+The server side will provide a place where the data can be stored and then be viewed via graph. For this project docker will be used to set up a:
+- MongoDB server:              For data storage.
+- Node-Red environment:   To receive the data, save it to the DB and graph it.
 
+Since this is not as important for the scope of this project, the documentation of this part will be on a separate [page](Dashboard.md).
+
+![dashbaord](../../Images/LoRa/dashboard/dashboard_example.png)
+## Result
+If everything is in order, communications between the module and back-end should be possible:
+
+![lora_test_ttn_connection](../../Images/LoRa/lora_test_ttn_connection.png)
 # Implementation
+explain test lora
 
 ``` AT Command
 AT+MODE="LWABP"
@@ -193,3 +201,8 @@ AT+DR=7
 AT+CH=num,0
 AT+MSGHEX="*message*"
 ```
+
+If we follow these pages we should get a connection as follows: [lora_working](https://youtu.be/k0ebGLbgOsk)
+
+
+# Power consumption
