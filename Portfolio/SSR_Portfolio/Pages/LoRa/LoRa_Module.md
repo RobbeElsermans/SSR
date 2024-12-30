@@ -275,7 +275,9 @@ The power measurements have been performed over a 13,67 minute time span. Notabl
 
 ![power_15_min_spread](../../Images/LoRa/power/power_15_min_spread.png)
 This gave an average current of 1.338 mA.
+
 $\text{power consumption} = \frac{1.338 \mathrm{mA} \cdot 823.434 \mathrm{s}}{3600} = 0.306 \mathrm{mAh}$
+
 The average power consumption for these settings becomes 0.3 mAh.
 
 The startup and repetition of the transmissions has the following current characteristic.
@@ -316,6 +318,7 @@ When repeating transmissions the following current characteristic occurs:
 | Unknown wake 2 | 17.635            | 6.576                | 220.875       | 0.000403          |
 | Unknown wake 3 | 13.563            | 6.648                | 48.634        | 0.000090          |
 | Repetition 2   | 216.405           | 38.001               | 170.220       | 0.001798          |
+
 When applying the same calculations on the other repetitions, we get similar results *(except for the peak current that differs greatly from instance to instance)*.
 ## ON/OFF
 Going back to the full range measurement, we will calculate the average current based on the different periods. These being:
@@ -330,5 +333,7 @@ Going back to the full range measurement, we will calculate the average current 
 | Startup and repetition | 217.397           | 2.595                | 189.024       | 0.000137          |
 | Lagging peaks          | 11.972            | 0.343                | 27.022        | 0.000003          |
 | Sleep                  | 42.822            | 0.035                | 177.075       | 0.000002          |
+
 $C_{\text{total}} = \left( 2.595 \times \frac{189.024}{3600000} \right) + \left( 0.343 \times \frac{27.022}{3600000} \right) + \left( 0.035 \times \frac{177.075}{3600000} \right) = 0.000137 + 0.000003 + 0.000002 = 0.000141 \mathrm{mAh}$
+
 The power consumption *(for only the LoRa module)* of one received transmission would become 0.000141 mAh.
