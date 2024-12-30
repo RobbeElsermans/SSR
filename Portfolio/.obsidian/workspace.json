@@ -22,29 +22,15 @@
             }
           },
           {
-            "id": "b1ef1253177138d4",
+            "id": "63ac7acf966565c1",
             "type": "leaf",
             "state": {
               "type": "image",
               "state": {
-                "file": "SSR_Portfolio/Images/LoRa/lora_implementation.png"
+                "file": "SSR_Portfolio/Images/LoRa/power/power_on_off.png"
               },
               "icon": "lucide-image",
-              "title": "lora_implementation"
-            }
-          },
-          {
-            "id": "ffe8cf538c569dd0",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "SSR_Portfolio/Pages/BLE_Module/nRF52_SEEED_XIAO.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "nRF52_SEEED_XIAO"
+              "title": "power_on_off"
             }
           }
         ]
@@ -190,9 +176,18 @@
   },
   "active": "0af305e7796ebab4",
   "lastOpenFiles": [
-    "SSR_Portfolio/Images/LoRa/lora_implementation.png",
+    "SSR_Portfolio/Images/LoRa/power/power_on_off.png",
     "SSR_Portfolio/Pages/LoRa/LoRa_Module.md",
-    "SSR_Portfolio/Images/LoRa/Leeg diagram - Pagina 1(2).png",
+    "SSR_Portfolio/Images/LoRa/power/power_15_min_spread.png",
+    "SSR_Portfolio/Images/LoRa/power/power_repeat.png",
+    "SSR_Portfolio/Images/LoRa/power/power_4_states.png",
+    "SSR_Portfolio/Images/LoRa/power/power_startup.png",
+    "SSR_Portfolio/Images/LoRa/power/power_lagging_peaks.png",
+    "SSR_Portfolio/Images/LoRa/power/Screenshot from 2024-12-30 21-36-42.png",
+    "SSR_Portfolio/Images/LoRa/power/power_startup_and_repeat.png",
+    "SSR_Portfolio/Images/LoRa/power/Screenshot from 2024-12-30 21-32-10.png",
+    "SSR_Portfolio/Images/LoRa/power/Screenshot from 2024-12-30 21-07-20.png",
+    "SSR_Portfolio/Images/LoRa/power",
     "SSR_Portfolio/Pages/BLE_Module/nRF52_SEEED_XIAO.md",
     "SSR_Portfolio/Datasheets/Lora_Specifications.pdf",
     "SSR_Portfolio/Pages/Brain_Module/STM32L412KB.md",
@@ -201,17 +196,9 @@
     "SSR_Portfolio/Pages/LoRa/Setup_Programs.md",
     "SSR_Portfolio/Pages/LoRa/Dashboard.md",
     "SSR_Portfolio/Pages/LoRa/z_Back_End.md",
-    "SSR_Portfolio/Images/LoRa/lora_test_ttn_connection.png",
     "SSR_Portfolio/Pages/LoRa/z_LoRa_Module.md",
-    "SSR_Portfolio/Images/LoRa/lora_e5_mini_pinout.jpg",
-    "SSR_Portfolio/Images/LoRa/lora_communications.png",
     "SSR_Portfolio/Pages/LoRa/z_TheThingsNetwork.md",
-    "SSR_Portfolio/Images/LoRa/back_end/ttn_advanced_activation_settings.png",
-    "SSR_Portfolio/Images/LoRa/back_end/ttn_register_device.png",
-    "SSR_Portfolio/Images/LoRa/module/at_command_error_output.png",
-    "SSR_Portfolio/Images/LoRa/module/at_command_send_message_output.png",
     "SSR_Portfolio/Pages/LoRa/z_UART_Communications.md",
-    "SSR_Portfolio/Images/LoRa/module/at_command_set_channel_output.png",
     "SSR_Portfolio/Datasheets/BLE_GATT_Specification.pdf",
     "SSR_Portfolio/Images/LoRa/module",
     "SSR_Portfolio/Images/LoRa/back_end",
@@ -222,7 +209,6 @@
     "SSR_Portfolio/Datasheets/Guide_AEM10941_Evaluation_Kit.pdf",
     "SSR_Portfolio/Datasheets/DataS_SuperCaps.pdf",
     "SSR_Portfolio/Datasheets/DataS_stm32l412c8-1.pdf",
-    "SSR_Portfolio/Datasheets/SCH_Linebot.pdf",
     "SSR_Portfolio/Datasheets/AEM10941.md",
     "SSR_Portfolio/Pages/Sensor/MPU6050.md",
     "SSR_Portfolio/Pages/LineBot/Rover_Bot.md",
