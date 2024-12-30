@@ -27,7 +27,7 @@ The standard UART/Serial settings the LoRa module uses are as follows:
 
 ![uart_settings](../../Images/LoRa/module/uart_settings.png)
 ### AT commands
-The LoRa module makes use of AT commands. All these commands can be found in this [document](../../Datasheets/Lora_Specifications.pdf).
+The LoRa module makes use of AT commands. All these commands can be found in this [document](../../Datasheets/Lora_Specifications.pdf#page=16).
 
 To test the connection, we need to send the base AT command:
 ``` AT Command
@@ -120,32 +120,43 @@ AT+CH=0
 
 ![at_command_channel_settings_output](../../Images/LoRa/module/at_command_channel_settings_output.png)
 ### Send a message
-Send a string message:
+To send a string message, use the following command:
 ``` AT Command
 AT+MSG="*message*"
 ```
 
 ![at_command_send_message_output](../../Images/LoRa/module/at_command_send_message_output.png)
 
-Send a hexadecimal message:
+To send a hexadecimal message, use the following command:
 ``` AT Command
 AT+MSGHEX="*message*"
 ```
 
-### ==Other interesting commands==
+### Other interesting commands
+The "LOWPOWER" command will set the module in ultra low-power mode.
 ``` AT Command
 AT+LOWPOWER
 ```
+Any command *(even faulty ones)* can wake the module up after it has been set to sleep, thought the command itself won't be processed.
+After waking up the host should wait at least 5ms to send the next command, so that the modem could get ready.
 
+With the "POWER" command the transmit power can be set.
 ``` AT Command
-AT+POWER
+AT+POWER=<Output Power>
 ```
+This can be set to 20, 14, 11, 8, 5 or 2 dBm for the EU868 standard.
 
+The LoRa module has an EEPROM of 256 bytes to save user data. Values have to be read and write byte per byte:
+- Read:
 ``` AT Command
-AT+EEPROM
+AT+EEPROM=<ADDR>
 ```
-
-### ==Error messages==
+- Write:
+``` AT Command
+AT+EEPROM=<ADDR>,<VAL>
+```
+### Error messages
+Any faulty command or setting will result in and error message. More information about the error messages can be found in this [document](../../Datasheets/Lora_Specifications.pdf#page=8) on page 3.
 
 ![at_command_error_output](../../Images/LoRa/module/at_command_error_output.png)
 ## Add the device to TTN

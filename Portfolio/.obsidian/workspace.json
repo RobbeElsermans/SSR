@@ -8,7 +8,7 @@
         "type": "tabs",
         "children": [
           {
-            "id": "cf9aeab18b8129f7",
+            "id": "0af305e7796ebab4",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -19,6 +19,18 @@
               },
               "icon": "lucide-file",
               "title": "LoRa_Module"
+            }
+          },
+          {
+            "id": "ffe8cf538c569dd0",
+            "type": "leaf",
+            "state": {
+              "type": "pdf",
+              "state": {
+                "file": "SSR_Portfolio/Datasheets/Lora_Specifications.pdf"
+              },
+              "icon": "lucide-file-text",
+              "title": "Lora_Specifications"
             }
           }
         ]
@@ -162,12 +174,15 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "cf9aeab18b8129f7",
+  "active": "0af305e7796ebab4",
   "lastOpenFiles": [
+    "SSR_Portfolio/Datasheets/Lora_Specifications.pdf",
+    "SSR_Portfolio/Pages/LoRa/LoRa_Module.md",
+    "SSR_Portfolio/Portfolio.md",
+    "z_LoRa_Module.md",
     "SSR_Portfolio/Pages/LoRa/Setup_Programs.md",
     "SSR_Portfolio/Pages/LoRa/Dashboard.md",
     "SSR_Portfolio/Pages/LoRa/z_Back_End.md",
-    "SSR_Portfolio/Pages/LoRa/LoRa_Module.md",
     "SSR_Portfolio/Images/LoRa/lora_test_ttn_connection.png",
     "SSR_Portfolio/Pages/LoRa/z_LoRa_Module.md",
     "SSR_Portfolio/Images/LoRa/lora_e5_mini_pinout.jpg",
@@ -177,7 +192,6 @@
     "SSR_Portfolio/Images/LoRa/back_end/ttn_register_device.png",
     "SSR_Portfolio/Images/LoRa/module/at_command_error_output.png",
     "SSR_Portfolio/Images/LoRa/module/at_command_send_message_output.png",
-    "SSR_Portfolio/Datasheets/Lora_Specifications.pdf",
     "SSR_Portfolio/Pages/LoRa/z_UART_Communications.md",
     "SSR_Portfolio/Images/LoRa/module/at_command_set_channel_output.png",
     "SSR_Portfolio/Images/LoRa/module/at_command_channel_settings_output.png",
@@ -189,7 +203,6 @@
     "SSR_Portfolio/Images/LoRa/Untitled.md",
     "SSR_Portfolio/Images/LoRa/dashboard",
     "SSR_Portfolio/Pages/BLE_Module/nRF52_SEEED_XIAO.md",
-    "SSR_Portfolio/Portfolio.md",
     "SSR_Portfolio/Pages/Investigation/Brain_Board_Selection.md",
     "SSR_Portfolio/Datasheets/Guide_Bluefruit_nrf52_feather.pdf",
     "SSR_Portfolio/Datasheets/Guide_AEM10941_Evaluation_Kit.pdf",
@@ -211,7 +224,6 @@
     "SSR_Portfolio/Backlog Tom.canvas",
     "SSR_Portfolio/Backlog Robbe.canvas",
     "SSR_Portfolio/Backlog Adam.canvas",
-    "SSR_Portfolio/Nice links.md",
-    "SSR_Portfolio/Fixes Software installations.md"
+    "SSR_Portfolio/Nice links.md"
   ]
 }

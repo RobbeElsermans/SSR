@@ -59,7 +59,7 @@ The MVP (Minimal Vital Product) contains the following items:
 ## Energy Awareness
 [Energy Awareness page](Pages/Energy_Awareness/Energy_Awareness.md)
 ## LoRaModule
-[LoRA Module page](z_LoRa_Module.md)
+[LoRA Module page](Pages/LoRa/LoRa_Module.md)
 ## Rover Bot
 [Rover Bot page](Pages/LineBot/Rover_Bot.md)
 
