@@ -14,7 +14,7 @@ To setup this network we will need to follow these steps:
 3) Create a Node-Red environment and connect it to TTN network.
 # Setup
 ## Connect to LoRA
-First we will connect to the LoRa module, to change the modules configuration. This can be done via the USB-C port and a serial monitor. *This can be done via a program such as Putty or the ArduinoIDE serial terminal. ([Installation and set](Setup_LoRaWAN_progams.md))*
+First we will connect to the LoRa module, to change the modules configuration. This can be done via the USB-C port and a serial monitor. *This can be done via a program such as Putty or the ArduinoIDE serial terminal. ([Installation and setup](Setup_Programs.md))*
 ### UART/Serial settings
 The standard UART/Serial settings the LoRa module uses are as follows:
 - Baud-Rate:     9600
@@ -148,6 +148,33 @@ AT+EEPROM
 
 ![at_command_error_output](../../Images/LoRa/module/at_command_error_output.png)
 ## Add the device to TTN
+Create an account on TheThingsNetwork *(TTN)* and open the dashboard. *If help is needed for this follow the steps on the [setup programs](Setup_Programs.md) page.
+
+### Create an application
+Hover over the plus sign and click on "Add application".
+
+![ttn_create_application](../../Images/LoRa/back_end/ttn_create_application.png)
+
+Give the application a name and ID.
+
+![ttn_application_settings](../../Images/LoRa/back_end/ttn_application_settings.png)
+
+## Add a device
+Under the "End devices" tab, click op the "Register end device" button.
+
+![ttn_register_device](../../Images/LoRa/back_end/ttn_register_device.png)
+
+Use the following settings to register an end device:
+- DevEUI should be provided by the device. Use the device value.
+- Device address, AppSKey & NwkSKey should be generated and then configured onto the end device.
+- The chosen mode is APB.
+
+![ttn_end_device_type](../../Images/LoRa/back_end/ttn_end_device_type.png)
+
+![ttn_advanced_activation_settings](../../Images/LoRa/back_end/ttn_advanced_activation_settings.png)
+
+![ttn_provisioning_information](../../Images/LoRa/back_end/ttn_provisioning_information.png)
+
 
 ## Create a dashboard
 

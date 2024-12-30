@@ -25,15 +25,18 @@
             "id": "48b4937d69d9b675",
             "type": "leaf",
             "state": {
-              "type": "image",
+              "type": "markdown",
               "state": {
-                "file": "SSR_Portfolio/Images/LoRa/module/lora_test_ttn_connection.png"
+                "file": "SSR_Portfolio/Pages/LoRa/Dashboard.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-image",
-              "title": "lora_test_ttn_connection"
+              "icon": "lucide-file",
+              "title": "Dashboard"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -174,28 +177,28 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "cf9aeab18b8129f7",
+  "active": "48b4937d69d9b675",
   "lastOpenFiles": [
+    "SSR_Portfolio/Pages/LoRa/z_LoRa_Module.md",
+    "SSR_Portfolio/Pages/LoRa/z_TheThingsNetwork.md",
+    "SSR_Portfolio/Pages/LoRa/Dashboard.md",
+    "SSR_Portfolio/Images/LoRa/back_end/ttn_advanced_activation_settings.png",
+    "SSR_Portfolio/Pages/LoRa/LoRa_Module.md",
+    "SSR_Portfolio/Pages/LoRa/Setup_Programs.md",
+    "SSR_Portfolio/Images/LoRa/back_end/ttn_register_device.png",
     "SSR_Portfolio/Images/LoRa/module/lora_test_ttn_connection.png",
     "SSR_Portfolio/Images/LoRa/module/at_command_error_output.png",
-    "SSR_Portfolio/Pages/LoRa/LoRa_Module.md",
     "SSR_Portfolio/Images/LoRa/module/at_command_send_message_output.png",
     "SSR_Portfolio/Datasheets/Lora_Specifications.pdf",
     "SSR_Portfolio/Pages/LoRa/z_Back_End.md",
-    "SSR_Portfolio/Pages/LoRa/z_LoRa_Module.md",
     "SSR_Portfolio/Pages/LoRa/z_UART_Communications.md",
-    "SSR_Portfolio/Pages/LoRa/Setup_LoRaWAN_progams.md",
     "SSR_Portfolio/Images/LoRa/module/at_command_set_channel_output.png",
     "SSR_Portfolio/Images/LoRa/module/at_command_channel_settings_output.png",
     "SSR_Portfolio/Images/LoRa/module/at_command_config_output.png",
     "SSR_Portfolio/Images/LoRa/module/at_command_full_output.png",
     "SSR_Portfolio/Images/LoRa/module/at_command_set_appeui_output.png",
-    "SSR_Portfolio/Images/LoRa/module/at_command_set_appskey_output.png",
-    "SSR_Portfolio/Images/LoRa/module/at_command_set_data_rate_output.png",
     "SSR_Portfolio/Datasheets/BLE_GATT_Specification.pdf",
-    "SSR_Portfolio/Pages/LoRa/Dashboard.md",
     "SSR_Portfolio/Pages/Brain_Module/STM32L412KB.md",
-    "SSR_Portfolio/Pages/LoRa/z_TheThingsNetwork.md",
     "SSR_Portfolio/Images/LoRa/module",
     "SSR_Portfolio/Images/LoRa/back_end",
     "SSR_Portfolio/Images/LoRa/Untitled.md",
