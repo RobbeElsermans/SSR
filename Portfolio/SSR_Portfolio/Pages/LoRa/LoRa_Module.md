@@ -197,8 +197,9 @@ If everything is in order, communications between the module and back-end should
 
 ![lora_test_ttn_connection](../../Images/LoRa/lora_test_ttn_connection.png)
 # Implementation
-explain test lora
-
+## Initialization
+After waking up, the brain module will initialize the LoRa module with the right settings:
+- Mode configuration
 ``` AT Command
 AT+MODE="LWABP"
 AT+ID=DevAddr,"260BC2D8"
@@ -206,14 +207,61 @@ AT+KEY=AppSKey,"E91661F4C1D5172FE116CCDB137A3FDE"
 AT+KEY=NwkSKey,"06E55AEC9813D87693F0A42EAF441E93"
 AT+ID=DevEui,"2CF7F12052608782"
 AT+ID=AppEui,"2CF7F12052608782"
-
+```
+- Channel configuration
+``` AT Command
 AT+MODE="LWABP"
 AT+DR=7
 AT+CH=num,0
-AT+MSGHEX="*message*"
+```
+This way the settings are always correct, since they can be erased if the LoRa module is in sleep mode for too long.
+## Sleep
+The LoRa module be set to sleep between transmission.
+``` AT Command
+AT+LOWPOWER
+```
+As mentioned earlier, when the module is in sleep mode for duration longer than a couple of seconds it seemingly loses its configuration.
+
+**Upon waking, after sleeping for longer than 10 seconds, the configuration should be reinitialized.**
+## Sending
+When sending the data, each data variable in the ssr_data struct will be concatenated and send as a 12-byte code:
+``` AT Command
+AT+MSGHEX="*12-byte hex code*"
 ```
 
-If we follow these pages we should get a connection as follows: [lora_working](https://youtu.be/k0ebGLbgOsk)
+```c
+struct ssr_data
+{
+	uint16_t seq_number; // Range from 0 to 511 (8 bits total usage)
+	int16_t env_temperature; // Range from -327.68 to 327.67 °C (val/100=°C)
+	uint8_t env_humidity; // Range from -0-100%
+	uint16_t env_lux; // Range from 0 to 1000
+	uint16_t dev_voltage; // Range from 0-6.5535V (val/10000=V) (val/10=mV)
+	int8_t dev_gyro_x; // Range from -125 to 125 (val*2=°)
+	int8_t dev_gyro_y; // Range from -125 to 125 (val*2=°)
+	int8_t dev_gyro_z; // Range from -125 to 125 (val*2=°)
+};
+typedef struct ssr_data ssr_data_t;
+```
 
+After a packet is received the module cannot send another message for at least 3 minutes, since TTN won't receive a package for that amount of time *(from the same device)*.
 
+Out of testing, we have found that the LoRa module needs to transmit the message multiple times before it is received at the TTN. The following video show this phenomenon:
+
+![lora_working](https://youtu.be/k0ebGLbgOsk)
+
+This can be due to:
+- A bad connection to the gateway.
+- Wrong settings during the configuration.
+- Not having enough time between transmission, leading to collisions.
+
+The amount of times that the transmission needs to be repeated drastically increases the shorter the time is between these repeated transmission. Only after 3.2 seconds do they stabilize at around ~58 TX / 1 RX.
+- 1 second -> ~127 TX / 1 RX
+- 2 second -> ~90 TX / 1 RX
+- 3.2 second -> ~58 TX / 1 RX
+- 5 seconds -> ~50 TX / 1 RX
+
+So the best course of action when sending to the server is to follow this flow chart:
+
+![lora_implementation](../../Images/LoRa/lora_implementation.png)
 # Power consumption

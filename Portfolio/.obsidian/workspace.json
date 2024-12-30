@@ -22,15 +22,29 @@
             }
           },
           {
+            "id": "b1ef1253177138d4",
+            "type": "leaf",
+            "state": {
+              "type": "image",
+              "state": {
+                "file": "SSR_Portfolio/Images/LoRa/lora_implementation.png"
+              },
+              "icon": "lucide-image",
+              "title": "lora_implementation"
+            }
+          },
+          {
             "id": "ffe8cf538c569dd0",
             "type": "leaf",
             "state": {
-              "type": "pdf",
+              "type": "markdown",
               "state": {
-                "file": "SSR_Portfolio/Datasheets/Lora_Specifications.pdf"
+                "file": "SSR_Portfolio/Pages/BLE_Module/nRF52_SEEED_XIAO.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-file-text",
-              "title": "Lora_Specifications"
+              "icon": "lucide-file",
+              "title": "nRF52_SEEED_XIAO"
             }
           }
         ]
@@ -176,8 +190,12 @@
   },
   "active": "0af305e7796ebab4",
   "lastOpenFiles": [
-    "SSR_Portfolio/Datasheets/Lora_Specifications.pdf",
+    "SSR_Portfolio/Images/LoRa/lora_implementation.png",
     "SSR_Portfolio/Pages/LoRa/LoRa_Module.md",
+    "SSR_Portfolio/Images/LoRa/Leeg diagram - Pagina 1(2).png",
+    "SSR_Portfolio/Pages/BLE_Module/nRF52_SEEED_XIAO.md",
+    "SSR_Portfolio/Datasheets/Lora_Specifications.pdf",
+    "SSR_Portfolio/Pages/Brain_Module/STM32L412KB.md",
     "SSR_Portfolio/Portfolio.md",
     "z_LoRa_Module.md",
     "SSR_Portfolio/Pages/LoRa/Setup_Programs.md",
@@ -194,15 +212,11 @@
     "SSR_Portfolio/Images/LoRa/module/at_command_send_message_output.png",
     "SSR_Portfolio/Pages/LoRa/z_UART_Communications.md",
     "SSR_Portfolio/Images/LoRa/module/at_command_set_channel_output.png",
-    "SSR_Portfolio/Images/LoRa/module/at_command_channel_settings_output.png",
-    "SSR_Portfolio/Images/LoRa/module/at_command_config_output.png",
     "SSR_Portfolio/Datasheets/BLE_GATT_Specification.pdf",
-    "SSR_Portfolio/Pages/Brain_Module/STM32L412KB.md",
     "SSR_Portfolio/Images/LoRa/module",
     "SSR_Portfolio/Images/LoRa/back_end",
     "SSR_Portfolio/Images/LoRa/Untitled.md",
     "SSR_Portfolio/Images/LoRa/dashboard",
-    "SSR_Portfolio/Pages/BLE_Module/nRF52_SEEED_XIAO.md",
     "SSR_Portfolio/Pages/Investigation/Brain_Board_Selection.md",
     "SSR_Portfolio/Datasheets/Guide_Bluefruit_nrf52_feather.pdf",
     "SSR_Portfolio/Datasheets/Guide_AEM10941_Evaluation_Kit.pdf",
