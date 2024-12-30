@@ -1,6 +1,3 @@
-# Table of contents
-==To Be Generated At the end==
-
 # SSR
 By Adam Hejduk, Robbe Elsermans, and Thomas Kramp
 ## Intro
