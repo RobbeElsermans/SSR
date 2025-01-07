@@ -38,7 +38,7 @@ The MVP (Minimal Vital Product) contains the following items:
 
 ![Block Diagram](Images/diagrams/Block_Diagram.png)
 ## Power Profiling
-[Power Profiling page](Power_Profiling.md)
+[Power Profiling page](Pages/Power_Profiling/Power_Profiling.md)
 ## STM32 Module
 [STM32 module page](Pages/Brain_Module/STM32L412KB.md)
 ## BLE Module
