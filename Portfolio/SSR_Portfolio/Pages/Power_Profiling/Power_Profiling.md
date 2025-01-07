@@ -84,17 +84,21 @@ while(1)
 ##### Normal Delay
 ![Normal Delay Profile](../../Images/Power_Profiling/STM32_Delay_mode.png)
 
-##### Stop Mode 2
+##### Stop 2 Mode
 ![Stop Mode 2 Profile](../../Images/Power_Profiling/STM32_Stop_2_mode.png)
 
 ##### Standby Mode
 ![Standby Mode Profile](../../Images/Power_Profiling/STM32_Standby_mode.png)
 
 ##### Conclusion
-- **Stop Mode 2** should replace any plain delay in code to achieve significant power savings while retaining RAM.
+- **Stop 2 Mode** should replace any plain delay in code to achieve significant power savings while retaining RAM.
 - Use **Standby Mode** for even greater power reduction when RAM retention is unnecessary.
 
 ![Comparison of STM Wait Modes](../../Images/Power_Profiling/STM_wait_modes.png)
+In mAh this results in:
+- **Delay**: $\frac{26.4s - 17.3s}{60*60 s/h}*9.24mA = 0.023357mAh$
+- **Stop 2**: $\frac{10.75s - 1.2s}{60*60 s/h}*4.3mA = 0.011407mAh$
+- **Standby**: $\frac{34.4s - 25s}{60*60 s/h}*4.35mA = 0.011358mAh$
 
 ### XIAO nRF52840
 
@@ -158,7 +162,7 @@ setup
 2. **Beacon Transmission:** ~0.46mA for 5 seconds.
 3. **Deep Sleep:** ~0.002mA.
 
-**Average Current Consumption:** ~0.3566mA.
+**Average Current Consumption:** ~0.3566mA for $33s$ or $0.003268833mAh$.
 
 #### Beacon Low Power Mode
 
@@ -168,7 +172,9 @@ setup
 
 - Total average consumption: ~3.15mA over 23 seconds.
 - Beacon mode consumption: ~6.44mA.
-- Deep sleep consumption: ~179.2µA (higher than datasheet specifications, requiring register investigation).
+- Deep sleep consumption: ~179.2µA (higher than datasheet specifications).
+
+> Later on in this page, We figured out why it was so high.
 
 #### Scan Low Power Mode
 
@@ -182,7 +188,7 @@ setup
 If a beacon is detected, scanning stops immediately, significantly reducing consumption:
 ![BLE Scan Half LP Mode](../../Images/Power_Profiling/BLE_Scan_Half_LPMode.png)
 
-- Optimized consumption: ~1.01mA over 25 seconds.
+- Optimized consumption: ~1.01mA over $25s$ or $0.00701388mAh$.
 
 #### Power Comparison
 
@@ -211,25 +217,36 @@ while(1)
 	// End deep sleep mode
 }
 ```
+##### No delay
 Below a graph where the normal modified is used (so no delay in the while).
 ![BLE_Normal_Power_profile](../../Images/Power_Profiling/BLE_Normal_Power_profile.png)
 A high consumption is present in the while loop with no delay. here, the PMU doesn't get time to decrease energy between CPU cycles. Therefore the full power consumption.
 
+##### Delay (NOPs)
 Below a graph where the normal modified is used (so a delay is used).
 ![BLE_Modified_normal_power_profile](../../Images/Power_Profiling/BLE_Modified_normal_power_profile.png)
 A weird spike happens when the led is on.
+##### Deep Sleep
 
 Below a graph when system off is used.
 ![BLE_Deep_sleep_power_profile](../../Images/Power_Profiling/BLE_Deep_sleep_power_profile.png)
 The difference between the modified delay is that here, we have a reduction of 2. This is not much but more then nothing.
 
 **Key Observations:**
-- Using a delay of 1 second vs. deep sleep yields similar power consumption.
+- Using a delay of 1 second vs. deep sleep yields similar power consumption (half power reduced).
 - Delay retains RAM, ensuring faster wake-up (~1 second) compared to deep sleep.
 
-A problem we've encountered.
-The used module has for some reasons a current consumption of 0.179µA. This should be lower. Therefore, another module is used with the same code and yields different values which are correctly accordingly to the datasheet.
+> A problem we've encountered.
+The used module has for some reasons a current consumption of 179µA. This should be lower. Therefore, another module is used with the same code and yields different values that are correctly accordingly to the datasheet. We where measuring with a defect module! All plots are done with the correct module.
+
 ![BLE_Comparison_power_profile](../../Images/Power_Profiling/BLE_Comparison_power_profile.png)
+
+In mAh this results in:
+- **No delay**: $\frac{52.5s - 42.1s}{60*60 s/h}*5.266mA = 0.015213mAh$
+- **Delay (NOPs)**: $\frac{8.9s - 0.15s}{60*60 s/h}*0.363mA = 0.00088229mAh$
+- **Deep Sleep**: $\frac{47.1s - 38.2s}{60*60 s/h}*0.08147mA = 0.0002014119mAh$
+
+
 ### LTR-329 Light Sensor
 ```c
 init();
