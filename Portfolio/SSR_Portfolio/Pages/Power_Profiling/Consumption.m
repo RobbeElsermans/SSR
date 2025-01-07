@@ -1,6 +1,6 @@
-start_time= 0; %in seconds
-stop_time = 25; %in seconds
-average_current = 1.01; %im mA
+start_time= 7.18; %in seconds
+stop_time = 18; %in seconds
+average_current = 0.011580; %im mA
 time = stop_time-start_time
 format longg
 disp('total mAh');

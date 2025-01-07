@@ -1,6 +1,6 @@
 ## Joule Scope Measurements
 
-### STM32L4 
+### STM32L412KB 
 
 #### Standby Mode
 This measurement is conducted using JP1 with the Joule Scope as an ammeter.
@@ -236,8 +236,8 @@ The difference between the modified delay is that here, we have a reduction of 2
 - Using a delay of 1 second vs. deep sleep yields similar power consumption (half power reduced).
 - Delay retains RAM, ensuring faster wake-up (~1 second) compared to deep sleep.
 
-> A problem we've encountered.
-The used module has for some reasons a current consumption of 179µA. This should be lower. Therefore, another module is used with the same code and yields different values that are correctly accordingly to the datasheet. We where measuring with a defect module! All plots are done with the correct module.
+> **A problem we've encountered**
+The used module has for some reasons a current consumption of 179µA in deep sleep. This should be lower. Therefore, another module is used to eliminate faults. This other module yields different values, which are correct accordingly to the datasheet, with the same code. We where measuring with a defect module! All plots are done with the correct module.
 
 ![BLE_Comparison_power_profile](../../Images/Power_Profiling/BLE_Comparison_power_profile.png)
 
@@ -268,22 +268,92 @@ while(1)
 ![LTR329_standby_mode](../../Images/Power_Profiling/LTR329_standby_mode.png)
 - Active: 171.5µA
 - Idle: 80µA
-- Total: 85.1µA
+- Total: 85.1µA or $0.00025482mAh$
 
 ### SHT40 Sensor
 
 #### Default Operation
+This operations implies a constant readout of the sensor. 
 ![SHT40 Consumption](../../Images/Power_Profiling/sht40_consumption.png)
 
 #### Standby Mode
+In standby mode, the module will be brought out of standby and we let the module measure once. After 1 measurement, we put it back to standby mode.
 ![SHT40_standby_mode](../../Images/Power_Profiling/SHT40_standby_mode.png)
 - Active: 121.14µA
 - Idle: 115.54µA
-- Total: 115.80µA
+- Total: 115.80µA or $0.0000348mAh$
 
 ### Sensors Power Measurement
+A global comparison of constantly running mode versus the standby mode.
 ![Power_consumption_sensor_differences](../../Images/Power_Profiling/Power_consumption_sensor_differences.png)
 
 ### LoRa Module
-**(To be documented)**
+#### Power measurements of basic sweep
+The power measurements have been performed over a 13,67 minute time span. Notable settings were:
+- **Amount of repeats:** 64 TX / 1 RX
+- **Time slept between RX:** 3 minutes (180 seconds)
 
+![power_15_min_spread](../../Images/LoRa/power/power_15_min_spread.png)
+This gave an average current of 1.338 mA.
+
+$\text{power consumption} = \frac{1.338 \mathrm{mA} \cdot 823.434 \mathrm{s}}{3600} = 0.306 \mathrm{mAh}$
+
+The average power consumption for these settings becomes 0.3 mAh.
+
+The startup and repetition of the transmissions has the following current characteristic.
+![power_startup_and_repeat](../../Images/LoRa/power/power_startup_and_repeat.png)
+Between the repetitions, the LoRa module always wakes op at 3 moments. The cause for this is still unkown *(due to time constraints)*, but presumably these are the unsent RX messages from the LoRa module, since 9 peaks occur after the last repeated transmission.
+
+![power_lagging_peaks](../../Images/LoRa/power/power_lagging_peaks.png)
+#### Measuring states
+There are 4 state that can be measured:
+- Idle state
+- TX/RX command
+- TX LoRa message
+- Sleep state
+
+![power_4_states](../../Images/LoRa/power/power_4_states.png)
+
+| State      | Peak current (mA) | Average current (mA) | Duration (ms) | Consumption (mAh) |
+| ---------- | ----------------- | -------------------- | ------------- | ----------------- |
+| Sleep      | 0.038             | 0.034                | 101.177       | 0.000956          |
+| Idle       | 7.714             | 7.909                | 70.687        | 0.001552          |
+| UART TX/RX | 14.130            | 7.726                | 144.522       | 0.003097          |
+| LoRA TX    | 204.733           | 40.399               | 157.915       | 0.017720          |
+#### Startup
+When starting up or after being in sleep mode for a longer period, the setup AT commands are transmitted. This has the following current characteristic:
+
+![power_startup](../../Images/LoRa/power/power_startup.png)
+The fluctuations are most likely due to the AT commands being send *(and their response being received)*. It is not clear what the correlation between the two is, since their were 13 commands send and only 4 fluctuations occured.
+
+This gave an average current of 7.707 mA over 676 ms (~1 minute).
+#### Repetition
+When repeating transmissions the following current characteristic occurs:
+![power_repeat](../../Images/LoRa/power/power_repeat.png)
+
+|                | Peak current (mA) | Average current (mA) | Duration (ms) | Consumption (mAh) |
+|:--------------:|:-----------------:|:--------------------:|:-------------:|:-----------------:|
+| Repetition 1   | 197.373           | 37.676               | 171.000       | 0.001790          |
+| Unknown wake 1 | 16.658            | 4.672                | 48.441        | 0.000063          |
+| Unknown wake 2 | 17.635            | 6.576                | 220.875       | 0.000403          |
+| Unknown wake 3 | 13.563            | 6.648                | 48.634        | 0.000090          |
+| Repetition 2   | 216.405           | 38.001               | 170.220       | 0.001798          |
+
+When applying the same calculations on the other repetitions, we get similar results *(except for the peak current that differs greatly from instance to instance)*.
+#### ON/OFF
+Going back to the full range measurement, we will calculate the average current based on the different periods. These being:
+- The startup and transmit repetition
+- The lagging peaks
+- The sleep mode
+
+![power_repeat](../../Images/LoRa/power/power_on_off.png)
+
+|                        | Peak current (mA) | Average current (mA) | Duration (ms) | Consumption (mAh) |
+|:----------------------:|:-----------------:|:--------------------:|:-------------:|:-----------------:|
+| Startup and repetition | 217.397           | 2.595                | 189.024       | 0.000137          |
+| Lagging peaks          | 11.972            | 0.343                | 27.022        | 0.000003          |
+| Sleep                  | 42.822            | 0.035                | 177.075       | 0.000002          |
+
+$C_{\text{total}} = \left( 2.595 \times \frac{189.024}{3600000} \right) + \left( 0.343 \times \frac{27.022}{3600000} \right) + \left( 0.035 \times \frac{177.075}{3600000} \right) = 0.000137 + 0.000003 + 0.000002 = 0.000141 \mathrm{mAh}$
+
+The power consumption *(for only the LoRa module)* of one received transmission would become 0.000141 mAh.
