@@ -157,7 +157,6 @@ int main(void)
 
   while (1)
   {
-
     ssr_data[ssr_data_index].seq_number = ssr_data_index; // Define sequence number
 
 #ifdef DEBUG
@@ -321,10 +320,10 @@ void taskDetermineTasks()
   // bool_buffer = 0b010000011; // Set DEEP_SLEEP, STORE, SENS,
   //  bool_buffer = 0b10010001; // Set SLEEP, BEACON, SENS
 
-  //bool_buffer = 0b01001000; // Set DEEP_SLEEP, SCAN, SENS
-  bool_buffer = 0b10011001; // Set SLEEP, BEACON, SCAN, SENS
-  //  bool_buffer = 0b10000001; // Set SLEEP, SENS
-  //  bool_buffer = 0b10000000; // Set SLEEP
+  // bool_buffer = 0b01001000; // Set DEEP_SLEEP, SCAN, SENS
+  // bool_buffer = 0b10011001; // Set SLEEP, BEACON, SCAN, SENS
+  //   bool_buffer = 0b10000001; // Set SLEEP, SENS
+  //   bool_buffer = 0b10000000; // Set SLEEP
 
 #ifdef DEBUG
   clearBuf();
@@ -380,7 +379,7 @@ void taskStore()
   // ssr_data_index++; // Increase sequence number
 #ifdef DEBUG
   clearBuf();
-  sprintf((char *)Buffer, "taskStore - storing index %d\r\n", ssr_data_index - 1);
+  sprintf((char *)Buffer, "taskStore - storing index %d\r\n", ssr_data_index);
   serial_print((char *)Buffer);
 #endif
 }
@@ -468,15 +467,34 @@ void taskBeacon()
 
 void taskDrive()
 {
-  // Do something with the struct *ble_scan_result* and gyro measurements + RSSI?
-  // Do something with the struct *ble_beacon_result*?
-  //  TODO
-
+  
 #ifdef DEBUG
   clearBuf();
   sprintf((char *)Buffer, "taskDrive - driving\r\n");
   serial_print((char *)Buffer);
 #endif
+
+  setupLineBot();
+
+  DRIVE_STATE drive_state = STOP;
+
+  //Drive around
+  //Some task determination that influence the driveing direction
+
+  drive_state = FORWARD; 
+  driveLineBot(drive_state);
+  half_sleep(1000);
+
+  drive_state = STOP; 
+  driveLineBot(drive_state);
+  half_sleep(500);
+
+  drive_state = LEFT; 
+  driveLineBot(drive_state);
+  half_sleep(500);
+  
+  drive_state = STOP; 
+  driveLineBot(drive_state);
 }
 
 void taskDeepSleep()
