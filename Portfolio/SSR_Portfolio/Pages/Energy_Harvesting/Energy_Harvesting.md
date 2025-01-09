@@ -16,6 +16,7 @@ It takes about 1h 35m to charge the Cap. to 2,3V WITH additional artiffical ligh
 
 
 ### Update on energy harvesting 
+Very plesant learning curve
 I previously tested only one E.H.M. since i expected them to be the same i only worked with one... Unfortunetly other board has a 'shorted input of source' - it would behave in a way like: if you connect a solar panel the panel would drop its Voltage to about 0.2 V which cant charge a capacitor
 
 #### New way of powering 
@@ -59,7 +60,3 @@ New plan : Use status 1,2,3 pins to see if we are running out of power - NOT HAP
 ![[StatusChecksSig.png]] 
 ### Powering the STM32 Nucleo with the H.M.
 ![[3V3PowerSuplyNucleo.png]]
-Unsouldering SBs until 12:45
-Charging 12:57
-Documentation
-### Decision making
