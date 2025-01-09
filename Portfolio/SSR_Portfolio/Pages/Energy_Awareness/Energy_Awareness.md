@@ -8,7 +8,6 @@ The selected tasks exhibit varying consumption profiles. Specifically, the curre
 For instance, consider three tasks where each subsequent task consumes 50% more energy than the previous one. If Task 1 consumes 2 units of energy, Task 2 would consume 3 units (50% more than Task 1), and Task 3 would consume 4.5 units (50% more than Task 2). By evaluating the total energy available, you can decide which tasks or combinations of tasks can be performed without exceeding the energy limit.
 
 > A basic Task scheduler is implemented where the voltage of the super capacitor determines the sequence of tasks.
-> 
 ## Optimal Transmission
 When two rovers are within a certain distance where their measured data is highly likely to be similar, it is inefficient to redundantly transmit this data over a long range to the base station. To optimize energy usage, a mechanism can be employed allowing rovers to detect each other's presence within a specific range. In this range, the rovers should be able to estimate their relative proximity, not necessarily as a precise metric value but as a qualitative factor (e.g., "close" or "far").
 
@@ -37,21 +36,22 @@ Once both rovers detect proximity, they need to exchange information to decide *
 - **What to transmit:**
     - Option 1: Transmit **24 🥔️** (data from the low-energy Rover B).
     - Option 2: Transmit **25 🥔️** (data from the high-energy Rover A).
-    - Option 3: Transmit the **average value**: (25+24)/2=24.5(25 + 24) / 2 = 24.5(25+24)/2=24.5 🥔️.
+    - Option 3: Transmit the **average value**: $(25+24)/2=24.5🥔️$.
 
-This approach reduces redundant transmissions and preserves the energy of the rover with lower reserves, ensuring more efficient data communication over long distances.
+This approach reduces transmissions and preserves the energy of the rover with lower reserves, ensuring more efficient data communication over long distances.
 
-> This energy aware algorithm is not jet implemented in the code. Although, preparations are made within the BLE-scan and beacon code bases in terms of the exchanged data.
+> This energy aware algorithm is not jet implemented in the code. Although, preparations are made within the BLE-scan and beacon code in terms of the exchanged data.
 
 ## Optimal Waiting
-When executing certain tasks, a significant portion of time can be spent waiting for modules to process their commands. This idle waiting time results in wasted, valuable energy. To optimize energy efficiency, waiting periods should be minimized, and during unavoidable waits, the system should consume as little energy as possible.
-In code, certain techniques can help achieve this, such as using function references.
+When executing certain tasks, a significant portion of time is used by waiting for modules to process their commands. This idle waiting time results in wasted, valuable energy. To optimize energy efficiency, waiting periods should be minimized, and during unavoidable waits, the system should consume as little energy as possible.
+
+In code, certain techniques can help achieve this, such as using function references. These function reference can later be used to create custom delay blocks where we can put the MCU in a low power mode when waiting. Or even doing some custom tasks if a certain delay is requested.
 
 It can be implemented in C as follows
 ```c
-1. typedef void (*delay_callback_t)(uint32_t time);
-2. void bleDelayCallback(delay_callback_t dc_fp);
-3. extern delay_callback_t _delay_callback;
+typedef void (*delay_callback_t)(uint32_t time);
+void bleDelayCallback(delay_callback_t dc_fp);
+extern delay_callback_t _delay_callback;
 ```
 1. **`typedef void (*delay_callback_t)(uint32_t time);`**
     
@@ -81,7 +81,7 @@ However, waiting for a response indefinitely can be risky, as the other party mi
 A small example:
 
 - **Scenario:**  
-    A rover sends a command to a remote sensor to collect data. The sensor typically takes **2 seconds** to process and respond, but due to potential failures, it may not respond at all.
+    A rover sends a command to a sensor to collect data. The sensor typically takes **2 seconds** to process and respond, but due to potential failures, it may not respond at all.
     
 - **Implementation:**
     

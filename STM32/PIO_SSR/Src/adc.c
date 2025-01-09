@@ -23,7 +23,7 @@
 
 /* USER CODE BEGIN 0 */
 const float base = 0.000805664;
-const float division_factor = 2.694789758;//1.198011114; //3.3/2.7 ish
+const float division_factor = 2.2;//2.694789758;//1.198011114; //3.3/2.7 ish
 /* USER CODE END 0 */
 
 ADC_HandleTypeDef hadc1;
@@ -149,9 +149,18 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
 
 float readVoltage(ADC_HandleTypeDef* adcHandle)
 {
-  HAL_ADC_Start(&hadc1);
-  HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
-  uint32_t raw_adc_val = (HAL_ADC_GetValue(&hadc1));
+  uint8_t times = 10;
+  uint32_t raw_value = 0;
+
+  for(uint8_t i = 0; i < times; i++)
+  {
+    HAL_ADC_Start(&hadc1);
+    HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+    raw_value += (HAL_ADC_GetValue(&hadc1));
+  }
+
+  //average measured:
+  uint32_t raw_adc_val = raw_value/times;
 
   //Convert
   // reference / 2^12
@@ -161,6 +170,8 @@ float readVoltage(ADC_HandleTypeDef* adcHandle)
   #ifdef DEBUG
   char Buffer[80] = {0};
   sprintf(Buffer, "readVoltage - raw:%ld \r\n", raw_adc_val);
+  serial_print(Buffer);
+  sprintf(Buffer, "readVoltage - r*b:%f \r\n", raw_adc_val*base);
   serial_print(Buffer);
   #endif
 

@@ -1,10 +1,10 @@
 # SSR
 By Adam Hejduk, Robbe Elsermans, and Thomas Kramp
+
+> This documentation is written in [Obsidian](https://obsidian.md/).
 ## Intro
 As humanities interest in Mars grows, an understanding of its weather is needed. One of the greatest challenges that the planet provides are the frequent dust storms.
 This project will try to monitor the weather phenomenon (such as temperature, humidity, light, ...) to predict such storms.
-
-> This documentation is written in [Obsidian](https://obsidian.md/).
 ## Project goal
 Each system operates autonomously as its own master, navigating the surface of Mars independently. When a node becomes lost or encounters an issue, and another node approaches, they can exchange valuable information to assist each other. Otherwise, each node functions independently.
 
@@ -38,7 +38,7 @@ The MVP (Minimal Vital Product) contains the following items:
 
 ![Block Diagram](Images/diagrams/Block_Diagram.png)
 ## Power Profiling
-[Power Profiling page](Power_Profiling.md)
+[Power Profiling page](Pages/Power_Profiling/Power_Profiling.md)
 ## STM32 Module
 [STM32 module page](Pages/Brain_Module/STM32L412KB.md)
 ## BLE Module
