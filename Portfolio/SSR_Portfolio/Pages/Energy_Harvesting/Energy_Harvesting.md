@@ -1,4 +1,7 @@
 [Enegry Harvesting Module AEM1094](AEM10941.md)
+
+
+
 The goal is to pover as many peripherals as possible... SHT40, LTR-329, STM32, BLE ?
 We have:
 - Outside S.P.
@@ -60,3 +63,12 @@ New plan : Use status 1,2,3 pins to see if we are running out of power - NOT HAP
 ![[StatusChecksSig.png]] 
 ### Powering the STM32 Nucleo with the H.M.
 ![[3V3PowerSuplyNucleo.png]]
+Soldering done, together with self current measuring prosedures of the STM32 nucleo B4K... 
+
+We are able to power STM32 with Enviromental sensors and beaconing BLE module !!! 
+It can run for about 45 seconds (two beaconing cycles)... then Energy is harvesting for about 7minutes under normal ambient lighting in the lab. before HighVol. Output opens again repeating the cycle.  
+![[EnergyHarvestingSTMPoweringBLE.png]]
+![[EnergyHarvestingSTMnBLE2.png]]
+
+This energy harvesting module has such a plesant learning curve ! 
+I am absolutely using this for some of my own projects in the future. 
