@@ -33,10 +33,12 @@ After reaching 3.92V on the Dual-cell Capacitor  HighOUT had 3.3V => Success
 
 
 ### Voltage measurement of the energy harvesting module
+The idea: self power awareness
 Hardware Setup: 
 - Use the **ADC (Analog-to-Digital Converter)** on the STM32 to measure the voltage of the energy storage device.
 - Connect the energy storage's (SUPERCAP) positive terminal to a voltage divider to scale it down if it exceeds the ADC input range of the STM32.
 - Connect the output of the voltage divider to an ADC pin.
+
 **Supercapacitor:**
 
 - For supercapacitors, the energy is directly proportional to the square of the voltage:
