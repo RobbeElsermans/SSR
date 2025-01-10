@@ -115,8 +115,6 @@ Some conclusions:
 - Read (low prec.) 0xE0 -> [2 * 8-bit T-data; 8-bit CRC; 2 * 8-bit RH-data; 8-bit CRC]
 $RH = ( -6 + 125 \cdot \frac{S_{RH}}{2^{16} -1}) (\%RH)$
 $T = ( -45 + 175 \cdot \frac{S_{T}}{2^{16} -1}) (^\circ C)$
-[SHT40_standby_mode](../../Images/Power_Profiling/SH40_standby_mode.png)
-![[SHT40_standby_mode.png]]
 
 
 
