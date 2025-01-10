@@ -3,7 +3,7 @@
 SHT4x is a digital sensor platform for measuring relative humidity and temperature at different accuracy classes. Its I2C interface provides several preconfigured I2C addresses while maintaining an ultra-low power budget.
 
 
-
+![pseudocode](../../Images/Sensors/pseudocode.png)
 ![[pseudocode.png]]
 
 Sensor read function:
